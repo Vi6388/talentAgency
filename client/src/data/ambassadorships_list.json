@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Lena Balout",
+    "email": "lena@atarimae.agency",
+    "phone": "0413 974 801",
+    "username": "lenab"
+  },
+  {
+    "id": 2,
+    "name": "Terry Barridge",
+    "email": "terry@atarimae.agency",
+    "phone": "0432 511 300",
+    "username": "terryb"
+  },
+  {
+    "id": 3,
+    "name": "Michael Lipman",
+    "email": "michael@atarimae.agency",
+    "phone": "02 6598 6325",
+    "username": "michaell"
+  }
+]

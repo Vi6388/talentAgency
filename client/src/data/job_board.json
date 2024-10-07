@@ -1,0 +1,77 @@
+[
+  {
+    "name": "New Job",
+    "items": [
+      {
+        "id": 3,
+        "client": "Good Food and Wine",
+        "title": "Social Posts for October Promotion",
+        "dueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Courtney Rowlsten",
+        "color": "#00aeef"
+      },
+      {
+        "id": 9,
+        "client": "AMEX",
+        "title": "Create food menu for lounge",
+        "dueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Khanh Ong",
+        "color": "#ffdd00"
+      }
+    ]
+  },
+  {
+    "name": "In Production",
+    "items": [
+      {
+        "id": 4,
+        "client": "WOW",
+        "title": "Social Campaign for new product",
+        "dueDate": "26/12/23",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Taylors Fist",
+        "color": "#9b57a3"
+      }
+    ]
+  },
+  {
+    "name": "With Client for approval",
+    "items": []
+  },
+  {
+    "name": "Changes Required",
+    "items": [
+      {
+        "id": 6,
+        "client": "SODA STREAM",
+        "title": "Social Campaign for new product",
+        "dueDate": "26/12/23",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Aurelia St Clair",
+        "color": "#638a97"
+      }
+    ]
+  },
+  {
+    "name": "Approved to go live",
+    "items": []
+  },
+  {
+    "name": "To Invoice",
+    "items": []
+  },
+  {
+    "name": "Invoiced",
+    "items": []
+  },
+  {
+    "name": "Paid",
+    "items": []
+  },
+  {
+    "name": "Completed",
+    "items": []
+  }
+]

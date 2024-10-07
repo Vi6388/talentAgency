@@ -1,0 +1,61 @@
+[
+  {
+    "name": "Estimate with Client",
+    "items": [
+      {
+        "id": 3,
+        "client": "Company Name",
+        "title": "Estimate Job Name Estimate Job Name Estimate Job Name",
+        "estimateDate": "26/11/24",
+        "estimateDelieverableDueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Courtney Rowlsten",
+        "color": "#00aeef"
+      },
+      {
+        "id": 9,
+        "client": "Company Name",
+        "title": "Estimate Job Name Estimate Job Name Estimate Job Name",
+        "estimateDate": "26/11/24",
+        "estimateDelieverableDueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Taylors Fist",
+        "color": "#ffdd00"
+      }
+    ]
+  },
+  {
+    "name": "Estimate to be reviewed",
+    "items": [
+      {
+        "id": 4,
+        "client": "Company Name",
+        "title": "Estimate Job Name Estimate Job Name Estimate Job Name",
+        "estimateDate": "26/11/24",
+        "estimateDelieverableDueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Khanh Ong",
+        "color": "#9b57a3"
+      }
+    ]
+  },
+  {
+    "name": "Declined Estimate",
+    "items": [
+      {
+        "id": 6,
+        "client": "Company Name",
+        "title": "Estimate Job Name Estimate Job Name Estimate Job Name",
+        "estimateDate": "26/11/24",
+        "estimateDelieverableDueDate": "26/11/24",
+        "avatar":"https://randomuser.me/api/portraits/men/79.jpg",
+        "userName": "Aurelia St Clair",
+        "color": "#638a97"
+      }
+    ]
+  },
+  {
+    "name": "Successful Estimate",
+    "items": []
+  }
+]

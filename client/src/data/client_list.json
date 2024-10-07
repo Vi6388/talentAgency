@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "phone": "02 6598 6325",
+    "state": "NSW",
+    "type": "Advertising Agency"
+  },
+  {
+    "id": 2,
+    "client": "Britney PR",
+    "contact": "RIPOFF agency",
+    "phone": "0145 698 523",
+    "state": "VIC",
+    "type": "PR Agency"
+  },
+  {
+    "id": 3,
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "phone": "02 6598 6325",
+    "state": "SA",
+    "type": "Direct Client"
+  },
+  {
+    "id": 4,
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "phone": "02 6598 6325",
+    "state": "WA",
+    "type": "Speakers Buero"
+  },
+  {
+    "id": 5,
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "phone": "02 6598 6325",
+    "state": "VIC",
+    "type": "Management Company"
+  },
+  {
+    "id": 6,
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "phone": "02 6598 6325",
+    "state": "NSW",
+    "type": "Advertising Agency"
+  }
+]

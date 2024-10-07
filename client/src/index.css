@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+.link {
+  @apply p-2.5 flex rounded-md gap-6 items-center md:cursor-pointer cursor-default duration-300 font-medium text-[#787486] text-[16px];
+}
+
+.active {
+  @apply bg-purple-100 text-[#0D062D] rounded-md	font-semibold;
+}
+
+/* @layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: blue orange;
+  }
+
+  // Works on Chrome, Edge, and Safari
+  *::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 5px;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-white;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-gradient-to-b from-blue-500 to-red-400 rounded;
+  }
+} */
+
+.navbar-list-margin {
+  margin-left: 8px !important;
+}
+
+.height-login-form {
+  height: calc(100vh - 70px);
+}
+
+.bg-main {
+  background-color: #f9f6f4;
+}
+
+.bg-primary-600 {
+  background-color: #3e4c57;
+}
+
+.bg-primary-700 {
+  background-color: #506373;
+}
+
+.bg-black {
+  background-color: #242c32;
+}
+
+.bg-kanban-item {
+  background-color: #e4ded9;
+}
+
+.bg-success {
+  background-color: #00a651;
+}
+
+.bg-button-1 {
+  background-color: #d1d3d4;
+}
+
+.bg-button-2 {
+  background-color: #9b8579;
+}
+
+.bg-button-3 {
+  background-color: #5b493b;
+}
+
+.bg-button-4 {
+  background-color: #242c32;
+}
+
+.bg-button-5 {
+  background-color: #9d5165;
+}
+
+.bg-button-6 {
+  background-color: #b99e8b;
+}
+
+.bg-table {
+  background-color: #e4ded9;
+}
+
+.text-brown {
+  color: #9b8579 !important;
+}
+
+.text-input {
+  color: #242c32;
+}
+
+.text-normal-icon {
+  color: #e2e0e0;
+}
+
+.text-kanban {
+  color: #242c36;
+}
+
+.text-estimateDate {
+  color: #5b493b;
+}
+
+.text-success {
+  color: #00a651;
+}
+
+.text-title-1 {
+  color: #9b8579;
+}
+
+.text-title-2 {
+  color: #554234;
+}
+
+.text-suffix {
+  color: #d4d5d6;
+}
+
+.text-label {
+  color: #998275;
+}
+
+.text-summary-item {
+  color: #31363c;
+}
+
+.text-th {
+  color: #5b4a4c;
+}
+
+.text-gray {
+  color: #cfcecd;
+}
+
+.border-input {
+  border: 1px solid #d4d5d6;
+}
+
+.border-button-3 {
+  border: 1px solid #5b493b;
+}
+
+.border-table {
+  border-color: #bda593;
+}
+
+.border-dashed-color {
+  border-color: #cfcecd;
+}
+
+.kanban-title-leading {
+  line-height: 18px !important;
+}
+
+input[type='time']::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  width: 10%;
+  left:35%;
+}
+
+.divider-line-color {
+  border-color: #dad9da;
+}

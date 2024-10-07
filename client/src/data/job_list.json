@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "Social brand post",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#9b57a3"
+  },
+  {
+    "id": 2,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "TV Show",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#ffdd00"
+  },
+  {
+    "id": 3,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "Book Deal",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#638a97"
+  },
+  {
+    "id": 4,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "Book Deal",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#00aeef"
+  },
+  {
+    "id": 5,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "Social brand post",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#00aeef"
+  },
+  {
+    "id": 6,
+    "talent": "Khanh Ong",
+    "client": "Jenny Agency",
+    "contact": "RIPOFF agency",
+    "title": "Social brand post",
+    "briefDate": "25/06/24",
+    "dueDate": "26/06/24",
+    "completionDate": "26/06/24",
+    "invoiced": false,
+    "paid": false,
+    "color": "#ffdd00"
+  }
+]
