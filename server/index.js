@@ -5,6 +5,9 @@ const app = express();
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const authRoute = require("./Routes/AuthRoute");
+const userRoute = require("./Routes/UserRoute");
+const talentRoute = require("./Routes/TalentRoute");
+const clientRoute = require("./Routes/ClientRoute");
 const { MONGO_URL, PORT } = process.env;
 
 mongoose
@@ -29,5 +32,9 @@ app.use(
 app.use(cookieParser());
 
 app.use(express.json());
+app.use(express.static(__dirname));
 
-app.use("/", authRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/user", userRoute);
+app.use("/api/talent", talentRoute);
+app.use("/api/client", clientRoute);

@@ -3,13 +3,14 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TalentApi } from "../../apis/TalentApi";
 import { toast, ToastContainer } from "react-toastify";
 import { isFormValid } from "../../utils/utils";
+import { ClientApi } from "../../apis/ClientApi";
 
-const TalentForm = () => {
+const ClientForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [talentForm, setTalentForm] = useState({
+  const [clientForm, setClientForm] = useState({
     firstname: "",
     surname: "",
     email: "",
@@ -19,11 +20,8 @@ const TalentForm = () => {
     suburb: "",
     state: "",
     postcode: "",
-    preferredAirline: "",
-    frequentFlyerNumber: "",
-    abn: "",
-    publiceLiabilityInsurance: "",
-    highlightColor: ""
+    contact: "",
+    type: ""
   });
 
   const [fileInfo, setFileInfo] = useState({
@@ -34,30 +32,27 @@ const TalentForm = () => {
 
   useEffect(() => {
     if (id !== undefined) {
-      TalentApi.getTalentById(id).then((res) => {
+      ClientApi.getClientById(id).then((res) => {
         if (res.data.status === 200) {
-          const talent = res.data.data;
-          setTalentForm({
-            firstname: talent.firstname || "",
-            surname: talent.surname || "",
-            email: talent.email || "",
-            phoneNumber: talent.phoneNumber || "",
-            avatar: talent.avatar || "",
-            address: talent.address || "",
-            suburb: talent.suburb || "",
-            state: talent.state || "",
-            postcode: talent.postcode || "",
-            preferredAirline: talent.preferredAirline || "",
-            frequentFlyerNumber: talent.frequentFlyerNumber || "",
-            abn: talent.abn || "",
-            publiceLiabilityInsurance: talent.publiceLiabilityInsurance || "",
-            highlightColor: talent.highlightColor || ""
+          const client = res.data.data;
+          setClientForm({
+            firstname: client.firstname || "",
+            surname: client.surname || "",
+            email: client.email || "",
+            phoneNumber: client.phoneNumber || "",
+            avatar: client.avatar || "",
+            address: client.address || "",
+            suburb: client.suburb || "",
+            state: client.state || "",
+            postcode: client.postcode || "",
+            contact: client.contact || "",
+            type: client.type || ""
           });
-          if (talent.avatar !== "") {
+          if (client.avatar !== "") {
             setFileInfo({
               ...fileInfo,
               isPreviewVisible: true,
-              imageSrc: talent.avatar
+              imageSrc: client.avatar
             })
           }
         }
@@ -66,8 +61,8 @@ const TalentForm = () => {
   }, []);
 
   const handleChange = (e) => {
-    setTalentForm({
-      ...talentForm,
+    setClientForm({
+      ...clientForm,
       [e.target.name]: e.target.value
     })
   }
@@ -84,8 +79,8 @@ const TalentForm = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setTalentForm({
-      ...talentForm,
+    setClientForm({
+      ...clientForm,
       avatar: e.target.files[0]
     })
 
@@ -111,31 +106,28 @@ const TalentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const requiredFields = ['firstname', 'surname', 'email'];
-    const valid = isFormValid(talentForm, requiredFields);
+    const valid = isFormValid(clientForm, requiredFields);
     if (valid) {
       const formData = new FormData();
-      formData.append('avatar', talentForm.avatar);
-      formData.append('firstname', talentForm.firstname);
-      formData.append('surname', talentForm.surname);
-      formData.append('email', talentForm.email);
-      formData.append('phoneNumber', talentForm.phoneNumber);
-      formData.append('address', talentForm.address);
-      formData.append('suburb', talentForm.suburb);
-      formData.append('state', talentForm.state);
-      formData.append('postcode', talentForm.postcode);
-      formData.append('preferredAirline', talentForm.preferredAirline);
-      formData.append('frequentFlyerNumber', talentForm.frequentFlyerNumber);
-      formData.append('abn', talentForm.abn);
-      formData.append('publiceLiabilityInsurance', talentForm.publiceLiabilityInsurance);
-      formData.append('highlightColor', talentForm.highlightColor);
+      formData.append('avatar', clientForm.avatar);
+      formData.append('firstname', clientForm.firstname);
+      formData.append('surname', clientForm.surname);
+      formData.append('email', clientForm.email);
+      formData.append('phoneNumber', clientForm.phoneNumber);
+      formData.append('address', clientForm.address);
+      formData.append('suburb', clientForm.suburb);
+      formData.append('state', clientForm.state);
+      formData.append('postcode', clientForm.postcode);
+      formData.append('contact', clientForm.contact);
+      formData.append('type', clientForm.type);
 
       if (id !== undefined) {
-        TalentApi.updateTalentById(id, formData).then((res) => {
+        ClientApi.updateClientById(id, formData).then((res) => {
           try {
             if (res.data.status === 200) {
               handleSuccess(res.data.message);
               setTimeout(() => {
-                navigate("/settings");
+                navigate("/client/list");
               }, 2000);
             } else {
               handleError(res.data.message);
@@ -145,12 +137,12 @@ const TalentForm = () => {
           }
         });
       } else {
-        TalentApi.add(formData).then((res) => {
+        ClientApi.add(formData).then((res) => {
           try {
             if (res.data.status === 200) {
               handleSuccess(res.data.message);
               setTimeout(() => {
-                navigate("/settings");
+                navigate("/client/list");
               }, 2000);
             } else {
               handleError(res.data.message);
@@ -166,23 +158,23 @@ const TalentForm = () => {
   return (
     <div className="p-5 h-full bg-main">
       <ToastContainer />
-      <div className="text-[36px] text-title-2 font-bold my-5 w-full text-center">Settings</div>
+      <div className="text-[36px] text-title-2 font-bold my-5 w-full text-center">Client</div>
       <div className="w-2/3 mx-auto grid grid-cols-1 md:grid-cols-3">
         <div className="col-span-1 md:col-span-2">
           <div className="">
-            <div className="text-base text-title-2 font-semibold py-3">New Talent</div>
+            <div className="text-base text-title-2 font-semibold py-3">New Client</div>
             <div className="flex flex-col justify-between items-center gap-3">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="firstname"
-                    type="text" value={talentForm.firstname} name="firstname"
+                    type="text" value={clientForm.firstname} name="firstname"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="surname"
-                    type="text" value={talentForm.surname} name="surname"
+                    type="text" value={clientForm.surname} name="surname"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
@@ -190,13 +182,13 @@ const TalentForm = () => {
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="email"
-                    type="text" value={talentForm.email} name="email"
+                    type="text" value={clientForm.email} name="email"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="phone Number"
-                    type="text" value={talentForm.phoneNumber} name="phoneNumber"
+                    type="text" value={clientForm.phoneNumber} name="phoneNumber"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
@@ -206,26 +198,26 @@ const TalentForm = () => {
               <div className="w-full">
                 <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="address"
-                  type="text" value={talentForm.address} name="address"
+                  type="text" value={clientForm.address} name="address"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="suburb"
-                    type="text" value={talentForm.suburb} name="suburb"
+                    type="text" value={clientForm.suburb} name="suburb"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="state"
-                    type="text" value={talentForm.state} name="state"
+                    type="text" value={clientForm.state} name="state"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="postcode"
-                    type="text" value={talentForm.postcode} name="postcode"
+                    type="text" value={clientForm.postcode} name="postcode"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
@@ -235,43 +227,17 @@ const TalentForm = () => {
               <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="preferred Airline"
-                    type="text" value={talentForm.preferredAirline} name="preferredAirline"
+                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="contact"
+                    type="text" value={clientForm.contact} name="contact"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="cols-span-1">
                   <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="frequent Flyer Number"
-                    type="text" value={talentForm.frequentFlyerNumber} name="frequentFlyerNumber"
+                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="type"
+                    type="text" value={clientForm.type} name="type"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
-            </div>
-
-            <div className="w-full my-12">
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="cols-span-1">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="abn"
-                    type="text" value={talentForm.abn} name="abn"
-                    onChange={(e) => handleChange(e)} />
-                </div>
-                <div className="cols-span-1">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="publice Liability Insurance"
-                    type="text" value={talentForm.publiceLiabilityInsurance} name="publiceLiabilityInsurance"
-                    onChange={(e) => handleChange(e)} />
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full my-12 relative">
-              <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
-                placeholder="Choose Highlight Color"
-                type="text" value={talentForm.highlightColor} readOnly />
-              <input type="color" id="color-picker" value={talentForm.highlightColor} className="absolute left-2 top-2 w-10 md:w-20"
-                onChange={(e) => handleChange(e)} name="highlightColor" />
             </div>
           </div>
         </div>
@@ -295,20 +261,20 @@ const TalentForm = () => {
       </div>
 
       <div className="flex justify-start md:justify-center items-center mt-12 gap-5">
-        {location.pathname === "/settings/talent/add" &&
+        {location.pathname === "/client/add" &&
           <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
                             active:bg-[#978172] active:shadow-lg text-sm" type="button"
             onClick={(e) => handleSubmit(e)}>Create</button>}
-        <Link to={"/settings"} className="w-full sm:w-fit">
-          <button className={`${location.pathname === "/settings/talent/add" ? 'bg-button-1 hover:bg-white-200 active:bg-white-100' : 'bg-button-6 hover:bg-[#a38b7b] active:bg-[#978172]'} 
+        <Link to={"/client/list"} className="w-full sm:w-fit">
+          <button className={`${location.pathname === "/client/add" ? 'bg-button-1 hover:bg-white-200 active:bg-white-100' : 'bg-button-6 hover:bg-[#a38b7b] active:bg-[#978172]'} 
                             h-12 md:h-9 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                             block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full md:w-[160px]
                             hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                             active:bg-white-100 active:shadow-md text-sm`}>Close</button>
         </Link>
-        {location.pathname.includes("/settings/talent/edit") &&
+        {location.pathname.includes("/client/edit") &&
           <button className="bg-button-4 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out
                             hover:bg-neutral-700 hover:shadow-lg focus:bg-neutral-700 focus:shadow-md focus:outline-none focus:ring-0 
@@ -319,4 +285,4 @@ const TalentForm = () => {
   )
 }
 
-export default TalentForm;
+export default ClientForm;

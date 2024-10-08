@@ -26,6 +26,7 @@ import ClientList from "../Pages/Client/List";
 import Settings from "../Pages/Settings/Settings";
 import UserForm from "../Pages/Settings/UserForm";
 import TalentForm from "../Pages/Settings/TalentForm";
+import ClientForm from "../Pages/Client/ClientForm";
 
 const routes = createBrowserRouter([
   {
@@ -109,6 +110,14 @@ const routes = createBrowserRouter([
   {
     path: "/client/list",
     element: <RootLayout children={<ClientList />} />
+  },
+  {
+    path: "/client/add",
+    element: <RootLayout children={<ClientForm />} />
+  },
+  {
+    path: "/client/edit/:id",
+    element: <RootLayout children={<ClientForm />} />
   },
   {
     path: "/settings",

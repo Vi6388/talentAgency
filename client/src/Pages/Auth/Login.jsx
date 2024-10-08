@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { api } from "../../apis";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,21 +36,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/login",
-        {
-          ...loginForm,
-        },
-        { withCredentials: true }
-      );
-      const { success, message } = data;
-      if (success) {
-        handleSuccess(message);
-        login("user");
-        navigate("/");
-      } else {
-        handleError(message);
-      }
+      api.login(loginForm).then((res) => {
+        if (res.data.status === 200) {
+          handleSuccess(res.data.message);
+          login(res.data.data);
+          navigate("/");
+        } else {
+          handleError(res.data.message);
+        }
+      });
     } catch (error) {
       console.log(error);
     }

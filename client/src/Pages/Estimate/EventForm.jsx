@@ -240,37 +240,37 @@ const EstimateEventForm = () => {
         <Link to={"/estimate/kanban"} className="w-full">
           <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Cancel</button>
         </Link>
         <Link to={"/estimate/add/social"} className="w-full">
           <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Previous</button>
         </Link>
         <Link to={"/estimate/add/media"} className="w-full">
           <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Next...</button>
         </Link>
         <Link className="w-full">
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Send Estimate</button>
         </Link>
         <Link className="w-full">
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Update and ReSend</button>
         </Link>
         <Link className="w-full">
           <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Make job live</button>
         </Link>
       </div>

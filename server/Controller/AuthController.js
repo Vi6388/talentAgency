@@ -8,7 +8,7 @@ module.exports.Login = async (req, res, next) => {
     if (!email || !password) {
       return res.json({ success: false, message: 'All fields are required' })
     }
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email: email });
     if (!user) {
       return res.json({ success: false, message: 'Incorrect password or email' })
     }
@@ -21,7 +21,7 @@ module.exports.Login = async (req, res, next) => {
       withCredentials: true,
       httpOnly: false,
     });
-    res.status(201).json({ message: "User logged in successfully", success: true });
+    return res.json({ status: 200, message: "User logged in successfully", success: true, data: user });
     next()
   } catch (error) {
     console.error(error);

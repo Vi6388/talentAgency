@@ -1,4 +1,4 @@
-const { UserAdd, UserUpdate, getUserList, getUserById } = require("../Controller/UserController");
+const { AddTalent, UpdateTalent, getTalentList, getTalentById } = require("../Controller/TalentController");
 const fs = require('fs');
 const router = require("express").Router();
 const multer = require('multer');
@@ -7,7 +7,7 @@ let path = require('path');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join(__dirname, '../uploads/user/');
+        const dir = path.join(__dirname, '../uploads/talent/');
         fs.access(dir, (error) => {
             if (error) {
                 fs.mkdir(dir, { recursive: true }, (err) => {
@@ -37,11 +37,11 @@ const fileFilter = (req, file, cb) => {
 
 let upload = multer({ storage, fileFilter });
 
-router.get("/list", getUserList);
+router.get("/list", getTalentList);
 
-router.route('/add').post(upload.single('avatar'), UserAdd);
-router.route('/update/:id').post(upload.single('avatar'), UserUpdate);
+router.route('/add').post(upload.single('avatar'), AddTalent);
+router.route('/update/:id').post(upload.single('avatar'), UpdateTalent);
 
-router.get("/:id", getUserById);
+router.get("/:id", getTalentById);
 
 module.exports = router;

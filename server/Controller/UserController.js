@@ -1,44 +1,63 @@
 const UserModel = require("../model/User.model");
-const { createSecretToken } = require("../util/SecretToken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcrypt');
 
-module.exports.add = async (req, res, next) => {
+module.exports.getUserList = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    const existingUser = await UserModel.findOne({ email });
+    const userList = await UserModel.find();
+    return res.json({ status: 200, message: "Get User list", success: true, data: userList });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+module.exports.UserAdd = async (req, res, next) => {
+  try {
+    const url = req.protocol + '://' + req.get("host");
+    const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
-      return res.json({ message: "User already exists" });
+      return res.json({ success: true, status: 201, message: "User already exists" });
     }
-    const user = await UserModel.create(req.body);
-    res.status(200).json({ status: 200, message: "User signed in successfully", success: true, data: user });
+    const user = UserModel.create({
+      ...req.body,
+      avatar: url + '/uploads/user/' + req.file.filename
+    });
+    return res.json({ status: 200, message: "User added successfully", success: true, data: user });
     next();
   } catch (error) {
     console.error(error);
   }
 };
 
-module.exports.Login = async (req, res, next) => {
+module.exports.getUserById = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.json({ success: false, message: 'All fields are required' })
+    const user = await UserModel.findById(req.params.id);
+    if (user) {
+      return res.json({ success: true, status: 200, message: "User is exist", data: user });
+    } else {
+      return res.json({ success: true, status: 201, message: "User not found" });
     }
-    const user = await UserModel.findOne({ email });
-    if (!user) {
-      return res.json({ success: false, message: 'Incorrect password or email' })
-    }
-    const auth = await bcrypt.compare(password, user.password)
-    if (!auth) {
-      return res.json({ success: false, message: 'Incorrect password or email' })
-    }
-    const token = createSecretToken(user._id);
-    res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
-    });
-    res.status(201).json({ message: "User logged in successfully", success: true });
-    next()
   } catch (error) {
     console.error(error);
   }
 }
+
+module.exports.UserUpdate = async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    const url = req.protocol + '://' + req.get("host");
+    var data = req.body;
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+    data.password = hashedPassword;
+    if(req.file !== undefined) {
+      data.avatar = url + '/uploads/user/' + req.file.filename;
+    }
+    if(req.body.avatar === 'undefined') {
+      data.avatar = user.avatar;
+    }
+    await UserModel.findById(req.params.id).updateMany(data);
+    res.json({ status: 200, success: true, user: user, message: "User updated successfully." });
+  } catch (err) {
+    next(err);
+  }
+};

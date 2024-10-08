@@ -260,7 +260,7 @@ const EstimateJobDetailsForm = () => {
         <Link to={"/estimate/kanban"} className="w-full">
           <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Cancel</button>
         </Link>
         <Link to={"/estimate/add/invoice"} className="w-full">

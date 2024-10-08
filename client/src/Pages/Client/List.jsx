@@ -1,6 +1,6 @@
-import { useState } from "react";
-import ClientListData from "../../data/client_list.json";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ClientApi } from "../../apis/ClientApi";
 
 const thData = [
   'client',
@@ -12,7 +12,16 @@ const thData = [
 ];
 
 const ClientList = () => {
-  const [list, setList] = useState(ClientListData);
+  const [clientList, setClientList] = useState([]);
+
+  useEffect(() => {
+    ClientApi.getClientList().then((res) => {
+      if (res.data.status === 200) {
+        setClientList(res.data.data);
+      }
+    });
+  }, []);
+
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -41,16 +50,16 @@ const ClientList = () => {
             </tr>
           </thead>
           <tbody>
-            {list?.map((item, index) => {
+            {clientList?.map((item, index) => {
               return (
                 <tr className="border-table border-b last:border-b-0" key={index}>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.client}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{item.firstname + " " + item.surname}</span></td>
                   <td className="p-2"><span className="text-input text-sm font-medium">{item.contact}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.phone}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{item.phoneNumber}</span></td>
                   <td className="p-2"><span className="text-input text-sm font-medium uppercase">{item.state}</span></td>
                   <td className="p-2"><span className="text-input text-sm font-medium">{item.type}</span></td>
                   <td className="p-2 w-[100px] md:w-[160px]">
-                    <Link to={"/client/edit/1"}>
+                    <Link to={`/client/edit/${item._id}`}>
                       <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
@@ -60,6 +69,7 @@ const ClientList = () => {
                 </tr>
               )
             })}
+            {clientList?.length === 0 && <tr><td colSpan="6" className="text-center p-2">No data</td></tr>}
           </tbody>
         </table>
       </div>
