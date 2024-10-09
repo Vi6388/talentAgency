@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const jobFinanceSchema = new mongoose.Schema({
+const jobEventSchema = new mongoose.Schema({
   id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
@@ -12,11 +12,11 @@ const jobFinanceSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
-  contentDueDate: {
+  eventStartTime: {
     type: Date,
     default: new Date(),
   },
-  liveDate: {
+  eventEndTime: {
     type: Date,
     default: new Date(),
   },
@@ -26,27 +26,9 @@ const jobFinanceSchema = new mongoose.Schema({
   deleverables: {
     type: String
   },
-  commission: {
-    type: Number
-  },
-  paymentTerms: {
-    type: Number
-  },
-  expenses: {
-    type: String
-  },
-  expensesDesc: {
-    type: String
-  },
-  miscellaneous: {
-    type: String
-  },
-  miscellaneousDesc: {
-    type: String
-  },
   partOfAmbassadorship: {
     type: Boolean
   }
 });
 
-module.exports = mongoose.model("JobFinance", jobFinanceSchema);
+module.exports = mongoose.model("JobEvent", jobEventSchema);

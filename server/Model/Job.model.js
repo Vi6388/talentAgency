@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const JobFinanceModel = require("./Job.Finance.model");
 
 const jobSchema = new mongoose.Schema({
   contactDetails: {
@@ -73,10 +72,36 @@ const jobSchema = new mongoose.Schema({
       type: String
     },
   },
-  finance: {
+  jobFinance: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'JobFinance',
-  },
+    required: true
+  }],
+  jobSocial: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobSocial',
+    required: true
+  }],
+  jobEvent: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobEvent',
+    required: true
+  }],
+  jobMedia: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobMedia',
+    required: true
+  }],
+  jobPublish: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobPublish',
+    required: true
+  }],
+  jobTravel: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobTravel',
+    required: true
+  }],
   createdAt: {
     type: Date,
     default: new Date(),

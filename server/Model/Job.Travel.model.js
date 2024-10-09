@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const jobFinanceSchema = new mongoose.Schema({
+const jobTravelSchema = new mongoose.Schema({
   id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
@@ -8,40 +8,35 @@ const jobFinanceSchema = new mongoose.Schema({
   jobTitle: {
     type: String
   },
-  conceptDueDate: {
+  startDate: {
     type: Date,
     default: new Date(),
   },
-  contentDueDate: {
+  departureTime: {
     type: Date,
     default: new Date(),
   },
-  liveDate: {
+  endDate: {
     type: Date,
     default: new Date(),
   },
-  keyMessage: {
+  arrivalTime: {
+    type: Date,
+    default: new Date(),
+  },
+  preferredCarrier: {
     type: String
   },
-  deleverables: {
+  requentFlyerNumber: {
     type: String
   },
-  commission: {
-    type: Number
+  clientPaying: {
+    type: Boolean
   },
-  paymentTerms: {
-    type: Number
+  carHireRequired: {
+    type: Boolean
   },
-  expenses: {
-    type: String
-  },
-  expensesDesc: {
-    type: String
-  },
-  miscellaneous: {
-    type: String
-  },
-  miscellaneousDesc: {
+  travelDetails: {
     type: String
   },
   partOfAmbassadorship: {
@@ -49,4 +44,4 @@ const jobFinanceSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("JobFinance", jobFinanceSchema);
+module.exports = mongoose.model("JobTravel", jobTravelSchema);

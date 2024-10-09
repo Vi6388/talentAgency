@@ -179,7 +179,7 @@ const JobEventForm = () => {
               </div>
             </div>
 
-            <div className="w-full grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
               <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-full'>
                 <input
                   type='checkbox'

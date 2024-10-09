@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const jobFinanceSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   poNumber: {
     type: String
   },

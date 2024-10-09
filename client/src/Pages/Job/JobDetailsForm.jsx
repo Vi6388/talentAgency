@@ -3,9 +3,12 @@ import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { baseUrl, jobFormValidateForm } from "../../utils/utils";
+import { toast, ToastContainer } from "react-toastify";
 
 const JobDetailsForm = () => {
+  const navigate = useNavigate();
   const [jobDetailsForm, setJobDetailsForm] = useState({
     firstname: "",
     surname: "",
@@ -24,21 +27,43 @@ const JobDetailsForm = () => {
     ambassadorshipName: "",
     startDate: "",
     endDate: "",
-    supplierRequired: true
+    supplierRequired: true,
+    uploadedFiles: {
+      contractFile: "",
+      briefFile: "",
+      supportingFile: ""
+    }
   });
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
-  const [uploadedList, setUploadedList] = useState([
-    { id: 1, filename: "Contract file name", type: "contact", path: "file_location/file_location/file_location" },
-    { id: 2, filename: "Brief file name", type: "contact", path: "file_location/file_location/file_location" },
-    { id: 3, filename: "Supporting file name", type: "contact", path: "file_location/file_location/file_location" },
-  ]);
+  const [uploadedList, setUploadedList] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  const [fileInfo, setFileInfo] = useState({
+    contractFile: {
+      filename: "",
+      fileSrc: "",
+      isPreviewVisible: false
+    },
+    briefFile: {
+      filename: "",
+      fileSrc: "",
+      isPreviewVisible: false
+    },
+    supportingFile: {
+      filename: "",
+      fileSrc: "",
+      isPreviewVisible: false
+    }
+  })
 
   const handleChange = (e) => {
     setJobDetailsForm({
       ...jobDetailsForm,
       [e.target.name]: e.target.value
     });
+    const newErrors = jobFormValidateForm(jobDetailsForm);
+    setErrors(newErrors);
   }
 
   const handleStartDateChange = (selectedDate) => {
@@ -96,8 +121,75 @@ const JobDetailsForm = () => {
     }
   }
 
+  const handleFileChange = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    setJobDetailsForm({
+      ...jobDetailsForm,
+      uploadedFiles: {
+        ...jobDetailsForm.uploadedFiles,
+        [e.target.name]: file
+      }
+    });
+    let list = uploadedList || [];
+    let uploadFile = uploadedList?.filter((item) => item?.type === e.target.name)[0];
+    if (uploadFile === undefined) {
+      uploadFile = {
+        filename: file?.name || "",
+        path: baseUrl + "uploads/job/" + file?.name || "",
+        type: e.target.name || ""
+      };
+      list.push(uploadFile);
+    } else {
+      list = uploadedList?.filter((item) => item.type !== e.target.name);
+    }
+    console.log(list)
+    setUploadedList(list);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (reader) => {
+        setFileInfo({
+          ...fileInfo,
+          [e.target.name]: {
+            ...[e.target.name],
+            filename: file.name,
+            fileSrc: reader.target.result,
+            isPreviewVisible: true
+          }
+        })
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFileInfo({
+        ...fileInfo,
+        [e.target.name]: {
+          filename: "",
+          fileSrc: "",
+          isPreviewVisible: false
+        }
+      })
+    }
+
+
+  }
+
+  const nextFunc = () => {
+    const newErrors = jobFormValidateForm(jobDetailsForm);
+    setErrors(newErrors);
+    console.log(errors);
+    if (Object.keys(newErrors).length === 0) {
+      navigate("/job/edit/0/invoice")
+    } else {
+      toast.error("Form submission failed due to validation errors.", {
+        position: "top-left",
+      });
+    }
+  }
+
   return (
     <div className="mt-7 w-full bg-main">
+      <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">{jobDetailsForm.jobName === "" ? "new job -" : ""} </span>
         <span className="text-title-2 uppercase font-bold">{jobDetailsForm.jobName === "" ? 'Details' : jobDetailsForm.jobName}</span>
@@ -112,28 +204,36 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="First Name"
-                  type="text" value={jobDetailsForm.firstname} name="firstname"
-                  onChange={(e) => handleChange(e)} />
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="surname"
-                  type="text" value={jobDetailsForm.surname} name="surname"
-                  onChange={(e) => handleChange(e)} />
+                <div className="w-full">
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.firstname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                    placeholder="First Name" type="text" value={jobDetailsForm.firstname} name="firstname"
+                    onChange={(e) => handleChange(e)} />
+                </div>
+                <div className="w-full">
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.surname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                    placeholder="surname"
+                    type="text" value={jobDetailsForm.surname} name="surname"
+                    onChange={(e) => handleChange(e)} />
+                </div>
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="Email Address"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.email ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="Email Address"
                   type="text" value={jobDetailsForm.email} name="email"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="position"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.position ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="position"
                   type="text" value={jobDetailsForm.position} name="position"
                   onChange={(e) => handleChange(e)} />
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="phone Number"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="phone Number"
                   type="text" value={jobDetailsForm.phoneNumber} name="phoneNumber"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -147,8 +247,9 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="Company Name"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.companyName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="Company Name"
                   type="text" value={jobDetailsForm.companyName} name="companyName"
                   onChange={(e) => handleChange(e)} />
                 <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
@@ -157,8 +258,9 @@ const JobDetailsForm = () => {
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="Postal Address"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.postalAddress ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="Postal Address"
                   type="text" value={jobDetailsForm.postalAddress} name="postalAddress"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -168,12 +270,14 @@ const JobDetailsForm = () => {
                   type="text" value={jobDetailsForm.suburb} name="suburb"
                   onChange={(e) => handleChange(e)} />
                 <div className="flex items-center justify-between gap-3 w-full">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="State"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.state ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                    placeholder="State"
                     type="text" value={jobDetailsForm.state} name="state"
                     onChange={(e) => handleChange(e)} />
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="postcode"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.postcode ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                    placeholder="postcode"
                     type="text" value={jobDetailsForm.postcode} name="postcode"
                     onChange={(e) => handleChange(e)} />
                 </div>
@@ -188,8 +292,9 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="job name"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.jobName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="job name"
                   type="text" value={jobDetailsForm.jobName} name="jobName"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -201,8 +306,9 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="talent name"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -221,8 +327,9 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="name"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.ambassadorshipName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="name"
                   type="text" value={jobDetailsForm.ambassadorshipName} name="ambassadorshipName"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -230,7 +337,7 @@ const JobDetailsForm = () => {
           </div>
 
           <div className="mb-3 w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 w-full gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 w-full gap-3">
               <div className="col-span-2 sm:col-span-1 md:col-span-2 w-full flex jutify-between items-center gap-3">
                 <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
@@ -303,13 +410,13 @@ const JobDetailsForm = () => {
                         <img src={DescriptionIcon} alt="file" className="w-4 h-4" />
                         <span className="text-summary-item text-sm">{item.filename}</span>
                       </div>
-                      <div className="flex items-center w-20 px-2">
+                      <div className="flex items-center w-20 md:w-fit px-2">
                         <span className="text-summary-item text-sm">{item.path}</span>
                       </div>
                     </div>
                   )
                 })
-                : <></>
+                : <div className="w-full text-center">No data</div>
               }
             </div>
           </div>
@@ -319,14 +426,39 @@ const JobDetailsForm = () => {
             </div>
             <div className="flex justify-between h-full">
               <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-1 lg:gap-4 md:gap-8">
-                <div className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center">
-                  <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Contact</div>
+                <div className="flex justify-center items-center">
+                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                    htmlFor="contractFile">
+                    {fileInfo?.contractFile?.isPreviewVisible ?
+                      <img src={fileInfo?.contractFile?.fileSrc} alt="contract file" className="w-full h-full" />
+                      :
+                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Contract</div>
+                    }
+                  </label>
+                  <input type="file" id="contractFile" name="contractFile" onChange={handleFileChange} hidden accept="image/*" />
                 </div>
-                <div className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center">
-                  <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
+                <div className="flex justify-center items-center">
+                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                    htmlFor="briefFile">
+                    {fileInfo?.briefFile?.isPreviewVisible ?
+                      <img src={fileInfo?.briefFile?.fileSrc} alt="brief file" className="w-full h-full" />
+                      :
+                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
+                    }
+                  </label>
+                  <input type="file" id="briefFile" name="briefFile" onChange={handleFileChange} hidden accept="image/*" />
                 </div>
-                <div className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center">
-                  <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
+
+                <div className="flex justify-center items-center">
+                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                    htmlFor="supportingFile">
+                    {fileInfo?.supportingFile?.isPreviewVisible ?
+                      <img src={fileInfo?.supportingFile?.fileSrc} alt="brief file" className="w-full h-full" />
+                      :
+                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
+                    }
+                  </label>
+                  <input type="file" id="supportingFile" name="supportingFile" onChange={handleFileChange} hidden accept="image/*" />
                 </div>
               </div>
             </div>
@@ -341,12 +473,12 @@ const JobDetailsForm = () => {
                         hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Cancel</button>
         </Link>
-        <Link to={"/job/edit/1/invoice"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-3 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Next...</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm" type="button" onClick={nextFunc}>Next...</button>
+        </div>
         <Link className="w-full">
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
