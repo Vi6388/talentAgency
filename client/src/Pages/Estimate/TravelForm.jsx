@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
+import { useSelector } from "react-redux";
+import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
+import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
+import { toast, ToastContainer } from "react-toastify";
+import { store } from "../../redux/store";
+import { EstimateApi } from "../../apis/EstimateApi";
 
 const EstimateTravelForm = () => {
   const [travelForm, setTravelForm] = useState({
@@ -16,10 +22,11 @@ const EstimateTravelForm = () => {
     arrivalTime: "",
     preferredCarrier: "",
     frequentFlyerNumber: "",
-    clientPaying: "",
+    clientPaying: false,
     carHireRequired: "",
     travelDetails: "",
-    ambassadorship: false
+    ambassadorship: false,
+    createdAt: new Date().toLocaleDateString("en-US"),
   });
 
   const [travelList, setTravelList] = useState([]);
@@ -33,6 +40,14 @@ const EstimateTravelForm = () => {
     departureTime: 'text',
     arrivalTime: 'text'
   });
+
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const { jobEstimate } = useSelector(state => state.job);
+
+  useEffect(() => {
+    setTravelList(jobEstimate?.jobSummaryList);
+  }, [jobEstimate]);
 
   const handleChange = (e) => {
     setTravelForm({
@@ -88,10 +103,27 @@ const EstimateTravelForm = () => {
     }
   }
 
+  const handleClientPaying = () => {
+    setTravelForm({
+      ...travelForm,
+      clientPaying: !travelForm.clientPaying
+    })
+  }
+
   const addJobTravel = () => {
-    if (travelForm.jobTitle !== "") {
-      const list = travelList;
-      list.push(travelForm);
+    const newErrors = jobFormValidateForm(travelForm);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      let list = travelList;
+      const data = {
+        ...travelForm,
+        departureDate: dateTimeFormat(travelForm.departureDate),
+        departureTime: dateTimeFormat(travelForm.departureTime),
+        arrivalDate: dateTimeFormat(travelForm.arrivalDate),
+        arrivalTime: dateTimeFormat(travelForm.arrivalTime),
+        type: 'travel'
+      }
+      list.push(data);
       setTravelList(list);
       setTravelForm({
         jobTitle: "",
@@ -104,7 +136,13 @@ const EstimateTravelForm = () => {
         clientPaying: "",
         carHireRequired: "",
         travelDetails: "",
-        ambassadorship: false
+        ambassadorship: false,
+        createdAt: new Date().toLocaleDateString("en-US"),
+      });
+      store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: travelList });
+    } else {
+      toast.error("Form submission failed due to validation errors.", {
+        position: "top-left",
       });
     }
   }
@@ -121,11 +159,80 @@ const EstimateTravelForm = () => {
     }
   }
 
+  const sendEstimate = () => {
+    if (jobEstimate?.details?._id) {
+      updateEstimate();
+    } else {
+      EstimateApi.add(jobEstimate).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
+    }
+  }
+
+  const updateEstimate = () => {
+    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => item.type !== "travel");
+    travelList?.forEach((item) => {
+      jobSummaryList.push(item);
+    });
+    const data = {
+      ...jobEstimate,
+      jobSummaryList: jobSummaryList
+    }
+    if (jobEstimate?.details?._id) {
+      EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      });
+    }
+  }
+
+  const updateAndResend = () => {
+    updateEstimate();
+  }
+
+  const makeJobLive = () => {
+    EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
+      if (res.data.status === 200) {
+        store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+        toast.success(res.data.message, {
+          position: "top-left",
+        });
+      } else {
+        toast.error(res.data.message, {
+          position: "top-left",
+        });
+      }
+    })
+  }
+
+  const cancelEstimate = () => {
+    store.dispatch({ type: CLEAN_JOB_ESTIMATE });
+    navigate("/estimate/kanban");
+  }
+
   return (
     <div className="mt-7 w-full bg-main">
+      <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{`{ JOB Name }`}</span>
+        <span className="text-title-2 uppercase font-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -136,10 +243,10 @@ const EstimateTravelForm = () => {
             </div>
             <div>
               <div className="w-full py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="job title"
-                  type="text" value={travelForm.jobTitle} name="jobTitle"
-                  onChange={(e) => handleChange(e)} />
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                  placeholder="job title" type="text" value={travelForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 relative gap-3 py-2">
@@ -147,8 +254,9 @@ const EstimateTravelForm = () => {
                   <DatePicker options={departureDateOption} onChange={(selectedDate) => handleDateChange("departureDate", selectedDate)} show={show.departureDate}
                     setShow={(state) => handleState("departureDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
-                      <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.departureDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                         placeholder="START Date" value={travelForm.departureDate} onFocus={() => setShow({ ...show, departureDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
                         <img src={CalendarIcon} alt="calendar" />
@@ -158,8 +266,9 @@ const EstimateTravelForm = () => {
 
                   <div className="relative w-full col-span-1">
                     <input type={inputType.departureTime} name="departureTime"
-                      className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                      className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.departureTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={travelForm.departureTime} placeholder="DEPARTURE TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, departureTime: 'time' })}
@@ -174,8 +283,9 @@ const EstimateTravelForm = () => {
                   <DatePicker options={arrivalDateOptions} onChange={(selectedDate) => handleDateChange("arrivalDate", selectedDate)} show={show.arrivalDate}
                     setShow={(state) => handleState("arrivalDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
-                      <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.arrivalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                         placeholder="END Date" value={travelForm.arrivalDate} onFocus={() => setShow({ ...show, arrivalDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
                         <img src={CalendarIcon} alt="calendar" />
@@ -185,8 +295,9 @@ const EstimateTravelForm = () => {
 
                   <div className="relative w-full col-span-1">
                     <input type={inputType.arrivalTime} name="arrivalTime"
-                      className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                      className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.arrivalTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={travelForm.arrivalTime} placeholder="ARRIVAL TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, arrivalTime: 'time' })}
@@ -200,8 +311,9 @@ const EstimateTravelForm = () => {
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 py-2">
                 <div className="relative w-full">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.preferredCarrier ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.preferredCarrier} name="preferredCarrier" placeholder="PREFERRED CARRIER"
                     onChange={(e) => handleChange(e)} />
                   <div className="absolute top-1.5 right-2">
@@ -209,8 +321,9 @@ const EstimateTravelForm = () => {
                   </div>
                 </div>
                 <div className="relative w-full">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.frequentFlyerNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.frequentFlyerNumber} name="frequentFlyerNumber" placeholder="FREQUENT FLYER NUMBER"
                     onChange={(e) => handleChange(e)} />
                   <div className="absolute top-1.5 right-2">
@@ -233,7 +346,7 @@ const EstimateTravelForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group4" />
+                              id="check-vertical-list-group4" checked={travelForm.clientPaying} onChange={handleClientPaying} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -254,7 +367,7 @@ const EstimateTravelForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider text-sm text-right
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group5" />
+                              id="check-vertical-list-group5" checked={!travelForm.clientPaying} onChange={handleClientPaying} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor"
                                 stroke="currentColor" strokeWidth="1">
@@ -270,16 +383,18 @@ const EstimateTravelForm = () => {
                   </div>
                 </div>
                 <div className="w-full">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.carHireRequired ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.carHireRequired} name="carHireRequired" placeholder="Car Hire Required"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
 
               <div className="w-full py-2">
-                <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center"
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
+                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                        ${errors.travelDetails ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Transfer and any other travel details"
                   type="text" value={travelForm.travelDetails} name="travelDetails" rows={10}
                   onChange={(e) => handleChange(e)} />
@@ -307,10 +422,12 @@ const EstimateTravelForm = () => {
               </select>
             </div>
 
-            <button className="w-full flex justify-end items-center gap-2 mt-10 cursor-pointer hover:text-decoration" onClick={addJobTravel}>
-              <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
-              <img src={AddCircle} alt="add" />
-            </button>
+            <div className="w-full flex justify-end items-center mt-10 ">
+              <button className="w-fit flex gap-2 cursor-pointer hover:text-decoration" onClick={addJobTravel}>
+                <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
+                <img src={AddCircle} alt="add" />
+              </button>
+            </div>
           </div>
         </div>
         <div className="col-span-1">
@@ -325,11 +442,11 @@ const EstimateTravelForm = () => {
                     <div className="flex justify-between items-center border-b divider-line-color py-1 md:py-3"
                       key={index}>
                       <div className="flex items-center">
-                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">Travel - </span>
+                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">{item.type} - </span>
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {item.arrivalDate}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobTravel(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="w-5 h-5" />
                         </button>
@@ -344,37 +461,46 @@ const EstimateTravelForm = () => {
         </div>
       </div>
 
-      <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 w-full px-4 md:w-2/3 sm:mx-auto gap-3">
-        <Link to={"/estimate/kanban"} className="w-full">
+      <div className={`mt-12 grid grid-cols-2 sm:grid-cols-3 ${jobEstimate?.details?.id ? 'md:grid-cols-4' : 'md:grid-cols-3'} w-full px-4 sm:w-2/3 lg:w-1/2 sm:mx-auto gap-3`}>
+        <div className="w-full">
           <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Cancel</button>
-        </Link>
-        <Link to={"/estimate/add/publish"} className="w-full">
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={cancelEstimate}>Cancel</button>
+        </div>
+        <Link to={jobEstimate?.details?._id ? `/estimate/edit/${jobEstimate?.details?._id}/publish` : "/estimate/add/publish"} className="w-full">
           <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Previous</button>
         </Link>
-        <Link className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+        {
+          jobEstimate?.details?._id ?
+            <>
+              <div className="w-full">
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Send Estimate</button>
-        </Link>
-        <Link className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                        active:bg-white-100 active:shadow-md text-sm"
+                  type="button" onClick={updateAndResend}>Update and ReSend</button>
+              </div>
+              <div className="w-full">
+                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update and ReSend</button>
-        </Link>
-        <Link className="w-full">
-          <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                        active:bg-white-100 active:shadow-md text-sm"
+                  type="button" onClick={makeJobLive}>Make job live</button>
+              </div>
+            </> :
+            <div className="w-full">
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Make job live</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm"
+                type="button" onClick={sendEstimate}>Send Estimate</button>
+            </div>
+        }
       </div>
 
     </div>

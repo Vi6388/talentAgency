@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const jobPublishSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: {
@@ -34,6 +35,10 @@ const jobPublishSchema = new mongoose.Schema({
   },
   partOfAmbassadorship: {
     type: Boolean
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const jobFinanceSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: {
@@ -46,7 +47,11 @@ const jobFinanceSchema = new mongoose.Schema({
   },
   partOfAmbassadorship: {
     type: Boolean
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 
-module.exports = mongoose.model("JobFinance", jobFinanceSchema);
+module.exports = mongoose.model("JobSocial", jobFinanceSchema);

@@ -6,7 +6,7 @@ const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
 
-module.exports.getJobList = async (req, res, next) => {
+module.exports.getJobEstimateList = async (req, res, next) => {
   try {
     const jobList = await JobModel.find();
     return res.json({ status: 200, message: "Get Job list", success: true, data: jobList });
@@ -15,8 +15,11 @@ module.exports.getJobList = async (req, res, next) => {
   }
 }
 
-module.exports.AddJob = async (req, res, next) => {
+module.exports.AddJobEstimate = async (req, res, next) => {
   try {
+    const url = req.protocol + '://' + req.get("host");
+    const { uploadedFiles } = req.body?.uploadedFiles || [];
+
     const detailData = req.body.details;
     // Create Job Model
     const newJob = await JobModel.create({
@@ -43,11 +46,6 @@ module.exports.AddJob = async (req, res, next) => {
       ambassadorship: detailData?.ambassadorshipName,
       startDate: new Date(detailData?.startDate),
       endDate: new Date(detailData?.endDate),
-      uploadedFiles: {
-        contactFile: detailData?.contactFile,
-        briefFile: detailData?.briefFile,
-        supportingFile: detailData?.supportingFile,
-      },
     });
 
     // Create Invoice List
@@ -104,7 +102,7 @@ module.exports.AddJob = async (req, res, next) => {
   }
 };
 
-module.exports.getJobById = async (req, res, next) => {
+module.exports.getJobEstimateById = async (req, res, next) => {
   try {
     if (req.params.id !== undefined) {
       const job = await JobModel.findById(req.params.id);
@@ -164,7 +162,7 @@ module.exports.getJobById = async (req, res, next) => {
   }
 }
 
-module.exports.UpdateJob = async (req, res, next) => {
+module.exports.UpdateJobEstimate = async (req, res, next) => {
   try {
     const job = await JobModel.findById(req.params.id);
     const url = req.protocol + '://' + req.get("host");
@@ -198,11 +196,6 @@ module.exports.UpdateJob = async (req, res, next) => {
         ambassadorship: detailData?.ambassadorshipName,
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
-        uploadedFiles: {
-          contactFile: detailData?.contactFile || existJob?.uploadedFiles?.contactFile,
-          briefFile: detailData?.briefFile || existJob?.uploadedFiles?.briefFile,
-          supportingFile: detailData?.supportingFile || existJob?.uploadedFiles?.supportingFile,
-        },
       });
 
       // Dalete Exist Invoice List By jobEstimate id and Create new Invoice List
@@ -270,3 +263,23 @@ module.exports.UpdateJob = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports.makeJobLive = async (req, res, next) => {
+  try {
+    const job = await JobModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        estimateStatus: true,
+        isLive: true,
+      },
+      { new: true }
+    );
+    if (job) {
+      return res.json({ status: 200, success: true, data: job, message: "Job updated successfully." });
+    } else {
+      return res.json({ status: 200, success: true, message: "Job Estimate doesn't exist." });
+    }
+  } catch (err) {
+    next(err);
+  }
+}

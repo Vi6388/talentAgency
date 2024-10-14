@@ -30,6 +30,10 @@ const EstimateKanban = () => {
     setBoardData(newBoardData);
   };
 
+  const editEstimate = () => {
+    console.log("edit")
+  }
+
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -56,7 +60,7 @@ const EstimateKanban = () => {
               <div key={board.name}>
                 <Droppable droppableId={bIndex.toString()}>
                   {(provided, snapshot) => (
-                    <div {...provided.droppableProps} ref={provided.innerRef}>
+                    <div {...provided.droppableProps} ref={provided.innerRef} onClick={editEstimate}>
                       <div
                         className={`bg-kanban-item rounded-t-lg shadow-md h-[108vh]
                         flex flex-col relative overflow-hidden px-5`}

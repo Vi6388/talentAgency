@@ -50,7 +50,7 @@ const jobSchema = new mongoose.Schema({
       type: String
     }
   },
-  ambassadorship: {
+  ambassadorshipName: {
     type: String
   },
   startDate: {
@@ -72,36 +72,14 @@ const jobSchema = new mongoose.Schema({
       type: String
     },
   },
-  jobFinance: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobFinance',
-    required: true
-  }],
-  jobSocial: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobSocial',
-    required: true
-  }],
-  jobEvent: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobEvent',
-    required: true
-  }],
-  jobMedia: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobMedia',
-    required: true
-  }],
-  jobPublish: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobPublish',
-    required: true
-  }],
-  jobTravel: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'JobTravel',
-    required: true
-  }],
+  estimateStatus: {
+    type: Boolean,
+    default: false,
+  },
+  isLive: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: new Date(),

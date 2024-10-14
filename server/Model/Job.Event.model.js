@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const jobEventSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: {
@@ -13,12 +14,10 @@ const jobEventSchema = new mongoose.Schema({
     default: new Date(),
   },
   eventStartTime: {
-    type: Date,
-    default: new Date(),
+    type: String,
   },
   eventEndTime: {
-    type: Date,
-    default: new Date(),
+    type: String
   },
   keyMessage: {
     type: String
@@ -28,6 +27,10 @@ const jobEventSchema = new mongoose.Schema({
   },
   partOfAmbassadorship: {
     type: Boolean
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 

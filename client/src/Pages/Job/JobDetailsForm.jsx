@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { baseUrl, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
+import { store } from "../../redux/store";
+import { SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
+import { useSelector } from "react-redux";
+import { JobApi } from "../../apis/job";
 
 const JobDetailsForm = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [jobDetailsForm, setJobDetailsForm] = useState({
     firstname: "",
@@ -38,6 +43,7 @@ const JobDetailsForm = () => {
   const [showEnd, setShowEnd] = useState(false);
   const [uploadedList, setUploadedList] = useState([]);
   const [errors, setErrors] = useState({});
+  const { jobDetails } = useSelector((state) => state.job);
 
   const [fileInfo, setFileInfo] = useState({
     contractFile: {
@@ -55,7 +61,38 @@ const JobDetailsForm = () => {
       fileSrc: "",
       isPreviewVisible: false
     }
-  })
+  });
+
+  useEffect(() => {
+    JobApi.getJobById(id).then((res) => {
+      if (res.data.status === 200) {
+        const data = res.data.data;
+        store.dispatch({ type: SAVE_JOB, payload: data });
+        console.log(data)
+        setJobDetailsForm({
+          ...data?.details,
+          id: data?.details?._id,
+          firstname: data?.details?.contactDetails?.firstname || "",
+          surname: data?.details?.contactDetails?.surname || "",
+          email: data?.details?.contactDetails?.email || "",
+          position: data?.details?.contactDetails?.position || "",
+          phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
+          companyName: data?.details?.companyDetails?.companyName || "",
+          abn: data?.details?.companyDetails?.abn || "",
+          postalAddress: data?.details?.companyDetails?.postalAddress || "",
+          suburb: data?.details?.companyDetails?.suburb || "",
+          state: data?.details?.companyDetails?.state || "",
+          postcode: data?.details?.companyDetails?.postcode || "",
+          jobName: data?.details?.jobName || "",
+          talentName: data?.details?.talent?.talentName || "",
+          manager: data?.details?.talent?.manager || "",
+          ambassadorshipName: data?.details?.ambassadorshipName || "",
+          startDate: data?.details?.startDate || "",
+          endDate: data?.details?.endDate || "",
+        })
+      }
+    });
+  }, [id]);
 
   const handleChange = (e) => {
     setJobDetailsForm({
@@ -143,7 +180,6 @@ const JobDetailsForm = () => {
     } else {
       list = uploadedList?.filter((item) => item.type !== e.target.name);
     }
-    console.log(list)
     setUploadedList(list);
 
     if (file) {
@@ -177,12 +213,82 @@ const JobDetailsForm = () => {
   const nextFunc = () => {
     const newErrors = jobFormValidateForm(jobDetailsForm);
     setErrors(newErrors);
-    console.log(errors);
     if (Object.keys(newErrors).length === 0) {
-      navigate("/job/edit/0/invoice")
+      store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: jobDetailsForm });
+      if (jobDetailsForm?.id) {
+        navigate("/job/edit/" + jobDetailsForm?.id + "/invoice");
+      } else {
+        navigate("/job/add/invoice");
+      }
     } else {
       toast.error("Form submission failed due to validation errors.", {
         position: "top-left",
+      });
+    }
+  }
+
+  const submitJob = async () => {
+    const formData = new FormData();
+    formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
+    formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
+    formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
+    await JobApi.uploadFiles(formData).then((res) => {
+      if (res.data.status === 200) {
+        const data = res.data.data;
+        setJobDetailsForm({
+          ...jobDetailsForm,
+          uploadedFiles: {
+            contractFile: data?.contractFile,
+            briefFile: data?.briefFile,
+            supportingFile: data?.supportingFile,
+          }
+        });
+      }
+      JobApi.add(jobDetailsForm).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
+    });
+  }
+
+  const updateJob = async () => {
+    if (jobDetailsForm.id) {
+      const formData = new FormData();
+      formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
+      formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
+      formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
+      await JobApi.uploadFiles(formData).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          setJobDetailsForm({
+            ...jobDetailsForm,
+            uploadedFiles: {
+              contractFile: data?.contractFile,
+              briefFile: data?.briefFile,
+              supportingFile: data?.supportingFile,
+            }
+          });
+        }
+        JobApi.updateJobById(jobDetailsForm.id, jobDetailsForm).then((res) => {
+          if (res.data.status === 200) {
+            store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+            toast.success(res.data.message, {
+              position: "top-left",
+            });
+          } else {
+            toast.error(res.data.message, {
+              position: "top-left",
+            });
+          }
+        });
       });
     }
   }
@@ -252,8 +358,9 @@ const JobDetailsForm = () => {
                   placeholder="Company Name"
                   type="text" value={jobDetailsForm.companyName} name="companyName"
                   onChange={(e) => handleChange(e)} />
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="abn"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.abn ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="abn"
                   type="text" value={jobDetailsForm.abn} name="abn"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -265,8 +372,9 @@ const JobDetailsForm = () => {
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="suburb"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.suburb ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="suburb"
                   type="text" value={jobDetailsForm.suburb} name="suburb"
                   onChange={(e) => handleChange(e)} />
                 <div className="flex items-center justify-between gap-3 w-full">
@@ -313,8 +421,9 @@ const JobDetailsForm = () => {
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="mananger"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
+                                    placeholder:font-bold placeholder:uppercase ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  placeholder="mananger"
                   type="text" value={jobDetailsForm.manager} name="manager"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -479,12 +588,21 @@ const JobDetailsForm = () => {
                         hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm" type="button" onClick={nextFunc}>Next...</button>
         </div>
-        <Link className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+        {
+          jobDetails?.details?._id ?
+            <div className="w-full">
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm" type="button" onClick={updateJob}>Update</button>
+            </div> :
+            <div className="w-full">
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                      block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
+                      hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
+                      active:bg-white-100 active:shadow-md text-sm" type="button" onClick={submitJob}>Submit</button>
+            </div>
+        }
       </div>
 
     </div>

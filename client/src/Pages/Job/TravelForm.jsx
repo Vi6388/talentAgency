@@ -6,6 +6,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
+import { useSelector } from "react-redux";
 
 const JobTravelForm = () => {
   const [travelForm, setTravelForm] = useState({
@@ -23,6 +24,7 @@ const JobTravelForm = () => {
   });
 
   const [travelList, setTravelList] = useState([]);
+  const { jobDetails } = useSelector((state) => state.job);
 
   const [show, setShow] = useState({
     departureDate: false,

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const jobMediaSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: {
@@ -16,7 +17,7 @@ const jobMediaSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
-  mediaType: {
+  type: {
     type: String // podcast, radio, web series, tv
   },
   numberOfEpisodes: {
@@ -30,6 +31,10 @@ const jobMediaSchema = new mongoose.Schema({
   },
   partOfAmbassadorship: {
     type: Boolean
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 

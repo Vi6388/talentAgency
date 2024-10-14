@@ -8,6 +8,7 @@ const authRoute = require("./Routes/AuthRoute");
 const userRoute = require("./Routes/UserRoute");
 const talentRoute = require("./Routes/TalentRoute");
 const clientRoute = require("./Routes/ClientRoute");
+const estimateRoute = require("./Routes/EstimateRoute");
 const { MONGO_URL, PORT } = process.env;
 
 mongoose
@@ -38,3 +39,4 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/talent", talentRoute);
 app.use("/api/client", clientRoute);
+app.use("/api/estimate", estimateRoute);

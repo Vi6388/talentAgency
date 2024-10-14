@@ -93,33 +93,7 @@ const JobSocialForm = () => {
       year: "numeric"
     }
   }
-
-  const contentDateOptions = {
-    autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
-    language: "en",
-    inputPlaceholderProp: "CONTENT DUE DATE",
-    inputDateFormatProp: {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric"
-    }
-  }
-
-  const liveDateOptions = {
-    autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
-    language: "en",
-    inputPlaceholderProp: "LIVE DATE",
-    inputDateFormatProp: {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric"
-    }
-  }
-
+  
   return (
     <div className="mt-7 w-full bg-main">
       <div className="w-full text-center text-xl md:text-3xl mb-5">

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const jobFinanceSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   poNumber: {
@@ -18,16 +19,16 @@ const jobFinanceSchema = new mongoose.Schema({
     type: String
   },
   asf: {
-    type: Number
+    type: String
   },
   royalities: {
     type: String
   },
   commission: {
-    type: Number
+    type: String
   },
   paymentTerms: {
-    type: Number
+    type: String
   },
   expenses: {
     type: String
@@ -40,6 +41,10 @@ const jobFinanceSchema = new mongoose.Schema({
   },
   miscellaneousDesc: {
     type: String
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 

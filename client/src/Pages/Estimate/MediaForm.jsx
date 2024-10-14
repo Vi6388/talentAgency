@@ -1,26 +1,30 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
+import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
+import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
+import { store } from "../../redux/store";
+import { EstimateApi } from "../../apis/EstimateApi";
 
 const EstimateMediaForm = () => {
-  const [episodeForm, setEpisodeForm] = useState({
+  const [mediaForm, setMediaForm] = useState({
     jobTitle: "",
     startDate: "",
     endDate: "",
-    podcast: false,
-    radio: false,
-    webSeries: false,
-    tv: false,
+    type: "podcast",
     numberOfEpisodes: "",
     keyMessages: "",
     deleverables: "",
-    ambassadorship: false
+    ambassadorship: false,
+    createdAt: new Date().toLocaleDateString("en-US"),
   });
 
-  const [episodeList, setEpisodeList] = useState([]);
+  const [mediaList, setMediaList] = useState([]);
 
   const [show, setShow] = useState({
     startDate: false,
@@ -28,16 +32,24 @@ const EstimateMediaForm = () => {
     eventEndTime: false
   })
 
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const { jobEstimate } = useSelector(state => state.job);
+
+  useEffect(() => {
+    setMediaList(jobEstimate?.jobSummaryList);
+  }, [jobEstimate]);
+
   const handleChange = (e) => {
-    setEpisodeForm({
-      ...episodeForm,
+    setMediaForm({
+      ...mediaForm,
       [e.target.name]: e.target.value
     });
   }
 
   const handleDateChange = (action, selectedDate) => {
-    setEpisodeForm({
-      ...episodeForm,
+    setMediaForm({
+      ...mediaForm,
       [action]: selectedDate.toLocaleDateString("en-US")
     })
   }
@@ -49,17 +61,18 @@ const EstimateMediaForm = () => {
     })
   }
 
-  const handleCheckboxChange = (action) => {
-    setEpisodeForm({
-      ...episodeForm,
-      [action]: !episodeForm[action]
+  const handleCheckboxChange = (e) => {
+    let type = e.target.checked ? e.target.name : "";
+    setMediaForm({
+      ...mediaForm,
+      type: type
     })
   }
 
   const handleAmbassadorshipChange = () => {
-    setEpisodeForm({
-      ...episodeForm,
-      ambassadorship: !episodeForm.ambassadorship
+    setMediaForm({
+      ...mediaForm,
+      ambassadorship: !mediaForm.ambassadorship
     })
   }
 
@@ -90,11 +103,18 @@ const EstimateMediaForm = () => {
   }
 
   const addJobEpisode = () => {
-    if (episodeForm.jobTitle !== "") {
-      const list = episodeList;
-      list.push(episodeForm);
-      setEpisodeList(list);
-      setEpisodeForm({
+    const newErrors = jobFormValidateForm(mediaForm);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      let list = mediaList;
+      const data = {
+        ...mediaForm,
+        startDate: dateTimeFormat(mediaForm.startDate),
+        endDate: dateTimeFormat(mediaForm.endDate)
+      }
+      list.push(data);
+      setMediaList(list);
+      setMediaForm({
         jobTitle: "",
         startDate: "",
         endDate: "",
@@ -105,28 +125,111 @@ const EstimateMediaForm = () => {
         numberOfEpisodes: "",
         keyMessages: "",
         deleverables: "",
-        ambassadorship: false
+        ambassadorship: false,
+        createdAt: new Date().toLocaleDateString("en-US"),
+      });
+    } else {
+      toast.error("Form submission failed due to validation errors.", {
+        position: "top-left",
       });
     }
   }
 
   const cancelJobEpisode = (index) => {
-    const episode = episodeList[index];
+    const episode = mediaList[index];
     if (episode) {
-      if (episodeList?.length > 0) {
-        const list = episodeList.filter((item, i) => i !== index);
-        setEpisodeList(list);
+      if (mediaList?.length > 0) {
+        const list = mediaList.filter((item, i) => i !== index);
+        setMediaList(list);
       } else {
-        setEpisodeList([]);
+        setMediaList([]);
       }
     }
   }
 
+  const nextFunc = () => {
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: mediaList });
+    if (jobEstimate?.details?._id) {
+      navigate("/estimate/edit/" + jobEstimate?.details?._id + "/publish");
+    } else {
+      navigate("/estimate/add/publish");
+    }
+  }
+
+  const sendEstimate = () => {
+    if (jobEstimate?.details?._id) {
+      updateEstimate();
+    } else {
+      EstimateApi.add(jobEstimate).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
+    }
+  }
+
+  const updateEstimate = () => {
+    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => (item.type !== "podcast" || item.type !== "webSeries" || item.type !== "radio" || item.type !== "tv"));
+    mediaList?.forEach((item) => {
+      jobSummaryList.push(item);
+    });
+    const data = {
+      ...jobEstimate,
+      jobSummaryList: jobSummaryList
+    }
+    if (jobEstimate?.details?._id) {
+      EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      });
+    }
+  }
+
+  const updateAndResend = () => {
+    updateEstimate();
+  }
+
+  const makeJobLive = () => {
+    EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
+      if (res.data.status === 200) {
+        store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+        toast.success(res.data.message, {
+          position: "top-left",
+        });
+      } else {
+        toast.error(res.data.message, {
+          position: "top-left",
+        });
+      }
+    })
+  }
+
+  const cancelEstimate = () => {
+    store.dispatch({ type: CLEAN_JOB_ESTIMATE });
+    navigate("/estimate/kanban");
+  }
+
   return (
     <div className="mt-7 w-full bg-main">
+      <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{`{ JOB Name }`}</span>
+        <span className="text-title-2 uppercase font-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -137,19 +240,20 @@ const EstimateMediaForm = () => {
             </div>
             <div>
               <div className="w-full py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="job title"
-                  type="text" value={episodeForm.jobTitle} name="jobTitle"
-                  onChange={(e) => handleChange(e)} />
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                  placeholder="job title" type="text" value={mediaForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full grid grid-cols-1 md:grid-cols-2 relative gap-3 py-2">
                 <DatePicker options={startDateOptions} onChange={(selectedDate) => handleDateChange("startDate", selectedDate)} show={show.startDate}
                   setShow={(state) => handleState("startDate", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
-                      placeholder="START Date" value={episodeForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      placeholder="START Date" value={mediaForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
                     </div>
@@ -159,9 +263,10 @@ const EstimateMediaForm = () => {
                 <DatePicker options={endDateOptions} onChange={(selectedDate) => handleDateChange("endDate", selectedDate)} show={show.endDate}
                   setShow={(state) => handleState("endDate", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
-                      placeholder="END Date" value={episodeForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      placeholder="END Date" value={mediaForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
                     </div>
@@ -180,7 +285,7 @@ const EstimateMediaForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group4" checked={episodeForm.podcast} onChange={() => handleCheckboxChange('podcast')} />
+                              id="check-vertical-list-group4" checked={mediaForm.type === "podcast"} onChange={(e) => handleCheckboxChange(e)} name="podcast" />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -203,7 +308,7 @@ const EstimateMediaForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group1" checked={episodeForm.radio} onChange={() => handleCheckboxChange('radio')} />
+                              id="check-vertical-list-group1" checked={mediaForm.type === "radio"} onChange={(e) => handleCheckboxChange(e)} name="radio" />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -226,7 +331,7 @@ const EstimateMediaForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group2" checked={episodeForm.webSeries} onChange={() => handleCheckboxChange('webSeries')} />
+                              id="check-vertical-list-group2" checked={mediaForm.type === "webSeries"} onChange={(e) => handleCheckboxChange(e)} name="webSeries" />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -249,7 +354,7 @@ const EstimateMediaForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group3" checked={episodeForm.tv} onChange={() => handleCheckboxChange('tv')} />
+                              id="check-vertical-list-group3" checked={mediaForm.type === "tv"} onChange={(e) => handleCheckboxChange(e)} name="tv" />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -265,26 +370,30 @@ const EstimateMediaForm = () => {
                   </div>
                 </div>
                 <div className="w-full col-span-1">
-                  <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="number Of Episodes"
-                    type="text" value={episodeForm.numberOfEpisodes} name="numberOfEpisodes"
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      ${errors.numberOfEpisodes ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                    placeholder="number Of Episodes"
+                    type="text" value={mediaForm.numberOfEpisodes} name="numberOfEpisodes"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
 
               <div className="w-full py-2">
-                <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center"
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
+                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Brief Copy Tags Key Messages"
-                  type="text" value={episodeForm.keyMessages} name="keyMessages" rows={5}
+                  type="text" value={mediaForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
-                <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[# d4d5d6] border-none
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center"
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[# d4d5d6]
+                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Deleverables"
-                  type="text" value={episodeForm.deleverables} name="deleverables" rows={5}
+                  type="text" value={mediaForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
             </div>
@@ -293,12 +402,12 @@ const EstimateMediaForm = () => {
               <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-full'>
                 <input
                   type='checkbox'
-                  checked={episodeForm.ambassadorship}
+                  checked={mediaForm.ambassadorship}
                   onChange={handleAmbassadorshipChange}
                   className='sr-only'
                 />
-                <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${episodeForm.ambassadorship ? 'bg-button-3' : 'bg-white'}`}>
-                  <span className={`dot h-6 w-6 rounded-full duration-200 ${episodeForm.ambassadorship ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
+                <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${mediaForm.ambassadorship ? 'bg-button-3' : 'bg-white'}`}>
+                  <span className={`dot h-6 w-6 rounded-full duration-200 ${mediaForm.ambassadorship ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
                 </span>
                 <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
                   Part of ambassadorship
@@ -310,10 +419,12 @@ const EstimateMediaForm = () => {
               </select>
             </div>
 
-            <button className="w-full flex justify-end items-center gap-2 mt-10 cursor-pointer hover:text-decoration" onClick={addJobEpisode}>
-              <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
-              <img src={AddCircle} alt="add" />
-            </button>
+            <div className="w-full flex justify-end items-center mt-10 ">
+              <button className="w-fit flex gap-2 cursor-pointer hover:text-decoration" onClick={addJobEpisode}>
+                <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
+                <img src={AddCircle} alt="add" />
+              </button>
+            </div>
           </div>
         </div>
         <div className="col-span-1">
@@ -322,20 +433,19 @@ const EstimateMediaForm = () => {
               <span className="text-base text-title-2 font-medium">Job Summary</span>
             </div>
             <div className="rounded-[16px] shadow-md shadow-500 h-full min-h-[160px] w-full tracking-wider text-md bg-white px-5 py-2">
-              {episodeList?.length > 0 ?
-                episodeList?.map((item, index) => {
+              {mediaList?.length > 0 ?
+                mediaList?.map((item, index) => {
                   return (
                     <div className="flex justify-between items-center border-b divider-line-color py-1 md:py-3"
                       key={index}>
                       <div className="flex items-center">
                         <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">
-                          {item.podcast ? "Podcast" : item.radio ? "Radio" : item.webSeries ? "Web Series" : item.tv ? "TV" : ""}
-                          -
+                          {item.type} -
                         </span>
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {item.endDate}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobEpisode(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="w-5 h-5" />
                         </button>
@@ -350,43 +460,53 @@ const EstimateMediaForm = () => {
         </div>
       </div>
 
-      <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 w-full px-4 md:w-2/3 sm:mx-auto gap-3">
-        <Link to={"/estimate/kanban"} className="w-full">
+      <div className={`mt-12 grid grid-cols-2 sm:grid-cols-3 ${jobEstimate?.details?._id ? 'md:grid-cols-5' : 'md:grid-cols-4'} w-full px-4 sm:w-2/3 lg:w-1/2 sm:mx-auto gap-3`}>
+        <div className="w-full">
           <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Cancel</button>
-        </Link>
-        <Link to={"/estimate/add/event"} className="w-full">
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={cancelEstimate}>Cancel</button>
+        </div>
+        <Link to={jobEstimate?.details?._id ? `/estimate/edit/${jobEstimate?.details?._id}/event` : "/estimate/add/event"} className="w-full">
           <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Previous</button>
         </Link>
-        <Link to={"/estimate/add/publish"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Next...</button>
-        </Link>
-        <Link className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={nextFunc}>Next...</button>
+        </div>
+        {
+          jobEstimate?.details?._id ?
+            <>
+              <div className="w-full">
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Send Estimate</button>
-        </Link>
-        <Link className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                        active:bg-white-100 active:shadow-md text-sm"
+                  type="button" onClick={updateAndResend}>Update and ReSend</button>
+              </div>
+              <div className="w-full">
+                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update and ReSend</button>
-        </Link>
-        <Link className="w-full">
-          <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                        active:bg-white-100 active:shadow-md text-sm"
+                  type="button" onClick={makeJobLive}>Make job live</button>
+              </div>
+            </> :
+            <div className="w-full">
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Make job live</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm"
+                type="button" onClick={sendEstimate}>Send Estimate</button>
+            </div>
+        }
       </div>
 
     </div>

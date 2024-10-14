@@ -38,6 +38,7 @@ const routes = createBrowserRouter([
     element: <Login />,
   },
 
+  // Estimate Route
   {
     path: "/estimate/kanban",
     element: <RootLayout children={<EstimateKanban />} />
@@ -71,6 +72,36 @@ const routes = createBrowserRouter([
     element: <RootLayout children={<EstimateTravelForm />} />
   },
 
+  {
+    path: "/estimate/edit/:id/jobDetails",
+    element: <RootLayout children={<EstimateJobDetailsForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/invoice",
+    element: <RootLayout children={<EstimateInvoiceForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/social",
+    element: <RootLayout children={<EstimateSocialForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/event",
+    element: <RootLayout children={<EstimateEventForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/media",
+    element: <RootLayout children={<EstimateMediaForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/publish",
+    element: <RootLayout children={<EstimatePublishForm />} />
+  },
+  {
+    path: "/estimate/edit/:id/travel",
+    element: <RootLayout children={<EstimateTravelForm />} />
+  },
+
+  // Job Route
   {
     path: "/job/kanban",
     element: <RootLayout children={<JobKanban />} />
@@ -108,6 +139,36 @@ const routes = createBrowserRouter([
     element: <RootLayout children={<JobTravelForm />} />
   },
   {
+    path: "/job/add/jobDetails",
+    element: <RootLayout children={<JobDetailsForm />} />
+  },
+  {
+    path: "/job/add/invoice",
+    element: <RootLayout children={<JobInvoiceForm />} />
+  },
+  {
+    path: "/job/add/social",
+    element: <RootLayout children={<JobSocialForm />} />
+  },
+  {
+    path: "/job/add/event",
+    element: <RootLayout children={<JobEventForm />} />
+  },
+  {
+    path: "/job/add/media",
+    element: <RootLayout children={<JobMediaForm />} />
+  },
+  {
+    path: "/job/add/publish",
+    element: <RootLayout children={<JobPublishForm />} />
+  },
+  {
+    path: "/job/add/travel",
+    element: <RootLayout children={<JobTravelForm />} />
+  },
+
+  // Client Route
+  {
     path: "/client/list",
     element: <RootLayout children={<ClientList />} />
   },
@@ -119,6 +180,8 @@ const routes = createBrowserRouter([
     path: "/client/edit/:id",
     element: <RootLayout children={<ClientForm />} />
   },
+
+  // Settings Route
   {
     path: "/settings",
     element: <RootLayout children={<Settings />} />

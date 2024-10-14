@@ -1,28 +1,27 @@
 const mongoose = require("mongoose");
 
 const jobTravelSchema = new mongoose.Schema({
-  id: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
     required: true
   },
   jobTitle: {
     type: String
   },
-  startDate: {
+  departureDate: {
     type: Date,
     default: new Date(),
   },
   departureTime: {
-    type: Date,
-    default: new Date(),
+    type: String
   },
-  endDate: {
+  arrivalDate: {
     type: Date,
     default: new Date(),
   },
   arrivalTime: {
-    type: Date,
-    default: new Date(),
+    type: String
   },
   preferredCarrier: {
     type: String
@@ -34,13 +33,17 @@ const jobTravelSchema = new mongoose.Schema({
     type: Boolean
   },
   carHireRequired: {
-    type: Boolean
+    type: String
   },
   travelDetails: {
     type: String
   },
   partOfAmbassadorship: {
     type: Boolean
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 
