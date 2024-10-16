@@ -40,7 +40,7 @@ const Navbar = () => {
                         active:bg-neutral-600 active:shadow-lg text-sm">New Job</button>
                 </Link>
               ) : (location.pathname === "/job/kanban" || location.pathname === "/job/list") ? (
-                <Link to={"/job/edit/0/jobDetails"}>
+                <Link to={"/job/add/jobDetails"}>
                   <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out px-3
                         hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 

@@ -5,6 +5,8 @@ const JobFinance = require("../Model/Job.Finance.model");
 const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
+const nodemailer = require('nodemailer');
+const { sendEmail } = require("../util/SendMail");
 
 module.exports.getJobEstimateList = async (req, res, next) => {
   try {
@@ -17,9 +19,6 @@ module.exports.getJobEstimateList = async (req, res, next) => {
 
 module.exports.AddJobEstimate = async (req, res, next) => {
   try {
-    const url = req.protocol + '://' + req.get("host");
-    const { uploadedFiles } = req.body?.uploadedFiles || [];
-
     const detailData = req.body.details;
     // Create Job Model
     const newJob = await JobModel.create({
@@ -43,7 +42,7 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         talentName: detailData?.talentName,
         manager: detailData?.manager
       },
-      ambassadorship: detailData?.ambassadorshipName,
+      labelColor: detailData?.labelColor,
       startDate: new Date(detailData?.startDate),
       endDate: new Date(detailData?.endDate),
     });
@@ -96,6 +95,18 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       })
     }
 
+    const emailData = {
+      jobTitle: newJob?.jobName,
+      startDate: new Date(newJob?.startDate).toLocaleDateString("en-US"),
+      endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
+      jobDesc: ""
+    };
+    await sendEmail({
+      filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      data: emailData,
+      subject: "Update Job Notification",
+      toEmail: job?.contactDetails?.email,
+    });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
     console.error(error);
@@ -104,7 +115,9 @@ module.exports.AddJobEstimate = async (req, res, next) => {
 
 module.exports.getJobEstimateById = async (req, res, next) => {
   try {
-    if (req.params.id !== undefined) {
+    if (!req.params.id) {
+      return res.json({ success: false, status: 201, message: "Job Id is required." });
+    } else {
       const job = await JobModel.findById(req.params.id);
       const invoice = await JobFinance.find({ jobId: req.params.id });
       const social = await JobSocialModel.find({ jobId: req.params.id });
@@ -153,10 +166,7 @@ module.exports.getJobEstimateById = async (req, res, next) => {
       } else {
         return res.json({ success: true, status: 201, message: "Job not found" });
       }
-    } else {
-      return res.json({ success: true, status: 201, message: "Job not found" });
     }
-
   } catch (error) {
     console.error(error);
   }
@@ -164,10 +174,6 @@ module.exports.getJobEstimateById = async (req, res, next) => {
 
 module.exports.UpdateJobEstimate = async (req, res, next) => {
   try {
-    const job = await JobModel.findById(req.params.id);
-    const url = req.protocol + '://' + req.get("host");
-    const { uploadedFiles } = req.body?.uploadedFiles || [];
-
     const detailData = req.body.details;
     // Update Job Model
     const existJob = await JobModel.findById(req.params.id);
@@ -193,7 +199,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           talentName: detailData?.talentName,
           manager: detailData?.manager
         },
-        ambassadorship: detailData?.ambassadorshipName,
+        labelColor: detailData?.labelColor,
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
       });
@@ -255,6 +261,19 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           }
         })
       }
+
+      const emailData = {
+        jobTitle: existJob?.jobName,
+        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
+        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
+        jobDesc: ""
+      };
+      await sendEmail({
+        filename: 'UpdateJob.ejs', // Ensure the correct file extension
+        data: emailData,
+        subject: "Update Job Notification",
+        toEmail: job?.contactDetails?.email,
+      });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
@@ -274,6 +293,7 @@ module.exports.makeJobLive = async (req, res, next) => {
       },
       { new: true }
     );
+
     if (job) {
       return res.json({ status: 200, success: true, data: job, message: "Job updated successfully." });
     } else {

@@ -20,7 +20,6 @@ const EstimateMediaForm = () => {
     numberOfEpisodes: "",
     keyMessages: "",
     deleverables: "",
-    ambassadorship: false,
     createdAt: new Date().toLocaleDateString("en-US"),
   });
 
@@ -66,13 +65,6 @@ const EstimateMediaForm = () => {
     setMediaForm({
       ...mediaForm,
       type: type
-    })
-  }
-
-  const handleAmbassadorshipChange = () => {
-    setMediaForm({
-      ...mediaForm,
-      ambassadorship: !mediaForm.ambassadorship
     })
   }
 
@@ -125,7 +117,6 @@ const EstimateMediaForm = () => {
         numberOfEpisodes: "",
         keyMessages: "",
         deleverables: "",
-        ambassadorship: false,
         createdAt: new Date().toLocaleDateString("en-US"),
       });
     } else {
@@ -148,7 +139,11 @@ const EstimateMediaForm = () => {
   }
 
   const nextFunc = () => {
-    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: mediaList });
+    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => (item.type !== "podcast" || item.type !== "radio" || item.type !== "webSeries" || item.type !== "tv"));
+    mediaList?.forEach((item) => {
+      jobSummaryList.push(item);
+    });
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: jobSummaryList });
     if (jobEstimate?.details?._id) {
       navigate("/estimate/edit/" + jobEstimate?.details?._id + "/publish");
     } else {
@@ -396,27 +391,6 @@ const EstimateMediaForm = () => {
                   type="text" value={mediaForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
-            </div>
-
-            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-full'>
-                <input
-                  type='checkbox'
-                  checked={mediaForm.ambassadorship}
-                  onChange={handleAmbassadorshipChange}
-                  className='sr-only'
-                />
-                <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${mediaForm.ambassadorship ? 'bg-button-3' : 'bg-white'}`}>
-                  <span className={`dot h-6 w-6 rounded-full duration-200 ${mediaForm.ambassadorship ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
-                </span>
-                <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
-                  Part of ambassadorship
-                </span>
-              </label>
-              <select className="bg-white text-center border-none outline-none text-sm rounded-lg w-52 text-[#d4d5d6] font-bold tracking-wider
-                          focus:ring-primary-500 focus:border-primary-100 shadow-md block w-full p-2">
-                <option>AMBASSADORSHIP</option>
-              </select>
             </div>
 
             <div className="w-full flex justify-end items-center mt-10 ">

@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { jobFormValidateForm, numberFormat } from "../../utils/utils";
+import { dateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
-import { SAVE_JOB_INVOICE_LIST } from "../../redux/actionTypes";
+import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_INVOICE_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
+import { JobApi } from "../../apis/job";
 
 const JobInvoiceForm = () => {
   const [invoiceForm, setInvoiceForm] = useState({
@@ -30,11 +31,11 @@ const JobInvoiceForm = () => {
   const navigate = useNavigate();
   const [invoiceList, setInvoiceList] = useState([]);
   const [errors, setErrors] = useState({});
-  const { jobInvoiceForm } = useSelector(state => state.job);
+  const { job } = useSelector(state => state.job);
 
   useEffect(() => {
-    setInvoiceForm(jobInvoiceForm);
-  }, [jobInvoiceForm]);
+    setInvoiceList(job?.invoiceList)
+  }, [job]);
 
   const handleNumberChange = (e) => {
     setInvoiceForm({
@@ -58,26 +59,35 @@ const JobInvoiceForm = () => {
   }
 
   const addInvoice = () => {
-    const list = invoiceList;
-    list.push(invoiceForm);
-    setInvoiceList(list);
-    setInvoiceForm({
-      id: "",
-      poNumber: "",
-      fee: "",
-      gst: "",
-      usage: "",
-      asf: "",
-      royalities: "",
-      commission: "",
-      paymentTerms: "",
-      expenses: "",
-      expensesDesc: "",
-      miscellaneous: "",
-      miscellaneousDesc: "",
-      createdAt: new Date().toLocaleDateString("en-US"),
-      dueDate: new Date().toLocaleDateString("en-US")
-    });
+    const newErrors = jobFormValidateForm(invoiceForm);
+    setErrors(newErrors);
+    console.log(newErrors)
+    if (Object.keys(newErrors).length === 0) {
+      let list = invoiceList || [];
+      list.push(invoiceForm);
+      setInvoiceList(list);
+      setInvoiceForm({
+        id: "",
+        poNumber: "",
+        fee: "",
+        gst: false,
+        usage: "",
+        asf: "",
+        royalities: "",
+        commission: "",
+        paymentTerms: "",
+        expenses: "",
+        expensesDesc: "",
+        miscellaneous: "",
+        miscellaneousDesc: "",
+        createdAt: new Date().toLocaleDateString("en-US"),
+        dueDate: new Date().toLocaleDateString("en-US")
+      });
+    } else {
+      toast.error("Form submission failed due to validation errors.", {
+        position: "top-left",
+      });
+    }
   }
 
   const cancelInvoice = (index) => {
@@ -93,16 +103,38 @@ const JobInvoiceForm = () => {
   }
 
   const nextFunc = () => {
-    const newErrors = jobFormValidateForm(invoiceForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      store.dispatch({ type: SAVE_JOB_INVOICE_LIST, payload: invoiceForm });
-      navigate("/job/edit/0/social")
+    store.dispatch({ type: SAVE_JOB_INVOICE_LIST, payload: invoiceList });
+    if (job?.details?._id) {
+      navigate("/job/edit/" + job?.details?._id + "/social");
     } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
+      navigate("/job/add/social");
+    }
+  }
+
+  const updateJob = () => {
+    const data = {
+      ...job,
+      invoiceList: invoiceList
+    }
+    if (job?.details?._id) {
+      JobApi.updateJobById(job?.details?._id, data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
       });
     }
+  }
+
+  const cancelJob = async () => {
+    store.dispatch({ type: CLEAN_JOB });
+    navigate("/job/kanban");
   }
 
   return (
@@ -110,7 +142,7 @@ const JobInvoiceForm = () => {
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">finance - </span>
-        <span className="text-title-2 uppercase font-bold">{`{ JOB Name }`}</span>
+        <span className="text-title-2 uppercase font-bold">{job.jobName === "" ? '{ Job Name }' : job.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-fit mx-4 md:w-2/3 sm:mx-auto gap-8">
@@ -123,13 +155,13 @@ const JobInvoiceForm = () => {
               <div className="flex justify-between items-center gap-3 py-2">
                 <span className="w-[15%] text-label text-sm">Po Number: </span>
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-[35%] tracking-wider text-sm text-right pr-4
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                       ${errors.poNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Po Number" type="text" value={invoiceForm.poNumber} name="poNumber" onChange={(e) => handleChange(e)} />
                 <span className="w-[15%] text-label text-sm">Fee: $ </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-right text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.fee ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.fee} name="fee" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -186,7 +218,7 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Usage: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.usage ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.usage} name="usage" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -196,14 +228,14 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Asf: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.asf ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.asf} name="asf" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Royalities: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.royalities ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.royalities} name="royalities" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -213,14 +245,14 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Commission: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.commission ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.commission} name="commission" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Payment Terms: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.paymentTerms ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.paymentTerms} name="paymentTerms" placeholder="Days" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -231,13 +263,15 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.expenses ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       type="text" value={invoiceForm.expenses} name="expenses" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
-                    <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="expenses"
+                    <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.expensesDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      placeholder="expenses"
                       type="text" value={invoiceForm.expensesDesc} name="expensesDesc" rows={4} onChange={(e) => handleChange(e)} />
                   </div>
                 </div>
@@ -248,22 +282,26 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.miscellaneous ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       type="text" value={invoiceForm.miscellaneous} name="miscellaneous" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
-                    <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="miscellaneous"
+                    <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.miscellaneousDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      placeholder="miscellaneous"
                       type="text" value={invoiceForm.miscellaneousDesc} name="miscellaneousDesc" rows={4} onChange={(e) => handleChange(e)} />
                   </div>
                 </div>
               </div>
             </div>
-            <button className="w-full flex justify-end items-center gap-2 mt-10 cursor-pointer hover:text-decoration" onClick={addInvoice}>
-              <span className="text-estimateDate text-sm font-semibold">Add to invoice list</span>
-              <img src={AddCircle} alt="add" />
-            </button>
+            <div className="w-full flex justify-end items-center mt-10 ">
+              <button className="w-fit flex gap-2 cursor-pointer hover:text-decoration" onClick={addInvoice}>
+                <span className="text-estimateDate text-sm font-semibold">Add to invoice list</span>
+                <img src={AddCircle} alt="add" />
+              </button>
+            </div>
           </div>
         </div>
         <div className="col-span-1">
@@ -281,7 +319,7 @@ const JobInvoiceForm = () => {
                         Invoice - {item.createdAt}
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {item.dueDate}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelInvoice(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>
@@ -297,13 +335,14 @@ const JobInvoiceForm = () => {
       </div>
 
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
-        <Link to={"/job/kanban"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Cancel</button>
-        </Link>
-        <Link to={"/job/edit/1/jobDetails"} className="w-full">
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={cancelJob}>Cancel</button>
+        </div>
+        <Link to={job?.details?._id ? `/job/edit/${job?.details?._id}/jobDetails` : "/job/add/jobDetails"} className="w-full">
           <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
@@ -320,7 +359,7 @@ const JobInvoiceForm = () => {
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update</button>
+                        active:bg-white-100 active:shadow-md text-sm" type="button" onClick={updateJob}>Update</button>
         </div>
       </div>
 

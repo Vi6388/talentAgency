@@ -38,9 +38,6 @@ const jobTravelSchema = new mongoose.Schema({
   travelDetails: {
     type: String
   },
-  partOfAmbassadorship: {
-    type: Boolean
-  },
   createdAt: {
     type: Date,
     default: new Date()

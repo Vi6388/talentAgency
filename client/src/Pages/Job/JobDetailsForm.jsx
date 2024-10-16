@@ -7,7 +7,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { baseUrl, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
-import { SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
+import { CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
 import { JobApi } from "../../apis/job";
 
@@ -29,9 +29,9 @@ const JobDetailsForm = () => {
     jobName: "",
     talentName: "",
     manager: "",
-    ambassadorshipName: "",
     startDate: "",
     endDate: "",
+    jobDetailsForm: "",
     supplierRequired: true,
     uploadedFiles: {
       contractFile: "",
@@ -43,8 +43,6 @@ const JobDetailsForm = () => {
   const [showEnd, setShowEnd] = useState(false);
   const [uploadedList, setUploadedList] = useState([]);
   const [errors, setErrors] = useState({});
-  const { jobDetails } = useSelector((state) => state.job);
-
   const [fileInfo, setFileInfo] = useState({
     contractFile: {
       filename: "",
@@ -64,34 +62,36 @@ const JobDetailsForm = () => {
   });
 
   useEffect(() => {
-    JobApi.getJobById(id).then((res) => {
-      if (res.data.status === 200) {
-        const data = res.data.data;
-        store.dispatch({ type: SAVE_JOB, payload: data });
-        console.log(data)
-        setJobDetailsForm({
-          ...data?.details,
-          id: data?.details?._id,
-          firstname: data?.details?.contactDetails?.firstname || "",
-          surname: data?.details?.contactDetails?.surname || "",
-          email: data?.details?.contactDetails?.email || "",
-          position: data?.details?.contactDetails?.position || "",
-          phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
-          companyName: data?.details?.companyDetails?.companyName || "",
-          abn: data?.details?.companyDetails?.abn || "",
-          postalAddress: data?.details?.companyDetails?.postalAddress || "",
-          suburb: data?.details?.companyDetails?.suburb || "",
-          state: data?.details?.companyDetails?.state || "",
-          postcode: data?.details?.companyDetails?.postcode || "",
-          jobName: data?.details?.jobName || "",
-          talentName: data?.details?.talent?.talentName || "",
-          manager: data?.details?.talent?.manager || "",
-          ambassadorshipName: data?.details?.ambassadorshipName || "",
-          startDate: data?.details?.startDate || "",
-          endDate: data?.details?.endDate || "",
-        })
-      }
-    });
+    if (id) {
+      JobApi.getJobById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB, payload: data });
+          console.log(data)
+          setJobDetailsForm({
+            ...data?.details,
+            id: data?.details?._id,
+            firstname: data?.details?.contactDetails?.firstname || "",
+            surname: data?.details?.contactDetails?.surname || "",
+            email: data?.details?.contactDetails?.email || "",
+            position: data?.details?.contactDetails?.position || "",
+            phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
+            companyName: data?.details?.companyDetails?.companyName || "",
+            abn: data?.details?.companyDetails?.abn || "",
+            postalAddress: data?.details?.companyDetails?.postalAddress || "",
+            suburb: data?.details?.companyDetails?.suburb || "",
+            state: data?.details?.companyDetails?.state || "",
+            postcode: data?.details?.companyDetails?.postcode || "",
+            jobName: data?.details?.jobName || "",
+            talentName: data?.details?.talent?.talentName || "",
+            manager: data?.details?.talent?.manager || "",
+            jobDetailsForm: data?.details?.labelColor || "",
+            startDate: data?.details?.startDate || "",
+            endDate: data?.details?.endDate || "",
+          })
+        }
+      });
+    }
   }, [id]);
 
   const handleChange = (e) => {
@@ -99,8 +99,6 @@ const JobDetailsForm = () => {
       ...jobDetailsForm,
       [e.target.name]: e.target.value
     });
-    const newErrors = jobFormValidateForm(jobDetailsForm);
-    setErrors(newErrors);
   }
 
   const handleStartDateChange = (selectedDate) => {
@@ -293,6 +291,11 @@ const JobDetailsForm = () => {
     }
   }
 
+  const cancelJob = async () => {
+    store.dispatch({ type: CLEAN_JOB });
+    navigate("/job/kanban");
+  }
+
   return (
     <div className="mt-7 w-full bg-main">
       <ToastContainer />
@@ -346,7 +349,7 @@ const JobDetailsForm = () => {
             </div>
           </div>
 
-          <div className="mb-3">
+          <div className="">
             <div className="flex justify-between items-center pt-2">
               <span className="text-base text-title-2 font-medium">Company Details</span>
               <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
@@ -429,19 +432,14 @@ const JobDetailsForm = () => {
               </div>
             </div>
           </div>
-          <div className="mb-3 w-full">
-            <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Ambassadorship</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
-            </div>
-            <div>
-              <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.ambassadorshipName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
-                  placeholder="name"
-                  type="text" value={jobDetailsForm.ambassadorshipName} name="ambassadorshipName"
-                  onChange={(e) => handleChange(e)} />
-              </div>
+          <div className="w-full">
+            <div className="w-full relative">
+              <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                placeholder="Label Color"
+                type="text" value={jobDetailsForm.labelColor} readOnly />
+              <input type="color" id="color-picker" value={jobDetailsForm.labelColor} className="absolute left-2 top-2 w-10 md:w-20"
+                onChange={(e) => handleChange(e)} name="labelColor" />
             </div>
           </div>
 
@@ -486,25 +484,27 @@ const JobDetailsForm = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 w-full px-4 sm:w-3/4 sm:px-0 md:w-2/3 sm:mx-auto gap-8 mt-5 lg:mt-0">
+      <div className="grid grid-cols-1 w-full px-4 sm:w-3/4 sm:px-0 md:w-2/3 sm:mx-auto gap-5 mt-5 lg:mt-3">
         <div className="w-full flex justify-between items-center gap-3">
-          <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-full'>
-            <input
-              type='checkbox'
-              checked={jobDetailsForm.supplierRequired}
-              onChange={handleSupplierRequired}
-              className='sr-only'
-            />
-            <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3' : 'bg-white'}`}>
-              <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
-            </span>
-            <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
-              Supplier setup required
-            </span>
-          </label>
+          <div className="w-full">
+            <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-fit'>
+              <input
+                type='checkbox'
+                checked={jobDetailsForm.supplierRequired}
+                onChange={handleSupplierRequired}
+                className='sr-only'
+              />
+              <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3' : 'bg-white'}`}>
+                <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
+              </span>
+              <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
+                Supplier setup required
+              </span>
+            </label>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <div className="col-span-1">
             <div className="text-center my-3">
               <span className="text-base text-title-2 font-medium">Uploaded Files</span>
@@ -576,12 +576,13 @@ const JobDetailsForm = () => {
       </div>
 
       <div className="mt-12 grid grid-cols-3 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
-        <Link to={"/job/kanban"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Cancel</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={cancelJob}>Cancel</button>
+        </div>
         <div className="w-full">
           <button className="bg-button-3 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
@@ -589,7 +590,7 @@ const JobDetailsForm = () => {
                         active:bg-white-100 active:shadow-md text-sm" type="button" onClick={nextFunc}>Next...</button>
         </div>
         {
-          jobDetails?.details?._id ?
+          jobDetailsForm?.id ?
             <div className="w-full">
               <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full

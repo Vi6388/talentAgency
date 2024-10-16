@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="/email-template.css">
+    <title>.atarimae // Workflow</title>
+</head>
+
+<body>
+    <div class="main">
+        <div class="center-box">
+            <img src="/workflowLogo.png" alt="logo" class="logo-image" />
+        </div>
+
+        <div class="center-box">
+            <div class="main-title">
+                Please Setup Supplier
+            </div>
+        </div>
+
+        <div class="content-box">
+            <div>
+                <div class="form-box">
+                    <div class="form-item">
+                        <label>Talent: </label>
+                        <span>
+                            <%= result.talent.name %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-box">
+                    <div class="form-item">
+                        <label>Company Name: </label>
+                        <span>
+                            <%= result.companyName %>
+                        </span>
+                    </div>
+                    <div class="form-item">
+                        <label>ABN: </label>
+                        <span>
+                            <%= result.abn %>
+                        </span>
+                    </div>
+                    <div class="form-item">
+                        <label>Company Address: </label>
+                        <span>
+                            <%= result.companyAddress %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-box">
+                    <div class="form-item">
+                        <label>Contact Name: </label>
+                        <span>
+                            <%= result.contactDetails.name %>
+                        </span>
+                    </div>
+                    <div class="form-item">
+                        <label>E-Mail: </label>
+                        <span>
+                            <%= result.contactDetails.email %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-box">
+                    <div class="form-item">
+                        <label>GST 10%: </label>
+                        <span>
+                            <%= result.gst ? "Yes" : "No" %>
+                        </span>
+                    </div>
+                    <div class="form-item">
+                        <label>ASP: </label>
+                        <span>
+                            <%= result.asp ? "Yes" : "No" %>
+                        </span>
+                    </div>
+
+                    <div class="form-item">
+                        <label>Commission: </label>
+                        <span>
+                            <%= result.commission %>
+                        </span>
+                    </div>
+                    <div class="form-item">
+                        <label>Payment Terms: </label>
+                        <span>
+                            <%= result.paymentTerms %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-center items-center mt-20">
+                <span class="tip-text">
+                    A copy of the brief, contract and any supporting files are in the job folder in your share drive.
+                    <br />
+                    You can access the job folder in your share drive in the link below
+                </span>
+            </div>
+
+            <div class="d-flex justify-center items-center">
+                <button class="job-folder-button">Job Folder</button>
+            </div>
+        </div>
+    </div>
+</body>

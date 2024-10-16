@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="/email-template.css">
+    <title>.atarimae // Workflow</title>
+</head>
+
+<body>
+    <div class="main">
+        <div class="center-box">
+            <img src="/workflowLogo.png" alt="logo" class="logo-image" />
+        </div>
+
+        <div class="center-box">
+            <div class="main-title">
+                Update
+            </div>
+        </div>
+
+        <div class="content-box">
+            <div class="d-flex my-5">
+                <input type="text" readonly class="data-input" value="<%=result.jobTitle %>" />
+            </div>
+            <div class="date-box">
+                <div class="relative d-flex w-full">
+                    <input type="text" readonly class="data-input" value="<%=result.startDate %>" />
+                    <img src="/calendar_month.svg" alt="calendar" class="absolute calendar-icon" />
+                </div>
+                <div class="relative d-flex w-full">
+                    <input type="text" readonly class="data-input" value="<%=result.endDate %>" />
+                    <img src="/calendar_month.svg" alt="calendar" class="absolute calendar-icon" />
+                </div>
+            </div>
+            <div class="my-5 ">
+                <div class="detail-box">
+                    <span class="detail-text updated-text">
+                        <%= result.jobDesc %>
+                    </span>
+
+                    <span class="detail-note-text">
+                        Full brief in the job folder..
+                    </span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-center items-center">
+                <span class="tip-text">
+                    A copy of the brief, contract and any supporting files are in the job folder in your share drive. <br/>
+                    You can access the job folder in your share drive in the link below
+                </span>
+            </div>
+
+            <div class="d-flex justify-center items-center">
+                <button class="job-folder-button">Job Folder</button>
+            </div>
+        </div>
+    </div>
+</body>

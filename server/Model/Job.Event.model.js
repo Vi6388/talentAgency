@@ -25,9 +25,6 @@ const jobEventSchema = new mongoose.Schema({
   deleverables: {
     type: String
   },
-  partOfAmbassadorship: {
-    type: Boolean
-  },
   createdAt: {
     type: Date,
     default: new Date()

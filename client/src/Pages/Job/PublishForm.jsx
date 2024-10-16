@@ -1,11 +1,19 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
+import { useSelector } from "react-redux";
+import { store } from "../../redux/store";
+import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
+import { JobApi } from "../../apis/job";
+import { toast, ToastContainer } from "react-toastify";
+import { dateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobPublishForm = () => {
+  const navigate = useNavigate();
+  const { job } = useSelector(state => state.job);
   const [publishForm, setPublishForm] = useState({
     jobTitle: "",
     firstDraftDate: "",
@@ -14,7 +22,7 @@ const JobPublishForm = () => {
     publisher: "",
     keyMessages: "",
     deleverables: "",
-    ambassadorship: false
+    createdAt: new Date().toLocaleDateString("en-US"),
   });
 
   const [publishList, setPublishList] = useState([]);
@@ -23,7 +31,13 @@ const JobPublishForm = () => {
     firstDraftDate: false,
     secondDraftDate: false,
     finalDate: false,
-  })
+  });
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const existPublishingList = job?.jobSummaryList?.filter(item => item.type === "publishing");
+    setPublishList(existPublishingList);
+  }, [job]);
 
   const handleChange = (e) => {
     setPublishForm({
@@ -43,13 +57,6 @@ const JobPublishForm = () => {
     setShow({
       ...show,
       [action]: state,
-    })
-  }
-
-  const handleAmbassadorshipChange = () => {
-    setPublishForm({
-      ...publishForm,
-      ambassadorship: !publishForm.ambassadorship
     })
   }
 
@@ -93,8 +100,10 @@ const JobPublishForm = () => {
   }
 
   const addJobPublish = () => {
-    if (publishForm.jobTitle !== "") {
-      const list = publishList;
+    const newErrors = jobFormValidateForm(publishForm);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      let list = publishList;
       list.push(publishForm);
       setPublishList(list);
       setPublishForm({
@@ -105,7 +114,11 @@ const JobPublishForm = () => {
         publisher: "",
         keyMessages: "",
         deleverables: "",
-        ambassadorship: false
+        createdAt: new Date().toLocaleDateString("en-US"),
+      });
+    } else {
+      toast.error("Form submission failed due to validation errors.", {
+        position: "top-left",
       });
     }
   }
@@ -122,11 +135,55 @@ const JobPublishForm = () => {
     }
   }
 
+  const nextFunc = () => {
+    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "publishing");
+    publishList?.forEach((item) => {
+      jobSummaryList.push(item);
+    });
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    if (job?.details?._id) {
+      navigate("/job/edit/" + job?.details?._id + "/travel");
+    } else {
+      navigate("/job/add/travel");
+    }
+  }
+
+  const updateJob = () => {
+    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "publishing");
+    publishList?.forEach((item) => {
+      jobSummaryList.push(item);
+    });
+    const data = {
+      ...job,
+      jobSummaryList: jobSummaryList
+    }
+    if (job?.details?._id) {
+      JobApi.updateJobById(job?.details?._id, data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      });
+    }
+  }
+
+  const cancelJob = () => {
+    store.dispatch({ type: CLEAN_JOB });
+    navigate("/job/kanban");
+  }
+
   return (
     <div className="mt-7 w-full bg-main">
+      <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">publishing - </span>
-        <span className="text-title-2 uppercase font-bold">{`{ JOB Name }`}</span>
+        <span className="text-title-2 uppercase font-bold">{job.jobName === "" ? '{ Job Name }' : job.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -137,8 +194,10 @@ const JobPublishForm = () => {
             </div>
             <div>
               <div className="w-full py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="job title"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                  placeholder="job title"
                   type="text" value={publishForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
               </div>
@@ -147,8 +206,9 @@ const JobPublishForm = () => {
                 <DatePicker options={firstDraftDateOption} onChange={(selectedDate) => handleDateChange("firstDraftDate", selectedDate)} show={show.firstDraftDate}
                   setShow={(state) => handleState("firstDraftDate", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.firstDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -159,8 +219,9 @@ const JobPublishForm = () => {
                 <DatePicker options={secondDraftDateOptions} onChange={(selectedDate) => handleDateChange("secondDraftDate", selectedDate)} show={show.secondDraftDate}
                   setShow={(state) => handleState("secondDraftDate", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.secondDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -171,8 +232,9 @@ const JobPublishForm = () => {
                 <DatePicker options={finalDateOptions} onChange={(selectedDate) => handleDateChange("finalDate", selectedDate)} show={show.finalDate}
                   setShow={(state) => handleState("finalDate", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.finalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -182,54 +244,38 @@ const JobPublishForm = () => {
               </div>
 
               <div className="w-full gap-3 py-2">
-                <input className="rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase" placeholder="publisher"
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
+                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      ${errors.publisher ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                  placeholder="publisher"
                   type="text" value={publishForm.publisher} name="publisher"
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
-                <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center"
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
+                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Brief Copy Tags Key Messages"
                   type="text" value={publishForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
-                <textarea className="rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center"
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
+                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Deleverables"
                   type="text" value={publishForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
             </div>
-
-            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center w-full'>
-                <input
-                  type='checkbox'
-                  checked={publishForm.ambassadorship}
-                  onChange={handleAmbassadorshipChange}
-                  className='sr-only'
-                />
-                <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${publishForm.ambassadorship ? 'bg-button-3' : 'bg-white'}`}>
-                  <span className={`dot h-6 w-6 rounded-full duration-200 ${publishForm.ambassadorship ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
-                </span>
-                <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
-                  Part of ambassadorship
-                </span>
-              </label>
-              <select className="bg-white text-center border-none outline-none text-sm rounded-lg w-52 text-[#d4d5d6] font-bold tracking-wider
-                          focus:ring-primary-500 focus:border-primary-100 shadow-md block w-full p-2">
-                <option>AMBASSADORSHIP</option>
-              </select>
+            <div className="w-full flex justify-end items-center mt-10 ">
+              <button className="w-fit flex gap-2 cursor-pointer hover:text-decoration" onClick={addJobPublish}>
+                <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
+                <img src={AddCircle} alt="add" />
+              </button>
             </div>
-
-            <button className="w-full flex justify-end items-center gap-2 mt-10 cursor-pointer hover:text-decoration" onClick={addJobPublish}>
-              <span className="text-estimateDate text-sm font-semibold">Add to job list</span>
-              <img src={AddCircle} alt="add" />
-            </button>
           </div>
         </div>
         <div className="col-span-1">
@@ -244,11 +290,11 @@ const JobPublishForm = () => {
                     <div className="flex justify-between items-center border-b divider-line-color py-3"
                       key={index}>
                       <div className="flex items-center">
-                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">Publishing - </span>
+                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">{item.type} - </span>
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {item.finalDate}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobPublish(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>
@@ -264,29 +310,32 @@ const JobPublishForm = () => {
       </div>
 
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
-        <Link to={"/job/kanban"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Cancel</button>
-        </Link>
-        <Link to={"/job/edit/1/media"} className="w-full">
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={cancelJob}>Cancel</button>
+        </div>
+        <Link to={job?.details?._id ? `/job/edit/${job?.details?._id}/media` : "/job/add/media"} className="w-full">
           <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
                         active:bg-white-100 active:shadow-md text-sm">Previous</button>
         </Link>
-        <Link to={"/job/edit/1/travel"} className="w-full">
+        <div className="w-full">
           <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Next...</button>
-        </Link>
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={nextFunc}>Next...</button>
+        </div>
         <div className="w-full">
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update</button>
+                        active:bg-white-100 active:shadow-md text-sm"
+            type="button" onClick={updateJob}>Update</button>
         </div>
       </div>
 

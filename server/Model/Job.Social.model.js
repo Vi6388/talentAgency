@@ -45,9 +45,6 @@ const jobFinanceSchema = new mongoose.Schema({
   miscellaneousDesc: {
     type: String
   },
-  partOfAmbassadorship: {
-    type: Boolean
-  },
   createdAt: {
     type: Date,
     default: new Date()

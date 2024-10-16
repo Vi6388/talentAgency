@@ -50,7 +50,7 @@ const jobSchema = new mongoose.Schema({
       type: String
     }
   },
-  ambassadorshipName: {
+  labelColor: {
     type: String
   },
   startDate: {

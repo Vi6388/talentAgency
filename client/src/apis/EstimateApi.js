@@ -8,7 +8,7 @@ const list = () => axios.get(`${SERVER_URL}/api/estimate/list`);
 
 const deleteJobEstimateById = (id) => axios.delete(`${SERVER_URL}/api/estimate/delete/` + id);
 
-const updateJobEstimateById = (id, data) => axios.put(`${SERVER_URL}/api/estimate/save/`+ id, data);
+const updateJobEstimateById = (id, data) => axios.post(`${SERVER_URL}/api/estimate/update/`+ id, data);
 
 const getJobEstimateById = (id) => axios.get(`${SERVER_URL}/api/estimate/` + id);
 

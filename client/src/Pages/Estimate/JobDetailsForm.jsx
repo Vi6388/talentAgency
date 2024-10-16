@@ -28,7 +28,6 @@ const EstimateJobDetailsForm = () => {
     jobName: "",
     talentName: "",
     manager: "",
-    ambassadorshipName: "",
     startDate: "",
     endDate: "",
   });
@@ -38,34 +37,35 @@ const EstimateJobDetailsForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    EstimateApi.getJobEstimateById(id).then((res) => {
-      if (res.data.status === 200) {
-        const data = res.data.data;
-        store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
-        console.log(data)
-        setJobDetailsForm({
-          ...data?.details,
-          id: data?.details?._id,
-          firstname: data?.details?.contactDetails?.firstname || "",
-          surname: data?.details?.contactDetails?.surname || "",
-          email: data?.details?.contactDetails?.email || "",
-          position: data?.details?.contactDetails?.position || "",
-          phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
-          companyName: data?.details?.companyDetails?.companyName || "",
-          abn: data?.details?.companyDetails?.abn || "",
-          postalAddress: data?.details?.companyDetails?.postalAddress || "",
-          suburb: data?.details?.companyDetails?.suburb || "",
-          state: data?.details?.companyDetails?.state || "",
-          postcode: data?.details?.companyDetails?.postcode || "",
-          jobName: data?.details?.jobName || "",
-          talentName: data?.details?.talent?.talentName || "",
-          manager: data?.details?.talent?.manager || "",
-          ambassadorshipName: data?.details?.ambassadorshipName || "",
-          startDate: data?.details?.startDate || "",
-          endDate: data?.details?.endDate || "",
-        })
-      }
-    });
+    if (id) {
+      EstimateApi.getJobEstimateById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
+          console.log(data)
+          setJobDetailsForm({
+            ...data?.details,
+            id: data?.details?._id,
+            firstname: data?.details?.contactDetails?.firstname || "",
+            surname: data?.details?.contactDetails?.surname || "",
+            email: data?.details?.contactDetails?.email || "",
+            position: data?.details?.contactDetails?.position || "",
+            phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
+            companyName: data?.details?.companyDetails?.companyName || "",
+            abn: data?.details?.companyDetails?.abn || "",
+            postalAddress: data?.details?.companyDetails?.postalAddress || "",
+            suburb: data?.details?.companyDetails?.suburb || "",
+            state: data?.details?.companyDetails?.state || "",
+            postcode: data?.details?.companyDetails?.postcode || "",
+            jobName: data?.details?.jobName || "",
+            talentName: data?.details?.talent?.talentName || "",
+            manager: data?.details?.talent?.manager || "",
+            startDate: data?.details?.startDate || "",
+            endDate: data?.details?.endDate || "",
+          })
+        }
+      });
+    }
   }, [id]);
 
   const handleChange = (e) => {
@@ -337,21 +337,6 @@ const EstimateJobDetailsForm = () => {
               </div>
             </div>
           </div>
-          <div className="mb-3 w-full">
-            <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Ambassadorship</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
-            </div>
-            <div>
-              <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.ambassadorshipName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
-                  placeholder="ambassadorshiipName"
-                  type="text" value={jobDetailsForm.ambassadorshipName} name="ambassadorshipName"
-                  onChange={(e) => handleChange(e)} />
-              </div>
-            </div>
-          </div>
 
           <div className="mb-3 w-full">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 w-full gap-3">
@@ -370,7 +355,7 @@ const EstimateJobDetailsForm = () => {
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.ambassadorshipName ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import AmbassadorshipsListData from "../../data/ambassadorships_list.json";
 import { Link } from "react-router-dom";
 import { UserApi } from "../../apis/UserApi";
 import { TalentApi } from "../../apis/TalentApi";
@@ -15,7 +14,6 @@ const thData = [
 const Settings = () => {
   const [userList, setUserList] = useState();
   const [talentList, setTalentList] = useState();
-  const [ambassadorshipsList, setAmbassdorshipsList] = useState(AmbassadorshipsListData);
 
   useEffect(() => {
     UserApi.getUserList().then((res) => {
@@ -114,47 +112,6 @@ const Settings = () => {
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
                             active:bg-[#978172] active:shadow-lg text-sm">New Talent</button>
-          </Link>
-        </div>
-        <div className="w-full">
-          <div className="text-base text-title-2 font-semibold py-3">Ambassadorships</div>
-          <div className="w-full overflow-x-auto shadow-md">
-            <table className="bg-table rounded-lg shadow-md w-full">
-              <thead>
-                <tr className="border-b border-table">
-                  {thData?.map((item, index) => {
-                    return (<th key={index} className="text-th text-sm tracking-wider capitalize text-left px-2 py-3">{item}</th>)
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {ambassadorshipsList?.map((item, index) => {
-                  return (
-                    <tr className="border-table border-b last:border-b-0" key={index}>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium">{item.name}</span></td>
-                      <td className="p-2"><span className="text-input text-sm font-medium">{item.email}</span></td>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium">{item.phone}</span></td>
-                      <td className="p-2"><span className="text-input text-sm font-medium">{item.username}</span></td>
-                      <td className="p-2 w-[100px] md:w-[160px]">
-                        <Link to={"/ambassadorships/edit/1"}>
-                          <button className="bg-button-6 h-full lg:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] lg:w-[160px]
-                            block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">Edit details</button>
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-                {ambassadorshipsList?.length === 0 && <tr><td colSpan="5" className="text-center p-2">No data</td></tr>}
-              </tbody>
-            </table>
-          </div>
-          <Link to={"/client/add"} className="flex justify-start md:justify-center items-center my-5">
-            <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[210px]
-                            block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">New Ambassadorship</button>
           </Link>
         </div>
       </div>

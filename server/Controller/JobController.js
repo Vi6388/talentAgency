@@ -40,7 +40,7 @@ module.exports.AddJob = async (req, res, next) => {
         talentName: detailData?.talentName,
         manager: detailData?.manager
       },
-      ambassadorship: detailData?.ambassadorshipName,
+      labelColor: detailData?.labelColor,
       startDate: new Date(detailData?.startDate),
       endDate: new Date(detailData?.endDate),
       uploadedFiles: {
@@ -97,6 +97,19 @@ module.exports.AddJob = async (req, res, next) => {
         }
       })
     }
+
+    const emailData = {
+      jobTitle: newJob?.jobName,
+      startDate: new Date(newJob?.startDate).toLocaleDateString("en-US"),
+      endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
+      jobDesc: ""
+    };
+    await sendEmail({
+      filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      data: emailData,
+      subject: "Update Job Notification",
+      toEmail: job?.contactDetails?.email,
+    });
 
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
@@ -166,10 +179,6 @@ module.exports.getJobById = async (req, res, next) => {
 
 module.exports.UpdateJob = async (req, res, next) => {
   try {
-    const job = await JobModel.findById(req.params.id);
-    const url = req.protocol + '://' + req.get("host");
-    const { uploadedFiles } = req.body?.uploadedFiles || [];
-
     const detailData = req.body.details;
     // Update Job Model
     const existJob = await JobModel.findById(req.params.id);
@@ -195,7 +204,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           talentName: detailData?.talentName,
           manager: detailData?.manager
         },
-        ambassadorship: detailData?.ambassadorshipName,
+        labelColor: detailData?.labelColor,
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
         uploadedFiles: {
@@ -262,6 +271,19 @@ module.exports.UpdateJob = async (req, res, next) => {
           }
         })
       }
+
+      const emailData = {
+        jobTitle: existJob?.jobName,
+        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
+        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
+        jobDesc: ""
+      };
+      await sendEmail({
+        filename: 'UpdateJob.ejs', // Ensure the correct file extension
+        data: emailData,
+        subject: "Update Job Notification",
+        toEmail: job?.contactDetails?.email,
+      });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
