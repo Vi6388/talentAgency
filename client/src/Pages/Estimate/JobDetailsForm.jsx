@@ -42,7 +42,6 @@ const EstimateJobDetailsForm = () => {
         if (res.data.status === 200) {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
-          console.log(data)
           setJobDetailsForm({
             ...data?.details,
             id: data?.details?._id,
@@ -144,7 +143,11 @@ const EstimateJobDetailsForm = () => {
     if (jobDetailsForm.id) {
       updateEstimate();
     } else {
-      EstimateApi.add(jobEstimate).then((res) => {
+      const data = {
+        ...jobEstimate,
+        details: jobDetailsForm,
+      }
+      EstimateApi.add(data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {

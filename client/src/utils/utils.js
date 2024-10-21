@@ -3,6 +3,18 @@ import { toast } from "react-toastify";
 export const baseUrl = "localhost:3000/";
 export const uploadUrl = "localhost:3000/uploads/";
 
+export const statusList = [
+  { statusIndex: 1, name: "New Job" },
+  { statusIndex: 2, name: "In Production" },
+  { statusIndex: 3, name: "With Client for approval" },
+  { statusIndex: 4, name: "Changes Required" },
+  { statusIndex: 5, name: "Approved to go live" },
+  { statusIndex: 6, name: "To Invoice" },
+  { statusIndex: 7, name: "Invoiced" },
+  { statusIndex: 8, name: "Paid" },
+  { statusIndex: 9, name: "Completed" },
+]
+
 export const numberFormat = (numStr) => {
   let result = numStr;
   if (isNaN(parseFloat(result)) || parseFloat(result) === 0) {
@@ -64,6 +76,16 @@ export const dateTimeFormat = (date) => {
 }
 
 export const dateFormat = (date) => {
-  const day = new Date(date).toISOString().split('T')[0];
-  return day;
+  if (date !== "Invalid Date") {
+    const day = new Date(date).toISOString().split('T')[0];
+    return day;
+  }
+}
+
+export const dueDateFormat = (date) => {
+  if (date !== "Invalid Date") {
+    const day = new Date(date).toISOString().split('T')[0];
+    day.replaceAll("-", "/");
+    return day;
+  }
 }

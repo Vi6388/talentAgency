@@ -8,28 +8,27 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 
     // Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
-        host: 'send.ahasend.com',
+        host: '103.73.64.225',
         port: 587,
         requireTLS: true, // Force TLS
-        service: 'gmail',
         auth: {
-            user: 'your.email@gmail.com',
-            pass: 'your-email-password',
+            user: 'honeypot.owner@gmail.com',
+            pass: 'TalentAgency!@#123',
         },
     });
 
     // Send email
     const info = await transporter.sendMail({
-        from: 'your.email@gmail.com',
-        to: toEmail,
+        from: 'honeypot.owner@gmail.com',
+        to: "laurahuillier90@gmail.com",
         subject: subject,
         html: emailContent,
         attachments: [{
-            content: data,
-            encoding: 'base64',
-            cid: 'uniqueImageCID', // Referenced in the HTML template
+            content: data
         }],
     });
+
+    console.log(info)
 
     console.log('Email sent:', info.messageId);
 }

@@ -5,6 +5,7 @@ const JobFinance = require("../Model/Job.Finance.model");
 const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
+const { sendEmail } = require("../util/SendMail");
 
 module.exports.getJobList = async (req, res, next) => {
   try {
@@ -212,6 +213,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           briefFile: detailData?.briefFile || existJob?.uploadedFiles?.briefFile,
           supportingFile: detailData?.supportingFile || existJob?.uploadedFiles?.supportingFile,
         },
+        jobStatus: detailData?.jobStatus
       });
 
       // Dalete Exist Invoice List By jobEstimate id and Create new Invoice List
@@ -278,12 +280,12 @@ module.exports.UpdateJob = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
-      await sendEmail({
-        filename: 'UpdateJob.ejs', // Ensure the correct file extension
-        data: emailData,
-        subject: "Update Job Notification",
-        toEmail: job?.contactDetails?.email,
-      });
+      // await sendEmail({
+      //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      //   data: emailData,
+      //   subject: "Update Job Notification",
+      //   toEmail: existJob?.contactDetails?.email,
+      // });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
@@ -292,3 +294,20 @@ module.exports.UpdateJob = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports.updateJobStatus = async (req, res, next) => {
+  try {
+    const existJob = await JobModel.findById(req.params.id);
+    if(existJob) {
+      await existJob.updateOne({
+        jobStatus: req.body.jobStatus
+      });
+      console.log(req.body.jobStatus);
+      return res.json({ status: 200, success: true, message: "Status updated Successfully." })
+    } else {
+      return res.json({ status: 201, success: true, message: "Job doesn't exist." })
+    }
+  } catch(err) {
+    next(err);
+  }
+}

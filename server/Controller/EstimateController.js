@@ -97,15 +97,15 @@ module.exports.AddJobEstimate = async (req, res, next) => {
 
     const emailData = {
       jobTitle: newJob?.jobName,
-      startDate: new Date(newJob?.startDate).toLocaleDateString("en-US"),
-      endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
+      startDate: new Date(newJob.startDate),
+      endDate: new Date(newJob.endDate),
       jobDesc: ""
     };
     await sendEmail({
       filename: 'UpdateJob.ejs', // Ensure the correct file extension
       data: emailData,
       subject: "Update Job Notification",
-      toEmail: job?.contactDetails?.email,
+      toEmail: newJob?.contactDetails?.email,
     });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {

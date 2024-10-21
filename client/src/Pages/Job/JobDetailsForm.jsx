@@ -227,33 +227,34 @@ const JobDetailsForm = () => {
 
   const submitJob = async () => {
     const formData = new FormData();
-    formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
+    console.log(jobDetailsForm?.uploadedFiles?.contractFile)
+    // formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
     formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
-    formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
+    // formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
     await JobApi.uploadFiles(formData).then((res) => {
       if (res.data.status === 200) {
         const data = res.data.data;
-        setJobDetailsForm({
-          ...jobDetailsForm,
-          uploadedFiles: {
-            contractFile: data?.contractFile,
-            briefFile: data?.briefFile,
-            supportingFile: data?.supportingFile,
-          }
-        });
+        // setJobDetailsForm({
+        //   ...jobDetailsForm,
+        //   uploadedFiles: {
+        //     contractFile: data?.contractFile,
+        //     briefFile: data?.briefFile,
+        //     supportingFile: data?.supportingFile,
+        //   }
+        // });
       }
-      JobApi.add(jobDetailsForm).then((res) => {
-        if (res.data.status === 200) {
-          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-          toast.success(res.data.message, {
-            position: "top-left",
-          });
-        } else {
-          toast.error(res.data.message, {
-            position: "top-left",
-          });
-        }
-      })
+      // JobApi.add(jobDetailsForm).then((res) => {
+      //   if (res.data.status === 200) {
+      //     store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+      //     toast.success(res.data.message, {
+      //       position: "top-left",
+      //     });
+      //   } else {
+      //     toast.error(res.data.message, {
+      //       position: "top-left",
+      //     });
+      //   }
+      // })
     });
   }
 

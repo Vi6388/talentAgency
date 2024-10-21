@@ -51,15 +51,14 @@ const jobSchema = new mongoose.Schema({
     }
   },
   labelColor: {
-    type: String
+    type: String,
+    default: "#000"
   },
   startDate: {
-    type: Date,
-    default: new Date(),
+    type: String,
   },
   endDate: {
-    type: Date,
-    default: new Date(),
+    type: String,
   },
   uploadedFiles: {
     contactFile: {
@@ -84,6 +83,10 @@ const jobSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  jobStatus: {
+    type: Number, // 0: new, 1:inProduction, 2:withClientForApproval, 3: changesRequired, 4:approvedToGoLive, 5:toInvoice, 6:invoiced, 7:paid, 8: completed
+    default: 0
+  }
 });
 
 module.exports = mongoose.model("Job", jobSchema);

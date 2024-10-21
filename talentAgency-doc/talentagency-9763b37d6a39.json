@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "talentagency",
+  "private_key_id": "9763b37d6a39ae4a2c5b520aee923fec6f558427",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDb7ETel5rANCGP\niko8JTo6ZRyXsVEAwJDPyycYdoa0mzdoqPVYOKlDBlEy4Z6vcLA1KaFiTrCO5OLs\n3a766T6Pvp5Cx09qmh+IBUHmrNDtw/JANEfFBjrcebln9JR6HjWd/11iuHJ6A2yo\nKytTWKangwLCS8lhxI4LpTyoS6PVXHe4hz6Qb7ROZwNTdWLBIPAdkyLSgyGqvdv6\nEtyKmLYfLJeRDn/0p96oouTyMpsNk11Ro5EscToN7c92TneApTzsBTfDg4Os+TVy\nAcg2vY4QaW+jCeiWShNuz6faeoRdPnaBukBhm/3QhKElTueeO9lVHEo530geJoWx\nRCNR7sS1AgMBAAECggEABwhyxArldDEWmQBgqF9pEctVqJTklMQTvXlvNM08OJQK\n0mouJ8CZdR8Yw1T2HgEvZBEtQTdoAQyDz0m1mf48ixya82LBVj+QiOk2IXo0V5jf\nwJA2HVsPeykvYIowogkg835iTlESDsyDkeCI4FT3m2geqKJY0dYXKXstdJUFVmzb\n4dY405W19J1oq4ENndmgiFHnKScoq9BVKrs1fIAo16rl/JIn1FrR+ZMdD0InD2BD\ngK9mCAPBaO34Hhx9K6NeOjpVAr7HEh2bpKNg1G2AAhUtRukGF9/4EWFVHSRIuaov\n46wlP6XcvBQ2ntKaOL+1jeIcGWnz+pewL00kYbMw3wKBgQD9/rfH8+pNHEtIWTl5\nJNsWaPzFKNMi6EZcfdnlOZVYYP1nPvNAwhxAKuMyEDDh9k4pin42MCi8N/di57r8\nJbsxkctFzYuFG06aNwpIeFBFgrYEfqAt/8M89kiifOESJERb5jMh2elYBYYP/wA2\nMN9YPfttycufAOzfDb6SyK1uhwKBgQDdqLJ0K/U+hY0mYDMaa4bY1iUeFBRMpvFH\n8PMCoVPRuOxGJembMX0lJqB0EvtvKwTDnMXe+d3DuNhj9MJu8RGtWTi3A/CQ36Ky\nPs/TUPFaRmz/W2yEeAXl66SUz2mKQEaaJXKwip2nFSoWjN0HnsIIVi1NR0srUUKD\ncPlWdEHl4wKBgQCHjItJ03skAciPaMaKR0gAsrDLC1l6VJlQPP2vHkb8bm5tziOF\nWNI40GqFSiy8OnVGKBnpE1R59ig5CVA5xm0bLCJeMy6VL5iIJn1/ZW35WqOGzIjx\nY4AvJYRn6ts2klJE9Rouo5urFO+R09WqFfTro9Btq/bV+WlwNGaS8TPVOwKBgQCr\nJHqMufgECwe9rp8mcglO2KEWBTjbKja3bjGjQT6/egFr9A/XlLFkgtt2Y8Wgwt1N\nz3jzvYbdfJYPL0cEc7tLVc01eaQ/p3wuFdNO/HstUZ0M2OEDsswTBwsvHqoFZbVd\nhTZ1WsF45R13BdIO9SQpXahit34xdu9dH1hUyTSsMwKBgQDwtWLGvOjj0rTjHch6\nz47Ql3pw8bEZKSneX1Ib+39lBC/q5+0l0cMnEfp89wizyhFii0j6RiCm3H+6GfVv\nf5vgtsfekg4c9kV7E4l9JwltE1HVz9bdkkEvDUXBrBVKVcRApitTkXMsIDyOaUY1\nvWABUR5H5zVidyBEVRch7/us0w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "talentagencycalendar-key@talentagency.iam.gserviceaccount.com",
+  "client_id": "107938769709857723966",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/talentagencycalendar-key%40talentagency.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

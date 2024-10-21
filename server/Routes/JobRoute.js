@@ -1,8 +1,8 @@
 const fs = require('fs');
 const router = require("express").Router();
 const multer = require('multer');
-const { Storage } = required("@google-cloud/storage");
-const { AddJob, UpdateJob, getJobById, getJobList } = require('../Controller/JobController');
+const { Storage } = require("@google-cloud/storage");
+const { AddJob, UpdateJob, getJobById, getJobList, updateJobStatus } = require('../Controller/JobController');
 
 // Configure multer storage
 const storage = multer.memoryStorage();
@@ -43,5 +43,6 @@ router.route('/add').post(AddJob);
 router.route('/update/:id').post(UpdateJob);
 
 router.get("/:id", getJobById);
+router.route("/updateJobStatus/:id").post(updateJobStatus);
 
 module.exports = router;

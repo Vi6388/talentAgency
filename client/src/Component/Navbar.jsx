@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WorkflowLogo from "../svg/workflow_logo.png";
 import BuildCircle from "../svg/header/build_circle.svg";
 import BuildCircleActive from "../svg/header/build_circle_active.svg";
@@ -10,11 +10,22 @@ import RequestQuote from "../svg/header/request_quote.svg";
 import RequestQuoteActive from "../svg/header/request_quote_active.svg";
 import ViewKanban from "../svg/header/view_kanban.svg";
 import ViewKanbanActive from "../svg/header/view_kanban_active.svg";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from "../svg/cancel.svg";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [loggedUser, setLoggedUser] = useState({});
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?._id) {
+      setLoggedUser(user);
+    } else {
+      navigate("/login");
+    }
+  }, []);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,8 +86,11 @@ const Navbar = () => {
                       block rounded bg-white leading-normal shadow-md transition duration-150 ease-in-out 
                       hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
                       active:bg-neutral-100 active:shadow-lg text-sm">
-                  <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1" src="https://randomuser.me/api/portraits/men/79.jpg" alt="User Avatar" />
-                  Lena
+                  <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1"
+                    src={loggedUser?.avatar ? loggedUser?.avatar :
+                      "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"}
+                    alt="User Avatar" />
+                  {loggedUser?.firstname}
                 </button>
               </li>
               <li className="navbar-list-margin">
