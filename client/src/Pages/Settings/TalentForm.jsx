@@ -115,7 +115,7 @@ const TalentForm = () => {
       handleError("Please upload avatar.");
     }
     const valid = isFormValid(talentForm, requiredFields);
-    if (valid && talentForm.avatar && fileInfo.imageSrc) {
+    if (valid && (talentForm.avatar || fileInfo.imageSrc)) {
       const formData = new FormData();
       formData.append('avatar', talentForm.avatar);
       formData.append('firstname', talentForm.firstname);

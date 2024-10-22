@@ -74,7 +74,7 @@ const UserForm = () => {
     if(!userForm.avatar && !fileInfo.imageSrc) {
       handleError("Please upload avatar.");
     }
-    if (valid && userForm.avatar && fileInfo.imageSrc) {
+    if (valid && (userForm.avatar || fileInfo.imageSrc)) {
       const formData = new FormData();
       formData.append('avatar', userForm.avatar);
       formData.append('firstname', userForm.firstname);
