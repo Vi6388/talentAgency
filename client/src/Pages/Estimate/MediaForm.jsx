@@ -139,11 +139,7 @@ const EstimateMediaForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => (item.type !== "podcast" || item.type !== "radio" || item.type !== "webSeries" || item.type !== "tv"));
-    mediaList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: mediaList });
     if (jobEstimate?.details?._id) {
       navigate("/estimate/edit/" + jobEstimate?.details?._id + "/publish");
     } else {

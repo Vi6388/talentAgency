@@ -9,7 +9,7 @@ import { store } from "../../redux/store";
 import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
-import { dateFormat, jobFormValidateForm } from "../../utils/utils";
+import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobPublishForm = () => {
   const navigate = useNavigate();
@@ -35,8 +35,7 @@ const JobPublishForm = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const existPublishingList = job?.jobSummaryList?.filter(item => item.type === "publishing");
-    setPublishList(existPublishingList);
+    setPublishList(job?.jobSummaryList);
   }, [job]);
 
   const handleChange = (e) => {
@@ -104,7 +103,14 @@ const JobPublishForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       let list = publishList;
-      list.push(publishForm);
+      const data = {
+        ...publishForm,
+        firstDraftDate: dateTimeFormat(publishForm.firstDraftDate),
+        secondDraftDate: dateTimeFormat(publishForm.secondDraftDate),
+        finalDate: dateTimeFormat(publishForm.finalDate),
+        type: "publishing"
+      }
+      list.push(data);
       setPublishList(list);
       setPublishForm({
         jobTitle: "",
@@ -136,11 +142,7 @@ const JobPublishForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "publishing");
-    publishList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: publishList });
     if (job?.details?._id) {
       navigate("/job/edit/" + job?.details?._id + "/travel");
     } else {
@@ -170,6 +172,19 @@ const JobPublishForm = () => {
           });
         }
       });
+    } else {
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
     }
   }
 

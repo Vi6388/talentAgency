@@ -11,7 +11,6 @@ import { JobApi } from "../../apis/job";
 
 const JobInvoiceForm = () => {
   const [invoiceForm, setInvoiceForm] = useState({
-    id: "",
     poNumber: "",
     fee: "",
     gst: false,
@@ -67,7 +66,6 @@ const JobInvoiceForm = () => {
       list.push(invoiceForm);
       setInvoiceList(list);
       setInvoiceForm({
-        id: "",
         poNumber: "",
         fee: "",
         gst: false,
@@ -129,6 +127,19 @@ const JobInvoiceForm = () => {
           });
         }
       });
+    } else {
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
     }
   }
 

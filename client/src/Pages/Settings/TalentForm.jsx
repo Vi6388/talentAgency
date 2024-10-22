@@ -111,8 +111,11 @@ const TalentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const requiredFields = ['firstname', 'surname', 'email'];
+    if (!talentForm.avatar && !fileInfo.imageSrc) {
+      handleError("Please upload avatar.");
+    }
     const valid = isFormValid(talentForm, requiredFields);
-    if (valid) {
+    if (valid && talentForm.avatar && fileInfo.imageSrc) {
       const formData = new FormData();
       formData.append('avatar', talentForm.avatar);
       formData.append('firstname', talentForm.firstname);

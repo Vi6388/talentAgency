@@ -37,7 +37,7 @@ const EstimatePublishForm = () => {
 
   useEffect(() => {
     setPublishList(jobEstimate?.jobSummaryList);
-  }, [jobEstimate]);
+  }, []);
 
   const handleChange = (e) => {
     setPublishForm({
@@ -143,11 +143,7 @@ const EstimatePublishForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => item.type !== "publishing");
-    publishList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: publishList });
     if (jobEstimate?.details?._id) {
       navigate("/estimate/edit/" + jobEstimate?.details?._id + "/travel");
     } else {

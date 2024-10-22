@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import JobBoardData from "../../data/job_board.json";
 import JobCardItem from "../../Component/JobCardItem";
 import { JobApi } from "../../apis/job";
 import { statusList } from "../../utils/utils";
@@ -8,8 +7,6 @@ import { toast, ToastContainer } from "react-toastify";
 
 const JobKanban = () => {
   const [ready, setReady] = useState(false);
-  const [boardData, setBoardData] = useState(JobBoardData);
-
   const [jobList, setJobList] = useState([]);
 
   useEffect(() => {
@@ -93,7 +90,7 @@ const JobKanban = () => {
                         flex flex-col relative overflow-hidden px-5`}
                       >
                         <div className="p-4 flex items-center justify-center">
-                          <span className="font-semibold text-base leading-5 text-kanban">
+                          <span className="font-semibold text-base leading-5 text-kanban text-center">
                             {board.name}
                           </span>
                         </div>

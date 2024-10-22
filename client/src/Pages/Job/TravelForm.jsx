@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { jobFormValidateForm } from "../../utils/utils";
+import { dateFormat, jobFormValidateForm } from "../../utils/utils";
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
@@ -41,6 +41,10 @@ const JobTravelForm = () => {
     departureTime: 'text',
     arrivalTime: 'text'
   });
+
+  useEffect(() => {
+    setTravelList(job?.jobSummaryList);
+  }, [job]);
 
   const handleChange = (e) => {
     setTravelForm({
@@ -94,7 +98,15 @@ const JobTravelForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       let list = travelList;
-      list.push(travelForm);
+      const data = {
+        ...travelForm,
+        departureDate: dateFormat(travelForm.departureDate),
+        departureTime: travelForm.departureTime,
+        arrivalDate: dateFormat(travelForm.arrivalDate),
+        arrivalTime: travelForm.arrivalTime,
+        type: 'travel'
+      }
+      list.push(data);
       setTravelList(list);
       setTravelForm({
         jobTitle: "",
@@ -149,6 +161,19 @@ const JobTravelForm = () => {
           });
         }
       });
+    } else {
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
     }
   }
 

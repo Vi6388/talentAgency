@@ -71,7 +71,10 @@ const UserForm = () => {
     e.preventDefault();
     const requiredFields = ['firstname', 'surname', 'email', 'username', 'password'];
     const valid = isFormValid(userForm, requiredFields);
-    if (valid) {
+    if(!userForm.avatar && !fileInfo.imageSrc) {
+      handleError("Please upload avatar.");
+    }
+    if (valid && userForm.avatar && fileInfo.imageSrc) {
       const formData = new FormData();
       formData.append('avatar', userForm.avatar);
       formData.append('firstname', userForm.firstname);

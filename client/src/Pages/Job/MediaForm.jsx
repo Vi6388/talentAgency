@@ -9,7 +9,7 @@ import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
 import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
-import { dateFormat, jobFormValidateForm } from "../../utils/utils";
+import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobMediaForm = () => {
   const navigate = useNavigate();
@@ -35,8 +35,7 @@ const JobMediaForm = () => {
   })
 
   useEffect(() => {
-    const existMediaList = job?.jobSummaryList?.filter(item => (item.type === "podcast" || item.type === "radio" || item.type === "webSeries" || item.type === "tv"));
-    setMediaList(existMediaList);
+    setMediaList(job?.jobSummaryList);
   }, [job]);
 
   const handleChange = (e) => {
@@ -99,7 +98,12 @@ const JobMediaForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       let list = mediaList;
-      list.push(mediaForm);
+      const data = {
+        ...mediaForm,
+        startDate: dateTimeFormat(mediaForm.startDate),
+        endDate: dateTimeFormat(mediaForm.endDate)
+      }
+      list.push(data);
       setMediaList(list);
       setMediaForm({
         jobTitle: "",
@@ -131,11 +135,7 @@ const JobMediaForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => (item.type === "podcast" || item.type === "radio" || item.type === "webSeries" || item.type === "tv"));
-    mediaList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: mediaList });
     if (job?.details?._id) {
       navigate("/job/edit/" + job?.details?._id + "/travel");
     } else {
@@ -165,6 +165,19 @@ const JobMediaForm = () => {
           });
         }
       });
+    } else {
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
     }
   }
 

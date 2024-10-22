@@ -67,12 +67,12 @@ const Settings = () => {
               </tbody>
             </table>
           </div>
-          <Link to={"/settings/user/add"} className="flex justify-start md:justify-center items-center my-5">
-            <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
-                            block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
+          <div className="w-full my-5">
+            <Link to={"/settings/user/add"} className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-fit md:w-[160px]
+                            flex items-center justify-center rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">New User</button>
-          </Link>
+                            active:bg-[#978172] active:shadow-lg text-sm mx-auto px-4">New User</Link>
+          </div>
         </div>
         <div className="w-full">
           <div className="text-base text-title-2 font-semibold py-3">Talent</div>
@@ -107,12 +107,12 @@ const Settings = () => {
               </tbody>
             </table>
           </div>
-          <Link to={"/settings/talent/add"} className="flex justify-start md:justify-center items-center my-5">
-            <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
-                            block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
+          <div className="w-full my-5">
+            <Link to={"/settings/talent/add"} className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-fit md:w-[160px]
+                            flex justify-center items-center rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">New Talent</button>
-          </Link>
+                            active:bg-[#978172] active:shadow-lg text-sm mx-auto px-4">New Talent</Link>
+          </div>
         </div>
       </div>
 

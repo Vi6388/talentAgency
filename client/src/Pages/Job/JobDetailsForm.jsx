@@ -14,6 +14,7 @@ import { JobApi } from "../../apis/job";
 const JobDetailsForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { jobEstimate } = useSelector((state) => state.job);
   const [jobDetailsForm, setJobDetailsForm] = useState({
     firstname: "",
     surname: "",
@@ -31,7 +32,7 @@ const JobDetailsForm = () => {
     manager: "",
     startDate: "",
     endDate: "",
-    jobDetailsForm: "",
+    labelColor: "",
     supplierRequired: true,
     uploadedFiles: {
       contractFile: "",
@@ -67,32 +68,36 @@ const JobDetailsForm = () => {
         if (res.data.status === 200) {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB, payload: data });
-          console.log(data)
-          setJobDetailsForm({
-            ...data?.details,
-            id: data?.details?._id,
-            firstname: data?.details?.contactDetails?.firstname || "",
-            surname: data?.details?.contactDetails?.surname || "",
-            email: data?.details?.contactDetails?.email || "",
-            position: data?.details?.contactDetails?.position || "",
-            phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
-            companyName: data?.details?.companyDetails?.companyName || "",
-            abn: data?.details?.companyDetails?.abn || "",
-            postalAddress: data?.details?.companyDetails?.postalAddress || "",
-            suburb: data?.details?.companyDetails?.suburb || "",
-            state: data?.details?.companyDetails?.state || "",
-            postcode: data?.details?.companyDetails?.postcode || "",
-            jobName: data?.details?.jobName || "",
-            talentName: data?.details?.talent?.talentName || "",
-            manager: data?.details?.talent?.manager || "",
-            jobDetailsForm: data?.details?.labelColor || "",
-            startDate: data?.details?.startDate || "",
-            endDate: data?.details?.endDate || "",
-          })
+          initialJobDetailsFormData(data);
         }
       });
     }
   }, [id]);
+
+  const initialJobDetailsFormData = (data) => {
+    console.log(data);
+    setJobDetailsForm({
+      ...data?.details,
+      id: data?.details?._id,
+      firstname: data?.details?.contactDetails?.firstname || "",
+      surname: data?.details?.contactDetails?.surname || "",
+      email: data?.details?.contactDetails?.email || "",
+      position: data?.details?.contactDetails?.position || "",
+      phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
+      companyName: data?.details?.companyDetails?.companyName || "",
+      abn: data?.details?.companyDetails?.abn || "",
+      postalAddress: data?.details?.companyDetails?.postalAddress || "",
+      suburb: data?.details?.companyDetails?.suburb || "",
+      state: data?.details?.companyDetails?.state || "",
+      postcode: data?.details?.companyDetails?.postcode || "",
+      jobName: data?.details?.jobName || "",
+      talentName: data?.details?.talent?.talentName || "",
+      manager: data?.details?.talent?.manager || "",
+      labelColor: data?.details?.labelColor || "",
+      startDate: data?.details?.startDate || "",
+      endDate: data?.details?.endDate || "",
+    })
+  }
 
   const handleChange = (e) => {
     setJobDetailsForm({
@@ -211,6 +216,7 @@ const JobDetailsForm = () => {
   const nextFunc = () => {
     const newErrors = jobFormValidateForm(jobDetailsForm);
     setErrors(newErrors);
+    console.log(newErrors)
     if (Object.keys(newErrors).length === 0) {
       store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: jobDetailsForm });
       if (jobDetailsForm?.id) {
@@ -243,7 +249,8 @@ const JobDetailsForm = () => {
     //       }
     //     });
     //   }
-      JobApi.add(jobDetailsForm).then((res) => {
+    if (jobDetailsForm?.details?._id) {
+      JobApi.updateJobById(jobDetailsForm?.details?._id, jobDetailsForm).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
@@ -255,6 +262,25 @@ const JobDetailsForm = () => {
           });
         }
       })
+    } else {
+      const data = {
+        ...jobEstimate,
+        details: jobDetailsForm,
+      }
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          initialJobDetailsFormData(res.data.data);
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
+    }
     // });
   }
 
@@ -276,9 +302,14 @@ const JobDetailsForm = () => {
             }
           });
         }
-        JobApi.updateJobById(jobDetailsForm.id, jobDetailsForm).then((res) => {
+        const data = {
+          ...jobEstimate,
+          details: jobDetailsForm,
+        }
+        JobApi.updateJobById(jobDetailsForm.id, data).then((res) => {
           if (res.data.status === 200) {
             store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+            initialJobDetailsFormData(res.data.data);
             toast.success(res.data.message, {
               position: "top-left",
             });

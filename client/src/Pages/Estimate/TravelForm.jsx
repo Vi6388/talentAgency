@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
+import { dateFormat, jobFormValidateForm } from "../../utils/utils";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
@@ -109,10 +109,10 @@ const EstimateTravelForm = () => {
       let list = travelList;
       const data = {
         ...travelForm,
-        departureDate: dateTimeFormat(travelForm.departureDate),
-        departureTime: dateTimeFormat(travelForm.departureTime),
-        arrivalDate: dateTimeFormat(travelForm.arrivalDate),
-        arrivalTime: dateTimeFormat(travelForm.arrivalTime),
+        departureDate: dateFormat(travelForm.departureDate),
+        departureTime: travelForm.departureTime,
+        arrivalDate: dateFormat(travelForm.arrivalDate),
+        arrivalTime: travelForm.arrivalTime,
         type: 'travel'
       }
       list.push(data);

@@ -13,7 +13,14 @@ export const statusList = [
   { statusIndex: 7, name: "Invoiced" },
   { statusIndex: 8, name: "Paid" },
   { statusIndex: 9, name: "Completed" },
-]
+];
+
+export const estimageStatusList = [
+  { statusIndex: 1, name: "Estimate with Client" },
+  { statusIndex: 2, name: "Estimate to be reviewed" },
+  { statusIndex: 3, name: "Declined Estimate" },
+  { statusIndex: 4, name: "Successful Estimate" },
+];
 
 export const numberFormat = (numStr) => {
   let result = numStr;
@@ -85,7 +92,6 @@ export const dateFormat = (date) => {
 export const dueDateFormat = (date) => {
   if (date !== "Invalid Date") {
     const day = new Date(date).toISOString().split('T')[0];
-    day.replaceAll("-", "/");
-    return day;
+    return day.replaceAll("-", "/");
   }
 }

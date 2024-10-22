@@ -40,8 +40,7 @@ const JobEventForm = () => {
   })
 
   useEffect(() => {
-    const existEventList = job?.jobSummaryList?.filter(item => item.type === "event");
-    setEventList(existEventList);
+    setEventList(job?.jobSummaryList);
   }, [job]);
 
   const handleChange = (e) => {
@@ -83,7 +82,14 @@ const JobEventForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       let list = eventList;
-      list.push(eventForm);
+      const data = {
+        ...eventForm,
+        eventDate: dateFormat(eventForm.eventDate),
+        eventStartTime: eventForm.eventStartTime,
+        eventEndTime: eventForm.eventEndTime,
+        type: "event"
+      }
+      list.push(data);
       setEventList(list);
       setEventForm({
         jobTitle: "",
@@ -114,11 +120,7 @@ const JobEventForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "event");
-    eventList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: eventList });
     if (job?.details?._id) {
       navigate("/job/edit/" + job?.details?._id + "/media");
     } else {
@@ -148,6 +150,19 @@ const JobEventForm = () => {
           });
         }
       });
+    } else {
+      JobApi.add(data).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
     }
   }
 
