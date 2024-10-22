@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const SERVER_URL = process.env.API_BACKEND_URL || "http://localhost:4000";
+const SERVER_URL = process.env.API_BACKEND_URL || "http://203.29.242.96:4000";
 
 const add = (data) => axios.post(`${SERVER_URL}/api/estimate/add`, data);
 

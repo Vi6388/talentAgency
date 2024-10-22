@@ -75,7 +75,6 @@ const JobDetailsForm = () => {
   }, [id]);
 
   const initialJobDetailsFormData = (data) => {
-    console.log(data);
     setJobDetailsForm({
       ...data?.details,
       id: data?.details?._id,
@@ -233,9 +232,8 @@ const JobDetailsForm = () => {
 
   const submitJob = async () => {
     const formData = new FormData();
-    console.log(jobDetailsForm?.uploadedFiles?.contractFile)
     // formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
-    formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
+    // formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
     // formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
     // await JobApi.uploadFiles(formData).then((res) => {
     //   if (res.data.status === 200) {
