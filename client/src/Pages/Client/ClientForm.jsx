@@ -107,7 +107,10 @@ const ClientForm = () => {
     e.preventDefault();
     const requiredFields = ['firstname', 'surname', 'email'];
     const valid = isFormValid(clientForm, requiredFields);
-    if (valid) {
+    if(!clientForm.avatar && !fileInfo.imageSrc) {
+      handleError("Please upload avatar.");
+    }
+    if (valid && clientForm.avatar && fileInfo.imageSrc) {
       const formData = new FormData();
       formData.append('avatar', clientForm.avatar);
       formData.append('firstname', clientForm.firstname);

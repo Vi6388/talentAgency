@@ -2,15 +2,30 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import EstimateBoardData from "../../data/estimate_board.json";
 import EstimateCardItem from "../../Component/EstimateCardItem";
+import { EstimateApi } from "../../apis/EstimateApi";
+import { toast, ToastContainer } from "react-toastify";
+import { estimageStatusList } from "../../utils/utils";
 
 const EstimateKanban = () => {
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState(EstimateBoardData);
+  const [estimateList, setEstimateList] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setReady(true);
     }
+
+    EstimateApi.list().then((res) => {
+      if (res.data.status === 200) {
+        const result = estimageStatusList.map(status => ({
+          name: status.name,
+          items: res.data.data.filter(item => item.jobStatus === status.statusIndex),
+          sort: status.statusIndex
+        })).sort((a, b) => a.sort - b.sort);
+        setEstimateList(result)
+      }
+    })
   }, []);
 
   const onDragEnd = (re) => {
@@ -27,7 +42,18 @@ const EstimateKanban = () => {
       0,
       dragItem
     );
-    setBoardData(newBoardData);
+    const job = estimateList?.filter((item, index) => index === parseInt(re.destination.droppableId))[0]?.items[0] || [];
+    if (job) {
+      const jobStatus = re.destination.droppableId + 1;
+      EstimateApi.updateJobEstimateById(job._id, { jobStatus: jobStatus }).then((res) => {
+        if (res.data.status === 200) {
+          setEstimateList(newBoardData);
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        }
+      })
+    }
   };
 
   const editEstimate = () => {
@@ -36,6 +62,7 @@ const EstimateKanban = () => {
 
   return (
     <div className="p-5 flex flex-col h-full bg-main">
+      <ToastContainer />
       <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-2 sm:grid-cols-5 gap-3">
         <select className="col-span-1 sm:col-span-2 bg-white text-kanban border-none outline-none text-sm rounded-lg w-52 text-input font-bold tracking-wider
                           focus:ring-neutral-500 focus:border-neutral-100 shadow-lg block w-full p-2">
@@ -56,9 +83,9 @@ const EstimateKanban = () => {
       {ready && (
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
-            {boardData.map((board, bIndex) => (
+            {estimateList.map((board, bIndex) => (
               <div key={board.name}>
-                <Droppable droppableId={bIndex.toString()}>
+                <Droppable droppableId={bIndex}>
                   {(provided, snapshot) => (
                     <div {...provided.droppableProps} ref={provided.innerRef} onClick={editEstimate}>
                       <div
@@ -66,7 +93,7 @@ const EstimateKanban = () => {
                         flex flex-col relative overflow-hidden px-5`}
                       >
                         <div className="p-4 flex items-center justify-center">
-                          <span className="font-semibold text-base leading-5 text-kanban">
+                          <span className="font-semibold text-base leading-5 text-kanban text-center">
                             {board.name}
                           </span>
                         </div>
@@ -76,7 +103,7 @@ const EstimateKanban = () => {
                         >
                           {board.items.length > 0 &&
                             board.items.map((item, iIndex) => (
-                              <EstimateCardItem key={item.id} item={item} index={iIndex}></EstimateCardItem>
+                              <EstimateCardItem key={item._id} item={item} index={iIndex}></EstimateCardItem>
                             ))}
                           {provided.placeholder}
                         </div>

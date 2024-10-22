@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
-import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
+import { dateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -85,9 +85,9 @@ const EstimateEventForm = () => {
       let list = eventList;
       const data = {
         ...eventForm,
-        eventDate: dateTimeFormat(eventForm.eventDate),
-        eventStartTime: dateTimeFormat(eventForm.eventStartTime),
-        eventEndTime: dateTimeFormat(eventForm.eventEndTime),
+        eventDate: dateFormat(eventForm.eventDate),
+        eventStartTime: eventForm.eventStartTime,
+        eventEndTime: eventForm.eventEndTime,
         type: "event"
       }
       list.push(data);
@@ -121,11 +121,7 @@ const EstimateEventForm = () => {
   }
 
   const nextFunc = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => item.type !== "event");
-    eventList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
-    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: jobSummaryList });
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: eventList });
     if (jobEstimate?.details?._id) {
       navigate("/estimate/edit/" + jobEstimate?.details?._id + "/media");
     } else {

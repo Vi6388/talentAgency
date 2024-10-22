@@ -42,30 +42,36 @@ const EstimateJobDetailsForm = () => {
         if (res.data.status === 200) {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
-          setJobDetailsForm({
-            ...data?.details,
-            id: data?.details?._id,
-            firstname: data?.details?.contactDetails?.firstname || "",
-            surname: data?.details?.contactDetails?.surname || "",
-            email: data?.details?.contactDetails?.email || "",
-            position: data?.details?.contactDetails?.position || "",
-            phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
-            companyName: data?.details?.companyDetails?.companyName || "",
-            abn: data?.details?.companyDetails?.abn || "",
-            postalAddress: data?.details?.companyDetails?.postalAddress || "",
-            suburb: data?.details?.companyDetails?.suburb || "",
-            state: data?.details?.companyDetails?.state || "",
-            postcode: data?.details?.companyDetails?.postcode || "",
-            jobName: data?.details?.jobName || "",
-            talentName: data?.details?.talent?.talentName || "",
-            manager: data?.details?.talent?.manager || "",
-            startDate: data?.details?.startDate || "",
-            endDate: data?.details?.endDate || "",
-          })
+          initialJobEstimateFormData(data);
         }
       });
+    } else {
+      initialJobEstimateFormData(jobEstimate)
     }
   }, [id]);
+
+  const initialJobEstimateFormData = (data) => {
+    setJobDetailsForm({
+      ...data?.details,
+      id: data?.details?._id,
+      firstname: data?.details?.contactDetails?.firstname || "",
+      surname: data?.details?.contactDetails?.surname || "",
+      email: data?.details?.contactDetails?.email || "",
+      position: data?.details?.contactDetails?.position || "",
+      phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
+      companyName: data?.details?.companyDetails?.companyName || "",
+      abn: data?.details?.companyDetails?.abn || "",
+      postalAddress: data?.details?.companyDetails?.postalAddress || "",
+      suburb: data?.details?.companyDetails?.suburb || "",
+      state: data?.details?.companyDetails?.state || "",
+      postcode: data?.details?.companyDetails?.postcode || "",
+      jobName: data?.details?.jobName || "",
+      talentName: data?.details?.talent?.talentName || "",
+      manager: data?.details?.talent?.manager || "",
+      startDate: data?.details?.startDate || "",
+      endDate: data?.details?.endDate || "",
+    })
+  }
 
   const handleChange = (e) => {
     setJobDetailsForm({
@@ -150,6 +156,7 @@ const EstimateJobDetailsForm = () => {
       EstimateApi.add(data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          initialJobEstimateFormData(res.data.data);
           toast.success(res.data.message, {
             position: "top-left",
           });
@@ -384,7 +391,7 @@ const EstimateJobDetailsForm = () => {
         </div>
       </div>
 
-      <div className={`mt-10 md:mt-52 grid grid-cols-2 sm:grid-cols-3 ${jobDetailsForm?.id ? 'md:grid-cols-4' : 'md:grid-cols-3'} w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-5/12 sm:mx-auto gap-3`}>
+      <div className={`mt-10 md:mt-52 grid grid-cols-2 ${jobDetailsForm?.id ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-5/12 sm:mx-auto gap-3`}>
         <div className="w-full">
           <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
