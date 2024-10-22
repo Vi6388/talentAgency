@@ -5,12 +5,11 @@ const JobFinance = require("../Model/Job.Finance.model");
 const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
-const nodemailer = require('nodemailer');
 const { sendEmail } = require("../util/SendMail");
 
 module.exports.getJobEstimateList = async (req, res, next) => {
   try {
-    const jobList = await JobModel.find();
+    const jobList = await JobModel.find({ estimateStatus: true, isLive: false });
     return res.json({ status: 200, message: "Get Job list", success: true, data: jobList });
   } catch (error) {
     console.error(error);
@@ -45,6 +44,9 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       labelColor: detailData?.labelColor,
       startDate: new Date(detailData?.startDate),
       endDate: new Date(detailData?.endDate),
+      estimateStatus: true,
+      isLive: false,
+      jobStatus: 1
     });
 
     // Create Invoice List
@@ -101,12 +103,12 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       endDate: new Date(newJob.endDate),
       jobDesc: ""
     };
-    await sendEmail({
-      filename: 'UpdateJob.ejs', // Ensure the correct file extension
-      data: emailData,
-      subject: "Update Job Notification",
-      toEmail: newJob?.contactDetails?.email,
-    });
+    // await sendEmail({
+    //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
+    //   data: emailData,
+    //   subject: "Update Job Notification",
+    //   toEmail: newJob?.contactDetails?.email,
+    // });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
     console.error(error);
@@ -268,12 +270,12 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
-      await sendEmail({
-        filename: 'UpdateJob.ejs', // Ensure the correct file extension
-        data: emailData,
-        subject: "Update Job Notification",
-        toEmail: job?.contactDetails?.email,
-      });
+      // await sendEmail({
+      //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      //   data: emailData,
+      //   subject: "Update Job Notification",
+      //   toEmail: existJob?.contactDetails?.email,
+      // });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });

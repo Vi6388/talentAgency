@@ -33,11 +33,10 @@ mongoose
   .catch((err) => console.error(err));
 
 // Middleware
-app.use(cors({
-  origin: ["http://localhost:3000"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-}));
+const corsOpts = {
+  origin: '*'
+}
+app.use(cors(corsOpts));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.static(__dirname)); // Serve static files from the root directory

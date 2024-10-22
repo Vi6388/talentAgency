@@ -12,15 +12,15 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         port: 587,
         requireTLS: true, // Force TLS
         auth: {
-            user: 'honeypot.owner@gmail.com',
-            pass: 'TalentAgency!@#123',
+            user: 'atarimae@atarimae.com',
+            pass: 'AtarimaeAdmin123!@#',
         },
     });
 
     // Send email
     const info = await transporter.sendMail({
-        from: 'honeypot.owner@gmail.com',
-        to: "laurahuillier90@gmail.com",
+        from: 'atarimae.com',
+        to: toEmail,
         subject: subject,
         html: emailContent,
         attachments: [{
