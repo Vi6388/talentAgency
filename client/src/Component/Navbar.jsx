@@ -89,7 +89,7 @@ const Navbar = () => {
                   <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1"
                     src={loggedUser?.avatar ? loggedUser?.avatar :
                       "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"}
-                    alt="User Avatar" />
+                    alt="" />
                   {loggedUser?.firstname}
                 </button>
               </li>
