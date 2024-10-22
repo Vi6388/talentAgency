@@ -3,13 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
-const { Storage } = require("@google-cloud/storage");
-const { google } = require('googleapis');
-const multer = require("multer");
-const path = require("path");
-
 dotenv.config();
 
+const { google } = require('googleapis');
 const authRoute = require("./Routes/AuthRoute");
 const userRoute = require("./Routes/UserRoute");
 const talentRoute = require("./Routes/TalentRoute");
@@ -17,11 +13,12 @@ const clientRoute = require("./Routes/ClientRoute");
 const estimateRoute = require("./Routes/EstimateRoute");
 const jobRoute = require("./Routes/JobRoute");
 
-const key = require("./public/talentagency-9763b37d6a39.json");
-
-const BUCKET_SCOPES = ['https://www.googleapis.com/auth/devstorage.read_write'];
-const GOOGLE_PRIVATE_KEY = key.private_key.replace(/\\n/g, '\n'); // Handle line breaks
-const GOOGLE_CLIENT_EMAIL = key.client_email;
+const oauth2Client = new google.auth.OAuth2
+  (
+    process.env.CALENDAR_CLIENT_ID,
+    process.env.CALENDAR_CLIENT_SECRET,
+    process.env.CALENDAR_REDIRECT_URL
+  );
 
 const app = express();
 const { MONGO_URL, PORT } = process.env;
@@ -53,55 +50,67 @@ app.use("/api/client", clientRoute);
 app.use("/api/estimate", estimateRoute);
 app.use("/api/job", jobRoute);
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-const jwtBucketClient = new google.auth.JWT(
-  GOOGLE_CLIENT_EMAIL,
-  null,
-  GOOGLE_PRIVATE_KEY,
-  BUCKET_SCOPES
+app.get('/auth', (req, res) => {
+  const url = oauth2Client.generateAuthUrl
+    ({
+      access_type: 'offline',
+      scope: process.env.CALENDAR_SCOPES
+    });
+  res.redirect(url);
+}
 );
 
-// Google Cloud Storage Setup
-const storageClient = new Storage({
-  auth: jwtBucketClient, // Use the JWT client for authentication
-  projectId: key.project_id
+app.get("/auth/redirect", async (req, res) => {
+  const { tokens } = await oauth2Client.getToken(req.query.code);
+  oauth2Client.setCredentials(tokens);
+  res.send('Authentication successful! Please return to the console.');
 });
 
-const bucketName = "talent";
+app.get('/create-event', async (req, res) => {
+  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const event = {
+    summary: 'Tech Talk with Jesus',
+    location: 'Google Meet',
 
-app.post("/api/job/uploadFile", upload.single("briefFile"), async (req, res) => {
-  console.log("In Image controller backend");
-  console.log(req.file);
-  try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: "No file uploaded" });
-    }
-    const fileBuffer = req.file.buffer;
-    const originalName = req.file.originalname;
+    description: "Demo event for Jesus's Blog Post.",
+    start: {
+      dateTime: "2024-10-14T19:30:00+05:30"
+    },
+    end: {
+      dateTime: "2024-10-14T20:30:00+05:30"
+    },
+    colorId: 1,
+    conferenceData: {
+      createRequest: {
+        requestId: 1,
+      }
+    },
 
-    const bucket = storageClient.bucket(bucketName);
-    const file = bucket.file(originalName);
+    attendees: [
+      { email: 'honeypot.owner@gmail.com' },
+    ]
 
-    await file.save(fileBuffer, {
-      metadata: { contentType: req.file.mimetype },
-      resumable: false,
-    });
+  };
+  // try {
+  //   const result = await calendar.events.insert({
+  //     calendarId: 'primary',
+  //     auth: oauth2Client,
+  //     conferenceDataVersion: 1,
+  //     sendUpdates: 'all',
+  //     resource: event
+  //   });
 
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${originalName}`;
-    return res.json({ success: true, message: "Success", imageUrl: publicUrl });
-  } catch (err) {
-    console.error("Error uploading to Google Cloud Storage: ", err);
-    return res.status(500).json({ success: false, message: "Internal Server Error", error: err.message });
-  }
-});
-
-app.get('/images/:filename', (req, res) => {
-  const fileName = req.params.filename;
-  const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
-  res.redirect(publicUrl); // Redirect to the public URL for the file
-});
+  //   return res.send({
+  //     status: 200,
+  //     message: 'Event created',
+  //     link: result.data.hangoutLink
+  //   });
+  // } catch (err) {
+  //   console.log(err);
+  //   res.send(err);
+  // }
+}
+);
 
 // Start the server
 app.listen(PORT, () => {
