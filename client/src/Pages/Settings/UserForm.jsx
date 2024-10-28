@@ -207,7 +207,7 @@ const UserForm = () => {
             <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
               htmlFor="profileImage">
               {fileInfo.isPreviewVisible ?
-                <img src={fileInfo.imageSrc} alt="profile image" className="w-full h-full" />
+                <img src={fileInfo.imageSrc} alt="profile" className="w-full h-full" />
                 :
                 <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Profile Image</div>
               }

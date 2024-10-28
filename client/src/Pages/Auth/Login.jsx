@@ -3,7 +3,6 @@ import WorkflowLogo from "../../svg/workflow_logo.png";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../hooks/useAuth";
-import axios from "axios";
 import { api } from "../../apis";
 
 const Login = () => {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { TalentApi } from "../../apis/TalentApi";
 import { toast, ToastContainer } from "react-toastify";
 import { isFormValid } from "../../utils/utils";
 import { ClientApi } from "../../apis/ClientApi";
@@ -250,7 +249,7 @@ const ClientForm = () => {
             <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
               htmlFor="profileImage">
               {fileInfo.isPreviewVisible ?
-                <img src={fileInfo.imageSrc} alt="profile image" className="w-full h-full" />
+                <img src={fileInfo.imageSrc} alt="profile" className="w-full h-full" />
                 :
                 <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Profile Image</div>
               }

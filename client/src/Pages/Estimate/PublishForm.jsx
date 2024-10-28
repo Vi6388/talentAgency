@@ -36,7 +36,7 @@ const EstimatePublishForm = () => {
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    setPublishList(jobEstimate?.jobSummaryList);
+    setPublishList(jobEstimate?.jobSummaryList || []);
   }, []);
 
   const handleChange = (e) => {

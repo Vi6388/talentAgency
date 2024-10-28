@@ -3,7 +3,7 @@ import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { baseUrl, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
@@ -232,58 +232,70 @@ const JobDetailsForm = () => {
 
   const submitJob = async () => {
     const formData = new FormData();
-    // formData.append('contractFile', jobDetailsForm?.uploadedFiles?.contractFile);
-    // formData.append('briefFile', jobDetailsForm?.uploadedFiles?.briefFile);
-    // formData.append('supportingFile', jobDetailsForm?.uploadedFiles?.supportingFile);
-    // await JobApi.uploadFiles(formData).then((res) => {
-    //   if (res.data.status === 200) {
-    //     const data = res.data.data;
-    //     setJobDetailsForm({
-    //       ...jobDetailsForm,
-    //       uploadedFiles: {
-    //         contractFile: data?.contractFile,
-    //         briefFile: data?.briefFile,
-    //         supportingFile: data?.supportingFile,
-    //       }
-    //     });
-    //   }
-    if (jobDetailsForm?.details?._id) {
-      JobApi.updateJobById(jobDetailsForm?.details?._id, jobDetailsForm).then((res) => {
-        if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
-        } else if (res.data.status === 200) {
-          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-          toast.success(res.data.message, {
-            position: "top-left",
-          });
-        } else {
-          toast.error(res.data.message, {
-            position: "top-left",
-          });
-        }
-      })
-    } else {
-      const data = {
-        ...jobEstimate,
-        details: jobDetailsForm,
+    if (jobDetailsForm?.uploadedFiles) {
+      const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+
+      // Check if files are valid before appending
+      if (contractFile instanceof File) {
+        formData.append('contractFile', contractFile);
       }
-      JobApi.add(data).then((res) => {
-        if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
-        } else if (res.data.status === 200) {
-          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-          initialJobDetailsFormData(res.data.data);
-          toast.success(res.data.message, {
-            position: "top-left",
-          });
-        } else {
-          toast.error(res.data.message, {
-            position: "top-left",
-          });
-        }
-      })
+      if (briefFile instanceof File) {
+        formData.append('briefFile', briefFile);
+      }
+      if (supportingFile instanceof File) {
+        formData.append('supportingFile', supportingFile);
+      }
     }
-    // });
+    await JobApi.uploadFiles(formData).then((res) => {
+      if (res.data.status === 200) {
+        const data = res.data.data;
+        console.log(data)
+        setJobDetailsForm({
+          ...jobDetailsForm,
+          uploadedFiles: {
+            contractFile: data?.contractFile,
+            briefFile: data?.briefFile,
+            supportingFile: data?.supportingFile,
+          }
+        });
+      }
+      if (jobDetailsForm?.details?._id) {
+        JobApi.updateJobById(jobDetailsForm?.details?._id, jobDetailsForm).then((res) => {
+          if (res.data.status === 401) {
+            window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+          } else if (res.data.status === 200) {
+            store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+            toast.success(res.data.message, {
+              position: "top-left",
+            });
+          } else {
+            toast.error(res.data.message, {
+              position: "top-left",
+            });
+          }
+        })
+      } else {
+        const data = {
+          ...jobEstimate,
+          details: jobDetailsForm,
+        }
+        JobApi.add(data).then((res) => {
+          if (res.data.status === 401) {
+            window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+          } else if (res.data.status === 200) {
+            store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+            initialJobDetailsFormData(res.data.data);
+            toast.success(res.data.message, {
+              position: "top-left",
+            });
+          } else {
+            toast.error(res.data.message, {
+              position: "top-left",
+            });
+          }
+        })
+      }
+    });
   }
 
   const updateJob = async () => {

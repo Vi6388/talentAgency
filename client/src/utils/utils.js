@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
-export const baseUrl = "localhost:3000/";
-export const uploadUrl = "localhost:3000/uploads/";
+export const baseUrl = "http://82.112.255.74:3000/";
+export const uploadUrl = "http://82.112.255.74:3000/uploads/";
 
 export const statusList = [
   { statusIndex: 1, name: "New Job" },
@@ -36,11 +36,6 @@ export const numberFormat = (numStr) => {
 
   return result;
 }
-
-const handleSuccess = (msg) =>
-  toast.success(msg, {
-    position: "top-left",
-  });
 
 const handleError = (err) =>
   toast.error(err, {

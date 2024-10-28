@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const SERVER_URL = process.env.REACT_APP_API_BACKEND_URL;
+const SERVER_URL = process.env.REACT_APP_API_BACKEND_URL + "/api";
 
 const add = (data) => axios.post(`${SERVER_URL}/job/add`, data);
 
@@ -12,7 +12,11 @@ const updateJobById = (id, data) => axios.post(`${SERVER_URL}/job/update/` + id,
 
 const getJobById = (id) => axios.get(`${SERVER_URL}/job/` + id);
 
-const uploadFiles = (formData) => axios.post(`${SERVER_URL}/job/uploadFile`, formData);
+const uploadFiles = (formData) => axios.post(`${SERVER_URL}/job/uploadFile`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 
 const updateJobStatusById = (id, data) => axios.post(`${SERVER_URL}/job/updateJobStatus/` + id, data);
 
