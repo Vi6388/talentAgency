@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const SERVER_URL = process.env.API_BACKEND_URL || "http://203.29.242.96:4000/api";
+const SERVER_URL = process.env.REACT_APP_API_BACKEND_URL;
 
 const add = (data) => axios.post(`${SERVER_URL}/talent/add`, data);
 

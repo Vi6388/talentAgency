@@ -249,7 +249,9 @@ const JobDetailsForm = () => {
     //   }
     if (jobDetailsForm?.details?._id) {
       JobApi.updateJobById(jobDetailsForm?.details?._id, jobDetailsForm).then((res) => {
-        if (res.data.status === 200) {
+        if (res.data.status === 401) {
+          window.location.href = res.data.redirectUrl;
+        } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
             position: "top-left",
@@ -266,7 +268,9 @@ const JobDetailsForm = () => {
         details: jobDetailsForm,
       }
       JobApi.add(data).then((res) => {
-        if (res.data.status === 200) {
+        if (res.data.status === 401) {
+          window.location.href = res.data.redirectUrl;
+        } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           initialJobDetailsFormData(res.data.data);
           toast.success(res.data.message, {

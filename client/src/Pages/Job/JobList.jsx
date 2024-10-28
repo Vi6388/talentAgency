@@ -1,8 +1,9 @@
-import { useState } from "react";
-import JobListData from "../../data/job_list.json";
+import { useEffect, useState } from "react";
 import CheckIcon from "../../svg/check.svg";
 import CloseIcon from "../../svg/close.svg";
 import { Link } from "react-router-dom";
+import { JobApi } from "../../apis/job";
+import { dueDateFormat } from "../../utils/utils";
 
 const thData = [
   'talent',
@@ -18,7 +19,16 @@ const thData = [
 ];
 
 const JobList = () => {
-  const [list, setList] = useState(JobListData);
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    JobApi.list().then((res) => {
+      if (res.data.status === 200) {
+        setList(res.data.data);
+        console.log(res.data.data);
+      }
+    })
+  }, []);
+
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -57,24 +67,24 @@ const JobList = () => {
                 <tr className="border-table border-b last:border-b-0" key={index}>
                   <td className="p-2">
                     <div className="flex justify-start items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full bg-[${item.color}]`} style={{ backgroundColor: `#${item.color}` }}></div>
-                      <span className="text-input text-sm font-medium">{item.talent}</span>
+                      <div className={`w-2 h-2 rounded-full bg-[${item.color}]`} style={{ backgroundColor: `#${item.labelColor}` }}></div>
+                      <span className="text-input text-sm font-medium">{item.talent?.talentName}</span>
                     </div>
                   </td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.client}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.contact}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.title}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.briefDate}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.dueDate}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.completionDate}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{item.companyDetails?.companyName}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{item.contactDetails?.firstname} {item.contactDetails?.surname}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{item.jobName}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.startDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.startDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.endDate)}</span></td>
                   <td className="p-2">
-                    <img src={item.invoiced ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
+                    <img src={item.jobStatus === 6 ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
                   </td>
                   <td className="p-2">
-                    <img src={item.paid ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
+                    <img src={item.jobStatus === 7 ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
                   </td>
                   <td className="p-2 w-[100px] md:w-[160px]">
-                    <Link to={"/job/edit/1/jobDetails"}>
+                    <Link to={`/job/edit/${item._id}/jobDetails`}>
                       <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
                             hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 

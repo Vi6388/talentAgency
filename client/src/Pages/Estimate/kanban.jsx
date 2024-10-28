@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import EstimateBoardData from "../../data/estimate_board.json";
 import EstimateCardItem from "../../Component/EstimateCardItem";
 import { EstimateApi } from "../../apis/EstimateApi";
 import { toast, ToastContainer } from "react-toastify";
@@ -8,7 +7,6 @@ import { estimageStatusList } from "../../utils/utils";
 
 const EstimateKanban = () => {
   const [ready, setReady] = useState(false);
-  const [boardData, setBoardData] = useState(EstimateBoardData);
   const [estimateList, setEstimateList] = useState([]);
 
   useEffect(() => {
@@ -30,7 +28,7 @@ const EstimateKanban = () => {
 
   const onDragEnd = (re) => {
     if (!re.destination) return;
-    let newBoardData = boardData;
+    let newBoardData = estimateList;
     var dragItem =
       newBoardData[parseInt(re.source.droppableId)].items[re.source.index];
     newBoardData[parseInt(re.source.droppableId)].items.splice(
