@@ -96,19 +96,6 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         }
       })
     }
-
-    const emailData = {
-      jobTitle: newJob?.jobName,
-      startDate: new Date(newJob.startDate),
-      endDate: new Date(newJob.endDate),
-      jobDesc: ""
-    };
-    // await sendEmail({
-    //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
-    //   data: emailData,
-    //   subject: "Update Job Notification",
-    //   toEmail: newJob?.contactDetails?.email,
-    // });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
     console.error(error);
@@ -264,18 +251,6 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         })
       }
 
-      const emailData = {
-        jobTitle: existJob?.jobName,
-        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
-        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
-        jobDesc: ""
-      };
-      // await sendEmail({
-      //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
-      //   data: emailData,
-      //   subject: "Update Job Notification",
-      //   toEmail: existJob?.contactDetails?.email,
-      // });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });

@@ -1,23 +1,14 @@
-const fs = require('fs');
 const router = require("express").Router();
-const multer = require('multer');
-const { Storage } = require("@google-cloud/storage");
 const { AddJob, UpdateJob, getJobById, getJobList, updateJobStatus, uploadFile } = require('../Controller/JobController');
 
-// Configure multer storage
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-const storageClient = new Storage({
-  keyFilename: "/talent",
-  projectId: 'talentAgency'
+const multer = require('multer');
+const upload = multer({
+  limits: { fileSize: 2 * 1024 * 1024 }, // Limit to 2MB
 });
-
-const bucketName = "talent";
 
 router.get("/list", getJobList);
 
-router.route('/uploadFile').post(upload.single('briefFile'), uploadFile);
+router.post('/uploadFile', upload.fields([{ name: 'contractFile' }, { name: 'briefFile' }, { name: 'supportingFile' }]), uploadFile);
 
 router.route('/add').post(AddJob);
 router.route('/update/:id').post(UpdateJob);

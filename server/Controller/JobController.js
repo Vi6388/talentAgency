@@ -7,32 +7,13 @@ const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
 const { sendEmail } = require("../util/SendMail");
 const dotenv = require("dotenv");
-const { Storage } = require("@google-cloud/storage");
 const { google } = require('googleapis');
-const multer = require("multer");
-const processFile = require("../Middlewares/UploadMiddleware");
 const { format } = require("util");
+const { Storage } = require("@google-cloud/storage");
 
 dotenv.config();
 
 const key = require("../public/verdant-oven-438907-b1-6b1cb6f3f747.json");
-
-const BUCKET_SCOPES = ['https://www.googleapis.com/auth/devstorage.read_write'];
-const GOOGLE_PRIVATE_KEY = key.private_key;
-const GOOGLE_CLIENT_EMAIL = key.client_email;
-
-const jwtBucketClient = new google.auth.JWT(
-  GOOGLE_CLIENT_EMAIL,
-  null,
-  GOOGLE_PRIVATE_KEY,
-  BUCKET_SCOPES
-);
-
-// Google Cloud Storage Setup
-const storage = new Storage({
-  key: jwtBucketClient,
-  projectId: key.project_id
-});
 
 const bucketName = "atarimaeagency";
 
@@ -43,59 +24,73 @@ const oauth2Client = new google.auth.OAuth2
     process.env.CALENDAR_REDIRECT_URL
   );
 
+const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+const bucket = storage.bucket("atarimaeagency");
+
 module.exports.uploadFile = async (req, res, next) => {
   try {
-    await processFile(req, res);
+    let filesToUpload = [];
 
-    if (!req.file) {
-      return res.status(400).send({ message: "Please upload a file!" });
+    if (req.files.contractFile?.length > 0) {
+      filesToUpload.push({ key: 'contractFile', name: req.files.contractFile[0]?.originalname })
+    }
+    if (req.files.supportingFile?.length > 0) {
+      filesToUpload.push({ key: 'briefFile', name: req.files.briefFile[0]?.originalname })
+    }
+    if (req.files.supportingFile?.length > 0) {
+      filesToUpload.push({ key: 'supportingFile', name: req.files.supportingFile[0]?.originalname })
     }
 
-    const blob = bucket.file(req.file.originalname);
-    const blobStream = blob.createWriteStream({
-      resumable: false,
-    });
+    const uploadedFiles = [];
 
-    blobStream.on("error", (err) => {
-      res.status(500).send({ message: err.message });
-    });
+    for (const file of filesToUpload) {
+      if (file.name) {
+        const blob = bucket.file(file.name);
+        const blobStream = blob.createWriteStream({ resumable: false });
 
-    blobStream.on("finish", async (data) => {
-      const publicUrl = format(
-        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-      );
-
-      try {
-        await bucket.file(req.file.originalname).makePublic();
-      } catch {
-        return res.status(500).send({
-          message:
-            `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
-          url: publicUrl,
+        blobStream.on("error", (err) => {
+          console.error("Blob stream error:", err);
+          return res.status(500).send({ message: err.message });
         });
-      }
 
-      return res.status(200).send({
-        message: "Uploaded the file successfully: " + req.file.originalname,
-        url: publicUrl,
-      });
+        blobStream.on("finish", async () => {
+          const publicUrl = format(`https://storage.googleapis.com/${bucket.name}/${blob.name}`);
+
+          try {
+            await blob.makePublic();
+            uploadedFiles.push({ name: file.name, url: publicUrl });
+          } catch (err) {
+            console.error("Make public error:", err);
+            uploadedFiles.push({
+              name: file.name,
+              message: `Uploaded successfully, but public access is denied!`,
+              url: publicUrl,
+            });
+          }
+        });
+        blobStream.end(req.files[file.key][0].buffer);
+      }
+    }
+    await Promise.all(uploadedFiles);
+    return res.status(200).send({
+      message: "Files processed successfully.",
+      uploadedFiles,
     });
 
-    blobStream.end(req.file.buffer);
   } catch (err) {
-    console.log(err);
-
-    if (err.code == "LIMIT_FILE_SIZE") {
-      return res.status(500).send({
+    console.error("Upload error:", err);
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).send({
         message: "File size cannot be larger than 2MB!",
       });
     }
-
-    res.status(500).send({
-      message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+    return res.status(500).send({
+      message: `Could not upload the files. ${err.message}`,
     });
   }
-}
+};
+
+
 
 module.exports.getFiles = async (req, res, next) => {
   try {
@@ -121,7 +116,6 @@ module.exports.getJobList = async (req, res, next) => {
 module.exports.AddJob = async (req, res, next) => {
   try {
     const detailData = req.body.details;
-    console.log(detailData)
     // Create Job Model
     const newJob = await JobModel.create({
       contactDetails: {
@@ -184,7 +178,7 @@ module.exports.AddJob = async (req, res, next) => {
         }
       }));
     }
-    await this.createCalendarEvent(req);
+    await this.createCalendarEvent(req, res, next);
 
     const emailData = {
       jobTitle: newJob?.jobName,
@@ -192,12 +186,12 @@ module.exports.AddJob = async (req, res, next) => {
       endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
       jobDesc: ""
     };
-    // await sendEmail({
-    //   filename: 'UpdateJob.ejs',
-    //   data: emailData,
-    //   subject: "Update Job Notification",
-    //   toEmail: newJob?.contactDetails?.email,
-    // });
+    await sendEmail({
+      filename: 'NewJob.ejs',
+      data: emailData,
+      subject: "New Job Notification",
+      toEmail: newJob?.contactDetails?.email,
+    });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
     console.error(error);
@@ -325,7 +319,20 @@ module.exports.UpdateJob = async (req, res, next) => {
           }
         }));
       }
+      await this.createCalendarEvent(req, res, next);
 
+      const emailData = {
+        jobTitle: existJob?.jobName,
+        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
+        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
+        jobDesc: ""
+      };
+      await sendEmail({
+        filename: 'UpdateJob.ejs', // Ensure the correct file extension
+        data: emailData,
+        subject: "Update Job Notification",
+        toEmail: existJob?.contactDetails?.email,
+      });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
@@ -341,6 +348,49 @@ module.exports.updateJobStatus = async (req, res, next) => {
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
       await existJob.updateOne({ jobStatus: req.body.jobStatus });
+
+      const emailData = {
+        jobTitle: existJob?.jobName,
+        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
+        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
+        jobDesc: ""
+      }
+      switch (req.body.jobStatus) {
+        case 4: // Approved
+          await sendEmail({
+            filename: 'ApprovedJob.ejs',
+            data: emailData,
+            subject: "Approved Job Notification",
+            toEmail: existJob?.contactDetails?.email,
+          });
+          break;
+        case 5: // Invoice Request
+          await sendEmail({
+            filename: 'InvoiceRequest.ejs',
+            data: emailData,
+            subject: "Invoice Request Notification",
+            toEmail: existJob?.contactDetails?.email,
+          });
+          break;
+        case 6: // Invoiced
+          await sendEmail({
+            filename: 'JobHasBeenInvoiced.ejs',
+            data: emailData,
+            subject: "Job Has Been Invoiced Notification",
+            toEmail: existJob?.contactDetails?.email,
+          });
+          break;
+        case 7: // Paid
+          await sendEmail({
+            filename: 'JobHasBeenPaid.ejs',
+            data: emailData,
+            subject: "Job Has Been Paid Notification",
+            toEmail: existJob?.contactDetails?.email,
+          });
+        default:
+          break;
+      }
+
       return res.json({ status: 200, success: true, message: "Status updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
@@ -352,42 +402,50 @@ module.exports.updateJobStatus = async (req, res, next) => {
 };
 
 module.exports.createCalendarEvent = async (req, res, next) => {
-  const jobSummaryList = req.body.jobSummaryList;
-  if (jobSummaryList?.length > 0) {
-    await Promise.all(jobSummaryList.map(async summary => {
-      const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-      if (summary.type === "social" || summary.type === "event") {
-        const conceptDueDateObj = new Date(summary.conceptDueDate);
-        const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
-        const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
+  try {
+    const jobSummaryList = req.body.jobSummaryList;
+    if (!oauth2Client.credentials || !oauth2Client.credentials.access_token) {
+      return res.json({ success: false, status: 401, redirectUrl: '/auth' });
+    } else {
+      if (jobSummaryList?.length > 0) {
+        await Promise.all(jobSummaryList.map(async summary => {
+          const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+          if (summary.type === "social" || summary.type === "event") {
+            const conceptDueDateObj = new Date(summary.conceptDueDate);
+            const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
+            const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
 
-        const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
-        const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
-        const event = {
-          summary: summary.jobTitle,
-          location: 'Atarimae',
-          description: summary.deleverables,
-          start: {
-            dateTime: start
-          },
-          end: {
-            dateTime: end
-          },
-          colorId: 1,
-          attendees: [
-            { email: newJob?.contactDetails?.email },
-          ]
+            const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
+            const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
+            const event = {
+              summary: summary.jobTitle,
+              location: 'https://atarimaewf.com',
+              description: summary.deleverables,
+              start: {
+                dateTime: start
+              },
+              end: {
+                dateTime: end
+              },
+              colorId: 1,
+              attendees: [
+                { email: newJob?.contactDetails?.email },
+              ]
 
-        };
-        const result = await calendar.events.insert({
-          calendarId: 'primary',
-          auth: oauth2Client,
-          conferenceDataVersion: 1,
-          sendUpdates: 'all',
-          resource: event
-        });
+            };
+            const result = await calendar.events.insert({
+              calendarId: 'primary',
+              auth: oauth2Client,
+              conferenceDataVersion: 1,
+              sendUpdates: 'all',
+              resource: event
+            });
+          }
+        }));
+        return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
       }
-    }));
-    return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
+    }
+  } catch (err) {
+    return res.json({ success: false, status: 401, redirectUrl: '/auth' });
   }
 }

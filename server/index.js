@@ -39,6 +39,7 @@ const corsOpts = {
 app.use(cors(corsOpts));
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(express.static(__dirname)); // Serve static files from the root directory
 
 // Routes
@@ -64,52 +65,6 @@ app.get("/auth/redirect", async (req, res) => {
   oauth2Client.setCredentials(tokens);
   res.send('Authentication successful! Please return to the console.');
 });
-
-app.get('/create-event', async (req, res) => {
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-  const event = {
-    summary: 'Tech Talk with Jesus',
-    location: 'Google Meet',
-
-    description: "Demo event for Jesus's Blog Post.",
-    start: {
-      dateTime: "2024-10-14T19:30:00+05:30"
-    },
-    end: {
-      dateTime: "2024-10-14T20:30:00+05:30"
-    },
-    colorId: 1,
-    conferenceData: {
-      createRequest: {
-        requestId: 1,
-      }
-    },
-
-    attendees: [
-      { email: 'honeypot.owner@gmail.com' },
-    ]
-
-  };
-  // try {
-  //   const result = await calendar.events.insert({
-  //     calendarId: 'primary',
-  //     auth: oauth2Client,
-  //     conferenceDataVersion: 1,
-  //     sendUpdates: 'all',
-  //     resource: event
-  //   });
-
-  //   return res.send({
-  //     status: 200,
-  //     message: 'Event created',
-  //     link: result.data.hangoutLink
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  //   res.send(err);
-  // }
-}
-);
 
 // Start the server
 app.listen(PORT, () => {
