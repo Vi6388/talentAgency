@@ -4,7 +4,7 @@ import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { baseUrl, jobFormValidateForm } from "../../utils/utils";
+import { baseUrl, dateFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
@@ -93,8 +93,8 @@ const JobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || "",
       manager: data?.details?.talent?.manager || "",
       labelColor: data?.details?.labelColor || "",
-      startDate: data?.details?.startDate || "",
-      endDate: data?.details?.endDate || "",
+      startDate: dueDateFormat(new Date(data?.details?.startDate)) || "",
+      endDate: dueDateFormat(new Date(data?.details?.endDate)) || "",
     })
   }
 

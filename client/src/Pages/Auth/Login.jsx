@@ -39,7 +39,14 @@ const Login = () => {
         if (res.data.status === 200) {
           handleSuccess(res.data.message);
           login(res.data.data);
-          navigate("/");
+          setTimeout(() => {
+            navigate("/");
+            setLoginForm({
+              ...loginForm,
+              email: "",
+              password: "",
+            });
+          }, 2000);
         } else {
           handleError(res.data.message);
         }
@@ -47,11 +54,6 @@ const Login = () => {
     } catch (error) {
       console.log(error);
     }
-    setLoginForm({
-      ...loginForm,
-      email: "",
-      password: "",
-    });
   };
 
   return (

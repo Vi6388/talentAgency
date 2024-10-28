@@ -4,9 +4,11 @@ import EstimateCardItem from "../../Component/EstimateCardItem";
 import { EstimateApi } from "../../apis/EstimateApi";
 import { toast, ToastContainer } from "react-toastify";
 import { estimageStatusList } from "../../utils/utils";
+import { useNavigate } from "react-router-dom";
 
 const EstimateKanban = () => {
   const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
   const [estimateList, setEstimateList] = useState([]);
 
   useEffect(() => {
@@ -54,8 +56,11 @@ const EstimateKanban = () => {
     }
   };
 
-  const editEstimate = () => {
-    console.log("edit")
+  const editEstimate = (board, index) => {
+    const selectedItem = board?.items?.filter((item, i) => i === index)[0];
+    if(selectedItem) {
+      navigate(`/estimate/edit/${selectedItem?._id}/jobDetails`);
+    }
   }
 
   return (
@@ -85,7 +90,7 @@ const EstimateKanban = () => {
               <div key={board.name}>
                 <Droppable droppableId={bIndex}>
                   {(provided, snapshot) => (
-                    <div {...provided.droppableProps} ref={provided.innerRef} onClick={editEstimate}>
+                    <div {...provided.droppableProps} ref={provided.innerRef} onClick={() => editEstimate(board, bIndex)}>
                       <div
                         className={`bg-kanban-item rounded-t-lg shadow-md h-[108vh]
                         flex flex-col relative overflow-hidden px-5`}

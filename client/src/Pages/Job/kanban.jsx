@@ -4,10 +4,12 @@ import JobCardItem from "../../Component/JobCardItem";
 import { JobApi } from "../../apis/job";
 import { statusList } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const JobKanban = () => {
   const [ready, setReady] = useState(false);
   const [jobList, setJobList] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -54,6 +56,13 @@ const JobKanban = () => {
     }
   };
 
+  const editJob = (board, index) => {
+    const selectedItem = board?.items?.filter((item, i) => i === index)[0];
+    if(selectedItem) {
+      navigate(`/job/edit/${selectedItem?._id}/jobDetails`);
+    }
+  }
+
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <ToastContainer />
@@ -84,7 +93,7 @@ const JobKanban = () => {
               <div key={bIndex}>
                 <Droppable droppableId={bIndex}>
                   {(provided, snapshot) => (
-                    <div {...provided.droppableProps} ref={provided.innerRef}>
+                    <div {...provided.droppableProps} ref={provided.innerRef} onClick={() => editJob(board, bIndex)}>
                       <div
                         className={`bg-kanban-item rounded-t-lg shadow-md h-[108vh]
                         flex flex-col relative overflow-hidden px-5`}

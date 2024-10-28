@@ -24,7 +24,6 @@ const JobList = () => {
     JobApi.list().then((res) => {
       if (res.data.status === 200) {
         setList(res.data.data);
-        console.log(res.data.data);
       }
     })
   }, []);

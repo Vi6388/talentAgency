@@ -5,7 +5,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
-import { jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -68,8 +68,8 @@ const EstimateJobDetailsForm = () => {
       jobName: data?.details?.jobName || "",
       talentName: data?.details?.talent?.talentName || "",
       manager: data?.details?.talent?.manager || "",
-      startDate: data?.details?.startDate || "",
-      endDate: data?.details?.endDate || "",
+      startDate: dueDateFormat(new Date(data?.details?.startDate)) || "",
+      endDate: dueDateFormat(new Date(data?.details?.endDate)) || "",
     })
   }
 
