@@ -117,7 +117,7 @@ const JobInvoiceForm = () => {
     if (job?.details?._id) {
       JobApi.updateJobById(job?.details?._id, data).then((res) => {
         if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
+          window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
         } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
@@ -132,7 +132,7 @@ const JobInvoiceForm = () => {
     } else {
       JobApi.add(data).then((res) => {
         if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
+          window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
         } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
@@ -331,7 +331,7 @@ const JobInvoiceForm = () => {
                     <div className="flex justify-between items-center border-b divider-line-color py-1 md:py-3"
                       key={index}>
                       <div className="flex items-center text-summary-item text-[12px] md:text-[15px] font-semibold">
-                        Invoice - {item.createdAt}
+                        Invoice - {item.poNumber}
                       </div>
                       <div className="flex items-center gap-5">
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>

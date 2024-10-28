@@ -321,7 +321,9 @@ const JobDetailsForm = () => {
           details: jobDetailsForm,
         }
         JobApi.updateJobById(jobDetailsForm.id, data).then((res) => {
-          if (res.data.status === 200) {
+          if (res.data.status === 401) {
+            window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+          } else if (res.data.status === 200) {
             store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
             initialJobDetailsFormData(res.data.data);
             toast.success(res.data.message, {

@@ -178,7 +178,7 @@ module.exports.AddJob = async (req, res, next) => {
         }
       }));
     }
-    await this.createCalendarEvent(req, res, next);
+    // await this.createCalendarEvent(req, res, next);
 
     const emailData = {
       jobTitle: newJob?.jobName,
@@ -319,7 +319,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           }
         }));
       }
-      await this.createCalendarEvent(req, res, next);
+      // await this.createCalendarEvent(req, res, next);
 
       const emailData = {
         jobTitle: existJob?.jobName,

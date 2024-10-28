@@ -162,7 +162,7 @@ const JobPublishForm = () => {
     if (job?.details?._id) {
       JobApi.updateJobById(job?.details?._id, data).then((res) => {
         if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
+          window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
         } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
@@ -177,7 +177,7 @@ const JobPublishForm = () => {
     } else {
       JobApi.add(data).then((res) => {
         if (res.data.status === 401) {
-          window.location.href = res.data.redirectUrl;
+          window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
         } else if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
           toast.success(res.data.message, {
