@@ -285,7 +285,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
         uploadedFiles: {
-          contactFile: detailData?.uploadedFiles?.contactFile || existJob?.uploadedFiles?.contactFile,
+          contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contactFile,
           briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
           supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile,
         },
