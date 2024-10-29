@@ -252,6 +252,7 @@ const JobDetailsForm = () => {
         const contractFile = data?.filter((item) => item.key === "contractFile")[0];
         const briefFile = data?.filter((item) => item.key === "briefFile")[0];
         const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+        console.log(data, contractFile)
         setJobDetailsForm({
           ...jobDetailsForm,
           uploadedFiles: {
