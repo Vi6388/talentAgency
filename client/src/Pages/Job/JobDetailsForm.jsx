@@ -95,6 +95,24 @@ const JobDetailsForm = () => {
       labelColor: data?.details?.labelColor || "",
       startDate: data?.details?.startDate || "",
       endDate: data?.details?.endDate || "",
+    });
+
+    setFileInfo({
+      contractFile: {
+        filename: data.details?.uploadedFiles?.contractFile,
+        fileSrc: data.details?.uploadedFiles?.contractFile,
+        isPreviewVisible: true
+      },
+      briefFile: {
+        filename: data.details?.uploadedFiles?.briefFile,
+        fileSrc: data.details?.uploadedFiles?.briefFile,
+        isPreviewVisible: true
+      },
+      supportingFile: {
+        filename: data.details?.uploadedFiles?.supportingFile,
+        fileSrc: data.details?.uploadedFiles?.supportingFile,
+        isPreviewVisible: true
+      }
     })
   }
 
