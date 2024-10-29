@@ -60,7 +60,6 @@ const JobInvoiceForm = () => {
   const addInvoice = () => {
     const newErrors = jobFormValidateForm(invoiceForm);
     setErrors(newErrors);
-    console.log(newErrors)
     if (Object.keys(newErrors).length === 0) {
       let list = invoiceList || [];
       list.push(invoiceForm);

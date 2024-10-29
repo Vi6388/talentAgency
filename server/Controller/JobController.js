@@ -152,7 +152,7 @@ module.exports.AddJob = async (req, res, next) => {
       isLive: true,
       jobStatus: 1,
       uploadedFiles: {
-        contactFile: detailData?.uploadedFiles?.contractFile || "",
+        contractFile: detailData?.uploadedFiles?.contractFile || "",
         briefFile: detailData?.uploadedFiles?.briefFile || "",
         supportingFile: detailData?.uploadedFiles?.supportingFile || "",
       },

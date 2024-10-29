@@ -233,7 +233,6 @@ const JobDetailsForm = () => {
   const nextFunc = () => {
     const newErrors = jobFormValidateForm(jobDetailsForm);
     setErrors(newErrors);
-    console.log(newErrors)
     if (Object.keys(newErrors).length === 0) {
       store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: jobDetailsForm });
       if (jobDetailsForm?.id) {
@@ -270,7 +269,6 @@ const JobDetailsForm = () => {
         const contractFile = data?.filter((item) => item.key === "contractFile")[0];
         const briefFile = data?.filter((item) => item.key === "briefFile")[0];
         const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-        console.log(data, contractFile)
         setJobDetailsForm({
           ...jobDetailsForm,
           uploadedFiles: {
@@ -370,26 +368,61 @@ const JobDetailsForm = () => {
               }
             },
           }
-          console.log(updateData)
           JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
             if (res.data.status === 401) {
-              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-            } else if (res.data.status === 200) {
-              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-              initialJobDetailsFormData(res.data.data);
-              toast.success(res.data.message, {
-                position: "top-left",
-              });
+              const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              openAuthPopup(authUrl, updateData);
             } else {
-              toast.error(res.data.message, {
-                position: "top-left",
-              });
+              if (res.data.status === 200) {
+                store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+                initialJobDetailsFormData(res.data.data);
+                toast.success(res.data.message, {
+                  position: "top-left",
+                });
+              } else {
+                toast.error(res.data.message, {
+                  position: "top-left",
+                });
+              }
             }
           });
         }
       });
     }
   }
+
+  const openAuthPopup = (url, updateData) => {
+    const width = 600;
+    const height = 700;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    const popup = window.open(url, 'OAuth Popup', `width=${width},height=${height},top=${top},left=${left}`);
+
+    // Poll for the popup to close
+    const interval = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(interval);
+        // After the popup is closed, call the backend to create the calendar event
+        retryCreateCalendarEvent(updateData);
+      }
+    }, 1000);
+  };
+
+  const retryCreateCalendarEvent = async (updateData) => {
+    JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
+      if (res.data.status === 200) {
+        store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+        initialJobDetailsFormData(res.data.data);
+        toast.success(res.data.message, {
+          position: "top-left",
+        });
+      } else {
+        toast.error(res.data.message, {
+          position: "top-left",
+        });
+      }
+    });
+  };
 
   const cancelJob = async () => {
     store.dispatch({ type: CLEAN_JOB });
