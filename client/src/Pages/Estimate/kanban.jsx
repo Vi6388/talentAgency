@@ -56,13 +56,6 @@ const EstimateKanban = () => {
     }
   };
 
-  const editEstimate = (board, index) => {
-    const selectedItem = board?.items?.filter((item, i) => i === index)[0];
-    if(selectedItem) {
-      navigate(`/estimate/edit/${selectedItem?._id}/jobDetails`);
-    }
-  }
-
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <ToastContainer />
@@ -90,7 +83,7 @@ const EstimateKanban = () => {
               <div key={board.name}>
                 <Droppable droppableId={bIndex}>
                   {(provided, snapshot) => (
-                    <div {...provided.droppableProps} ref={provided.innerRef} onClick={() => editEstimate(board, bIndex)}>
+                    <div {...provided.droppableProps} ref={provided.innerRef}>
                       <div
                         className={`bg-kanban-item rounded-t-lg shadow-md h-[108vh]
                         flex flex-col relative overflow-hidden px-5`}
