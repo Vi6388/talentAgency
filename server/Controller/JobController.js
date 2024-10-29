@@ -150,7 +150,12 @@ module.exports.AddJob = async (req, res, next) => {
       endDate: new Date(detailData?.endDate),
       estimateStatus: false,
       isLive: true,
-      jobStatus: 1
+      jobStatus: 1,
+      uploadedFiles: {
+        contactFile: detailData?.uploadedFiles?.contractFile || "",
+        briefFile: detailData?.uploadedFiles?.briefFile || "",
+        supportingFile: detailData?.uploadedFiles?.supportingFile || "",
+      },
     });
 
     const jobInvoiceList = req.body.invoiceList;
@@ -280,9 +285,9 @@ module.exports.UpdateJob = async (req, res, next) => {
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
         uploadedFiles: {
-          contactFile: detailData?.contactFile || existJob?.uploadedFiles?.contactFile,
-          briefFile: detailData?.briefFile || existJob?.uploadedFiles?.briefFile,
-          supportingFile: detailData?.supportingFile || existJob?.uploadedFiles?.supportingFile,
+          contactFile: detailData?.uploadedFiles?.contactFile || existJob?.uploadedFiles?.contactFile,
+          briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
+          supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile,
         },
         jobStatus: detailData?.jobStatus
       });
