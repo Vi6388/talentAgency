@@ -78,7 +78,8 @@ module.exports.uploadFile = async (req, res, next) => {
 
     const uploadedFiles = await Promise.all(uploadPromises);
 
-    return res.status(200).send({
+    return res.json({
+      status: 200,
       message: "Files processed successfully.",
       uploadedFiles: uploadedFiles.filter(Boolean), // Filter out undefined values
     });
@@ -86,11 +87,13 @@ module.exports.uploadFile = async (req, res, next) => {
   } catch (err) {
     console.error("Upload error:", err);
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(413).send({
+      return res.json({
+        status: 413,
         message: "File size cannot be larger than 2MB!",
       });
     }
-    return res.status(500).send({
+    return res.json({
+      status: 500,
       message: `Could not upload the files. ${err.message}`,
     });
   }
