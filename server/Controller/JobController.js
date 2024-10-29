@@ -81,7 +81,7 @@ module.exports.uploadFile = async (req, res, next) => {
     return res.json({
       status: 200,
       message: "Files processed successfully.",
-      uploadedFiles: uploadedFiles.filter(Boolean), // Filter out undefined values
+      data: uploadedFiles.filter(Boolean), // Filter out undefined values
     });
 
   } catch (err) {

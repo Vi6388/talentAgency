@@ -93,8 +93,8 @@ const JobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || "",
       manager: data?.details?.talent?.manager || "",
       labelColor: data?.details?.labelColor || "",
-      startDate: dueDateFormat(data?.details?.startDate) || "",
-      endDate: dueDateFormat(data?.details?.endDate) || "",
+      startDate: data?.details?.startDate || "",
+      endDate: data?.details?.endDate || "",
     })
   }
 
@@ -248,7 +248,7 @@ const JobDetailsForm = () => {
     }
     await JobApi.uploadFiles(formData).then((res) => {
       if (res.data.status === 200) {
-        const data = res.data.data?.uploadedFiles;
+        const data = res.data.data;
         const contractFile = data?.filter((item) => item.key === "contractFile")[0];
         const briefFile = data?.filter((item) => item.key === "briefFile")[0];
         const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
@@ -328,7 +328,7 @@ const JobDetailsForm = () => {
       }
       await JobApi.uploadFiles(formData).then((res) => {
         if (res.data.status === 200) {
-          const data = res.data.data?.uploadedFiles;
+          const data = res.data.data;
           const contractFile = data?.filter((item) => item.key === "contractFile")[0];
           const briefFile = data?.filter((item) => item.key === "briefFile")[0];
           const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
