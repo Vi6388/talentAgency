@@ -68,8 +68,8 @@ const EstimateJobDetailsForm = () => {
       jobName: data?.details?.jobName || "",
       talentName: data?.details?.talent?.talentName || "",
       manager: data?.details?.talent?.manager || "",
-      startDate: dueDateFormat(data?.details?.startDate) || "",
-      endDate: dueDateFormat(data?.details?.endDate) || "",
+      startDate: data?.details?.startDate || "",
+      endDate: data?.details?.endDate || "",
     })
   }
 
