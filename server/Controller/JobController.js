@@ -32,25 +32,27 @@ module.exports.uploadFile = async (req, res, next) => {
     let filesToUpload = [];
 
     if (req.files.contractFile?.length > 0) {
-      filesToUpload.push({ key: 'contractFile', name: req.files.contractFile[0]?.originalname })
+      filesToUpload.push({ key: 'contractFile', name: req.files.contractFile[0]?.originalname });
+    }
+    if (req.files.briefFile?.length > 0) {
+      filesToUpload.push({ key: 'briefFile', name: req.files.briefFile[0]?.originalname });
     }
     if (req.files.supportingFile?.length > 0) {
-      filesToUpload.push({ key: 'briefFile', name: req.files.briefFile[0]?.originalname })
-    }
-    if (req.files.supportingFile?.length > 0) {
-      filesToUpload.push({ key: 'supportingFile', name: req.files.supportingFile[0]?.originalname })
+      filesToUpload.push({ key: 'supportingFile', name: req.files.supportingFile[0]?.originalname });
     }
 
-    const uploadedFiles = [];
+    const uploadPromises = filesToUpload.map(file => {
+      return new Promise((resolve, reject) => {
+        if (!file.name) {
+          return resolve();
+        }
 
-    for (const file of filesToUpload) {
-      if (file.name) {
         const blob = bucket.file(file.name);
         const blobStream = blob.createWriteStream({ resumable: false });
 
         blobStream.on("error", (err) => {
           console.error("Blob stream error:", err);
-          return res.status(500).send({ message: err.message });
+          reject({ name: file.name, message: err.message });
         });
 
         blobStream.on("finish", async () => {
@@ -58,23 +60,26 @@ module.exports.uploadFile = async (req, res, next) => {
 
           try {
             await blob.makePublic();
-            uploadedFiles.push({ name: file.name, url: publicUrl });
+            resolve({ name: file.name, url: publicUrl });
           } catch (err) {
             console.error("Make public error:", err);
-            uploadedFiles.push({
+            resolve({
               name: file.name,
               message: `Uploaded successfully, but public access is denied!`,
               url: publicUrl,
             });
           }
         });
+
         blobStream.end(req.files[file.key][0].buffer);
-      }
-    }
-    await Promise.all(uploadedFiles);
+      });
+    });
+
+    const uploadedFiles = await Promise.all(uploadPromises);
+
     return res.status(200).send({
       message: "Files processed successfully.",
-      uploadedFiles,
+      uploadedFiles: uploadedFiles.filter(Boolean), // Filter out undefined values
     });
 
   } catch (err) {
@@ -89,8 +94,6 @@ module.exports.uploadFile = async (req, res, next) => {
     });
   }
 };
-
-
 
 module.exports.getFiles = async (req, res, next) => {
   try {

@@ -78,14 +78,14 @@ export const dateTimeFormat = (date) => {
 }
 
 export const dateFormat = (date) => {
-  if (date !== "Invalid Date") {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date") {
     const day = new Date(date).toISOString().split('T')[0];
     return day;
   }
 }
 
 export const dueDateFormat = (date) => {
-  if (date !== "Invalid Date") {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date") {
     const day = new Date(date).toISOString().split('T')[0];
     return day.replaceAll("-", "/");
   }
