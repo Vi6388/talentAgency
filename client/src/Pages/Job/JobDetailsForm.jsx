@@ -99,19 +99,19 @@ const JobDetailsForm = () => {
 
     setFileInfo({
       contractFile: {
-        filename: data.details?.uploadedFiles?.contractFile,
-        fileSrc: data.details?.uploadedFiles?.contractFile,
-        isPreviewVisible: true
+        filename: data.details?.uploadedFiles?.contractFile || "",
+        fileSrc: data.details?.uploadedFiles?.contractFile || "",
+        isPreviewVisible: data.details?.uploadedFiles?.contractFile ? true : false
       },
       briefFile: {
-        filename: data.details?.uploadedFiles?.briefFile,
-        fileSrc: data.details?.uploadedFiles?.briefFile,
-        isPreviewVisible: true
+        filename: data.details?.uploadedFiles?.briefFile || "",
+        fileSrc: data.details?.uploadedFiles?.briefFile || "",
+        isPreviewVisible: data.details?.uploadedFiles?.briefFile ? true : false
       },
       supportingFile: {
-        filename: data.details?.uploadedFiles?.supportingFile,
-        fileSrc: data.details?.uploadedFiles?.supportingFile,
-        isPreviewVisible: true
+        filename: data.details?.uploadedFiles?.supportingFile || "",
+        fileSrc: data.details?.uploadedFiles?.supportingFile || "",
+        isPreviewVisible: data.details?.uploadedFiles?.supportingFile ? true : false
       }
     })
   }
