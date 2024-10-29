@@ -261,8 +261,19 @@ const JobDetailsForm = () => {
           }
         });
 
+        const updateData = {
+          ...jobEstimate,
+          details: {
+            ...jobDetailsForm,
+            uploadedFiles: {
+              contractFile: contractFile ? contractFile?.url : "",
+              briefFile: briefFile ? briefFile?.url : "",
+              supportingFile: supportingFile ? supportingFile?.url : "",
+            }
+          },
+        }
         if (jobDetailsForm?.details?._id) {
-          JobApi.updateJobById(jobDetailsForm?.details?._id, jobDetailsForm).then((res) => {
+          JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
             if (res.data.status === 401) {
               window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
             } else if (res.data.status === 200) {
@@ -277,11 +288,7 @@ const JobDetailsForm = () => {
             }
           })
         } else {
-          const data = {
-            ...jobEstimate,
-            details: jobDetailsForm,
-          }
-          JobApi.add(data).then((res) => {
+          JobApi.add(updateData).then((res) => {
             if (res.data.status === 401) {
               window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
             } else if (res.data.status === 200) {
@@ -335,7 +342,14 @@ const JobDetailsForm = () => {
 
           const updateDate = {
             ...jobEstimate,
-            details: jobDetailsForm,
+            details: {
+              ...jobDetailsForm,
+              uploadedFiles: {
+                contractFile: contractFile ? contractFile?.url : "",
+                briefFile: briefFile ? briefFile?.url : "",
+                supportingFile: supportingFile ? supportingFile?.url : "",
+              }
+            },
           }
           JobApi.updateJobById(jobDetailsForm.id, updateDate).then((res) => {
             if (res.data.status === 401) {
