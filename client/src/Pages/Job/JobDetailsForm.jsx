@@ -256,9 +256,9 @@ const JobDetailsForm = () => {
         setJobDetailsForm({
           ...jobDetailsForm,
           uploadedFiles: {
-            contractFile: contractFile ? contractFile?.url : "",
-            briefFile: briefFile ? briefFile?.url : "",
-            supportingFile: supportingFile ? supportingFile?.url : "",
+            contractFile: contractFile?.url || "",
+            briefFile: briefFile?.url || "",
+            supportingFile: supportingFile?.url || "",
           }
         });
 
@@ -267,9 +267,9 @@ const JobDetailsForm = () => {
           details: {
             ...jobDetailsForm,
             uploadedFiles: {
-              contractFile: contractFile ? contractFile?.url : "",
-              briefFile: briefFile ? briefFile?.url : "",
-              supportingFile: supportingFile ? supportingFile?.url : "",
+              contractFile: contractFile?.url || "",
+              briefFile: briefFile?.url || "",
+              supportingFile: supportingFile?.url || "",
             }
           },
         }
@@ -335,9 +335,9 @@ const JobDetailsForm = () => {
           setJobDetailsForm({
             ...jobDetailsForm,
             uploadedFiles: {
-              contractFile: contractFile ? contractFile?.url : "",
-              briefFile: briefFile ? briefFile?.url : "",
-              supportingFile: supportingFile ? supportingFile?.url : "",
+              contractFile: contractFile?.url || "",
+              briefFile: briefFile?.url || "",
+              supportingFile: supportingFile?.url || "",
             }
           });
 
@@ -346,9 +346,9 @@ const JobDetailsForm = () => {
             details: {
               ...jobDetailsForm,
               uploadedFiles: {
-                contractFile: contractFile,
-                briefFile: briefFile,
-                supportingFile: supportingFile,
+                contractFile: contractFile?.url || "",
+                briefFile: briefFile?.url || "",
+                supportingFile: supportingFile?.url || "",
               }
             },
           }
