@@ -341,18 +341,19 @@ const JobDetailsForm = () => {
             }
           });
 
-          const updateDate = {
+          const updateData = {
             ...jobEstimate,
             details: {
               ...jobDetailsForm,
               uploadedFiles: {
-                contractFile: contractFile ? contractFile?.url : "",
-                briefFile: briefFile ? briefFile?.url : "",
-                supportingFile: supportingFile ? supportingFile?.url : "",
+                contractFile: contractFile,
+                briefFile: briefFile,
+                supportingFile: supportingFile,
               }
             },
           }
-          JobApi.updateJobById(jobDetailsForm.id, updateDate).then((res) => {
+          console.log(updateData)
+          JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
             if (res.data.status === 401) {
               window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
             } else if (res.data.status === 200) {
