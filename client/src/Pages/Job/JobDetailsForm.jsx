@@ -248,14 +248,16 @@ const JobDetailsForm = () => {
     }
     await JobApi.uploadFiles(formData).then((res) => {
       if (res.data.status === 200) {
-        const data = res.data.data;
-        console.log(data)
+        const data = res.data.data?.uploadedFiles;
+        const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+        const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+        const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
         setJobDetailsForm({
           ...jobDetailsForm,
           uploadedFiles: {
-            contractFile: data?.contractFile,
-            briefFile: data?.briefFile,
-            supportingFile: data?.supportingFile,
+            contractFile: contractFile ? contractFile?.url : "",
+            briefFile: briefFile ? briefFile?.url : "",
+            supportingFile: supportingFile ? supportingFile?.url : "",
           }
         });
       }

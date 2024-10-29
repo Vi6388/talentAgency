@@ -60,13 +60,14 @@ module.exports.uploadFile = async (req, res, next) => {
 
           try {
             await blob.makePublic();
-            resolve({ name: file.name, url: publicUrl });
+            resolve({ name: file.name, url: publicUrl, key: file.key });
           } catch (err) {
             console.error("Make public error:", err);
             resolve({
               name: file.name,
               message: `Uploaded successfully, but public access is denied!`,
               url: publicUrl,
+              key: file.key
             });
           }
         });
