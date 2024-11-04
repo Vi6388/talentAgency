@@ -3,12 +3,12 @@ import { Draggable } from "react-beautiful-dnd";
 import { dueDateFormat } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 
-function JobCardItem({ item, index }) {
+function JobCardItem({ item, index, talent }) {
   const navigate = useNavigate();
-
   const editJob = (id) => {
     navigate(`/job/edit/${id}/jobDetails`);
   }
+  
   return (
     <Draggable index={index} draggableId={item._id}>
       {(provided) => (
@@ -35,7 +35,7 @@ function JobCardItem({ item, index }) {
             </div>
             <div className="flex flex-row items-center w-full">
               <div className="mr-2 w-14">
-                <img src={item.avatar ? item.avatar :
+                <img src={talent?.avatar ? talent?.avatar :
                   "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"
                 } alt={item.contactDetails?.firstname} className="w-7 h-7 rounded-full" />
               </div>

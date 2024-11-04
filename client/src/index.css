@@ -19,7 +19,7 @@
 }
 
 .active {
-  @apply bg-purple-100 text-[#0D062D] rounded-md	font-semibold;
+  @apply bg-purple-100 text-[#0D062D] rounded-md font-semibold;
 }
 
 /* @layer base {
@@ -144,7 +144,10 @@
 }
 
 .text-summary-item {
+  white-space: nowrap;
   color: #31363c;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .text-th {
@@ -179,7 +182,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
   opacity: 0;
   position: absolute;
   width: 10%;
-  left:35%;
+  left: 35%;
 }
 
 .divider-line-color {

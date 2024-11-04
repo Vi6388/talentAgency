@@ -4,10 +4,12 @@ import JobCardItem from "../../Component/JobCardItem";
 import { JobApi } from "../../apis/job";
 import { statusList } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
+import { TalentApi } from "../../apis/TalentApi";
 
 const JobKanban = () => {
   const [ready, setReady] = useState(false);
   const [jobList, setJobList] = useState([]);
+  const [talentList, setTalentList] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -22,6 +24,12 @@ const JobKanban = () => {
           sort: status.statusIndex
         })).sort((a, b) => a.sort - b.sort);
         setJobList(result)
+      }
+    });
+
+    TalentApi.getTalentList().then((res) => {
+      if(res.data.status === 200) {
+        setTalentList(res.data.data);
       }
     })
   }, []);
@@ -99,7 +107,7 @@ const JobKanban = () => {
                         >
                           {board.items.length > 0 &&
                             board.items.map((item, iIndex) => (
-                              <JobCardItem key={item._id} item={item} index={iIndex}></JobCardItem>
+                              <JobCardItem key={item._id} item={item} index={iIndex} talent={talentList.filter((talent) => talent.email === item.talent?.email)[0]}></JobCardItem>
                             ))}
                           {provided.placeholder}
                         </div>

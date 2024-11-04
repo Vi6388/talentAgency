@@ -3,7 +3,7 @@ import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { baseUrl, dateFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
@@ -75,6 +75,18 @@ const JobDetailsForm = () => {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB, payload: data });
           initialJobDetailsFormData(data);
+          const uploadedFiles = data?.details?.uploadedFiles;
+          let list = [];
+          if (uploadedFiles?.contractFile) {
+            list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
+          }
+          if (uploadedFiles?.briefFile) {
+            list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
+          }
+          if (uploadedFiles?.supportingFile) {
+            list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
+          }
+          setUploadedList(list);
         }
       });
     }
@@ -232,17 +244,13 @@ const JobDetailsForm = () => {
       }
     });
     let list = uploadedList || [];
-    let uploadFile = uploadedList?.filter((item) => item?.type === e.target.name)[0];
-    if (uploadFile === undefined) {
-      uploadFile = {
-        filename: file?.name || "",
-        path: baseUrl + "uploads/job/" + file?.name || "",
-        type: e.target.name || ""
-      };
-      list.push(uploadFile);
-    } else {
-      list = uploadedList?.filter((item) => item.type !== e.target.name);
-    }
+    list = uploadedList?.filter((item) => item.type !== e.target.name);
+    let uploadFile = {
+      filename: file?.name || "",
+      path: file?.name || "",
+      type: e.target.name || ""
+    };
+    list.push(uploadFile);
     setUploadedList(list);
 
     if (file) {
@@ -709,12 +717,15 @@ const JobDetailsForm = () => {
                   return (
                     <div className="flex justify-between items-center border-b divider-line-color last:border-none py-2 overflow-hidden"
                       key={index}>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 overflow-hidden w-full">
                         <img src={DescriptionIcon} alt="file" className="w-4 h-4" />
-                        <span className="text-summary-item text-sm">{item.filename}</span>
+                        <span className="text-summary-item text-sm">({item.type}) {item.filename}</span>
                       </div>
-                      <div className="flex items-center w-20 md:w-fit px-2">
-                        <span className="text-summary-item text-sm">{item.path}</span>
+                      <div className="flex items-center w-20 md:w-fit px-2 overflow-hidden w-full">
+                        {item?.path?.includes("storage.googleapis.com") ?
+                          <Link className="text-summary-item text-sm hover:underline" to={item.path} target="_blank">{item.path}</Link> :
+                          <div className="text-summary-item text-sm cursor-pointer">{item.path}</div>
+                        }
                       </div>
                     </div>
                   )
@@ -732,36 +743,24 @@ const JobDetailsForm = () => {
                 <div className="flex justify-center items-center">
                   <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="contractFile">
-                    {fileInfo?.contractFile?.isPreviewVisible ?
-                      <img src={fileInfo?.contractFile?.fileSrc} alt="contract file" className="w-full h-full" />
-                      :
-                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Contract</div>
-                    }
+                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Contract</div>
                   </label>
-                  <input type="file" id="contractFile" name="contractFile" onChange={handleFileChange} hidden accept="image/*" />
+                  <input type="file" id="contractFile" name="contractFile" onChange={handleFileChange} hidden accept="*" />
                 </div>
                 <div className="flex justify-center items-center">
                   <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="briefFile">
-                    {fileInfo?.briefFile?.isPreviewVisible ?
-                      <img src={fileInfo?.briefFile?.fileSrc} alt="brief file" className="w-full h-full" />
-                      :
-                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
-                    }
+                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
                   </label>
-                  <input type="file" id="briefFile" name="briefFile" onChange={handleFileChange} hidden accept="image/*" />
+                  <input type="file" id="briefFile" name="briefFile" onChange={handleFileChange} hidden accept="*" />
                 </div>
 
                 <div className="flex justify-center items-center">
                   <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="supportingFile">
-                    {fileInfo?.supportingFile?.isPreviewVisible ?
-                      <img src={fileInfo?.supportingFile?.fileSrc} alt="brief file" className="w-full h-full" />
-                      :
-                      <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
-                    }
+                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
                   </label>
-                  <input type="file" id="supportingFile" name="supportingFile" onChange={handleFileChange} hidden accept="image/*" />
+                  <input type="file" id="supportingFile" name="supportingFile" onChange={handleFileChange} hidden accept="*" />
                 </div>
               </div>
             </div>
