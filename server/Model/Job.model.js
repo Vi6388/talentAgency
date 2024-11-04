@@ -64,7 +64,7 @@ const jobSchema = new mongoose.Schema({
     type: String,
   },
   uploadedFiles: {
-    contactFile: {
+    contractFile: {
       type: String
     },
     briefFile: {

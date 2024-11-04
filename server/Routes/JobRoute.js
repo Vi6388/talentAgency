@@ -3,7 +3,7 @@ const { AddJob, UpdateJob, getJobById, getJobList, updateJobStatus, uploadFile }
 
 const multer = require('multer');
 const upload = multer({
-  limits: { fileSize: 2 * 1024 * 1024 }, // Limit to 2MB
+  limits: { fileSize: 100 * 1024 * 1024 }, // Limit to 100MB
 });
 
 router.get("/list", getJobList);

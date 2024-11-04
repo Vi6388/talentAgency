@@ -41,39 +41,18 @@ module.exports.uploadFile = async (req, res, next) => {
     const [talentNameFiles] = await bucket.getFiles({ prefix: talentFolderPrefix });
     if (talentNameFiles.length === 0) {
       console.log(`Folder '${talentName}' does not exist. Creating it...`);
-      await bucket.file(`${talentFolderPrefix}placeholder.txt`).save('This is a placeholder file to create the folder.');
     }
 
     // Check if the "NewJobs" folder exists
     const [newJobsFiles] = await bucket.getFiles({ prefix: newJobsFolderPath });
     if (newJobsFiles.length === 0) {
       console.log(`Folder '${newJobsFolder}' does not exist. Creating it...`);
-      await bucket.file(`${newJobsFolderPath}placeholder.txt`).save('This is a placeholder file to create the folder.');
     }
 
     // Check if the "NewJob" folder exists
     const [newJobFiles] = await bucket.getFiles({ prefix: newJobFolderPath });
     if (newJobFiles.length === 0) {
       console.log(`Folder '${newJobFolder}' does not exist. Creating it...`);
-      await bucket.file(`${newJobFolderPath}placeholder.txt`).save('This is a placeholder file to create the folder.');
-    }
-
-    // Create subfolders if they do not exist
-    const folders = [
-      { path: `${newJobFolderPath}/Contract`, name: 'Contract' },
-      { path: `${newJobFolderPath}/Brief`, name: 'Brief' },
-      { path: `${newJobFolderPath}/Supportingfiles`, name: 'Supportingfiles' },
-      { path: `${newJobFolderPath}/Invoice`, name: 'Invoice' },
-      { path: `${newJobFolderPath}/Content`, name: 'Content' },
-      { path: `${newJobFolderPath}/Analytics`, name: 'Analytics' },      
-    ];
-
-    for (const { path, name } of folders) {
-      const [folderFiles] = await bucket.getFiles({ prefix: path });
-      if (folderFiles.length === 0) {
-        console.log(`Folder '${name}' does not exist. Creating it...`);
-        await bucket.file(`${path}placeholder.txt`).save('This is a placeholder file to create the folder.');
-      }
     }
 
     let filesToUpload = [];
@@ -335,7 +314,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),
         uploadedFiles: {
-          contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contactFile,
+          contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile,
           briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
           supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile,
         },
@@ -451,6 +430,8 @@ module.exports.updateJobStatus = async (req, res, next) => {
             subject: "Job Has Been Paid Notification",
             toEmail: toEmail,
           });
+        case 8: // Completed
+          await this.moveToCompletedFolde();
         default:
           break;
       }
@@ -462,6 +443,56 @@ module.exports.updateJobStatus = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     next(err);
+  }
+};
+
+module.exports.moveToCompletedFolder = async (req, res) => {
+  try {
+    const existJob = await JobModel.findById(req.params.id);
+    if (existJob) {
+      const talentName = existJob?.talent?.talentName; // Get talent name from request body
+      const sourceFolder = `${talentName}/NewJobs/NewJob/`;
+      const destinationFolder = `${talentName}/CompletedJobs/CompletedJob`;
+      const [files] = await bucket.getFiles({ prefix: sourceFolder }); // List files in the source folder
+      if (files.length === 0) {
+        return res.json({
+          status: 404,
+          message: "No files found in the folder.",
+        });
+      }
+      const movePromises = files.map(async (file) => { // Move each file
+        const newFileName = file.name.replace(sourceFolder, destinationFolder);
+        const newFile = bucket.file(newFileName);
+        await file.copy(newFile);  // Copy the file to the new location
+        await file.delete(); // Delete the original file
+        return {
+          oldFile: file.name,
+          newFile: newFileName,
+        };
+      });
+      const movedFiles = await Promise.all(movePromises);
+
+      const uploadFiles = existJob?.uploadedFiles;
+      const completedUploadFiles = {
+        contractFile: uploadFiles?.contractFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || "",
+        briefFile: uploadFiles?.briefFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || "",
+        supportingFile: uploadFiles?.supportingFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || ""
+      }
+      await existJob.updateOne({
+        uploadedFiles: completedUploadFiles
+      });
+      return res.json({
+        status: 200,
+        message: "Files moved successfully.",
+        data: movedFiles,
+      });
+    }
+  } catch (err) {
+    console.error("Move error:", err);
+    return res.json({
+      status: 500,
+      message: `Could not move the files. ${err.message}`,
+    });
   }
 };
 
