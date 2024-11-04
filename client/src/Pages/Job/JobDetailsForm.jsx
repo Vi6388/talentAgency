@@ -309,6 +309,7 @@ const JobDetailsForm = () => {
     const newErrors = jobFormValidateForm(jobDetailsForm);
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
+      formData.append('talentName', jobDetailsForm?.talentName);
       await JobApi.uploadFiles(formData).then((res) => {
         if (res.data.status === 200) {
           const data = res.data.data;
@@ -392,6 +393,7 @@ const JobDetailsForm = () => {
       const newErrors = jobFormValidateForm(jobDetailsForm);
       setErrors(newErrors);
       if (Object.keys(newErrors).length === 0) {
+        formData.append('talentName', jobDetailsForm?.talentName);
         await JobApi.uploadFiles(formData).then((res) => {
           if (res.data.status === 200) {
             const data = res.data.data;

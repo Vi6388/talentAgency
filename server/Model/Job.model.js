@@ -46,6 +46,9 @@ const jobSchema = new mongoose.Schema({
     talentName: {
       type: String
     },
+    email: {
+      type: String
+    },
     manager: {
       type: String
     }

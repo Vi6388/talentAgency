@@ -25,20 +25,67 @@ const oauth2Client = new google.auth.OAuth2
   );
 
 const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+
 const bucket = storage.bucket("atarimaeagency");
 
 module.exports.uploadFile = async (req, res, next) => {
   try {
+    const talentName = req.body.talentName; // Replace with dynamic talent name if needed
+    const newJobsFolder = 'NewJobs';
+    const newJobFolder = 'NewJob';
+    const talentFolderPrefix = `${talentName}/`;
+    const newJobsFolderPath = `${talentFolderPrefix}${newJobsFolder}/`;
+    const newJobFolderPath = `${newJobsFolderPath}${newJobFolder}`;
+
+    // Check if the req.body.talentName folder exists
+    const [talentNameFiles] = await bucket.getFiles({ prefix: talentFolderPrefix });
+    if (talentNameFiles.length === 0) {
+      console.log(`Folder '${talentName}' does not exist. Creating it...`);
+      await bucket.file(`${talentFolderPrefix}placeholder.txt`).save('This is a placeholder file to create the folder.');
+    }
+
+    // Check if the "NewJobs" folder exists
+    const [newJobsFiles] = await bucket.getFiles({ prefix: newJobsFolderPath });
+    if (newJobsFiles.length === 0) {
+      console.log(`Folder '${newJobsFolder}' does not exist. Creating it...`);
+      await bucket.file(`${newJobsFolderPath}placeholder.txt`).save('This is a placeholder file to create the folder.');
+    }
+
+    // Check if the "NewJob" folder exists
+    const [newJobFiles] = await bucket.getFiles({ prefix: newJobFolderPath });
+    if (newJobFiles.length === 0) {
+      console.log(`Folder '${newJobFolder}' does not exist. Creating it...`);
+      await bucket.file(`${newJobFolderPath}placeholder.txt`).save('This is a placeholder file to create the folder.');
+    }
+
+    // Create subfolders if they do not exist
+    const folders = [
+      { path: `${newJobFolderPath}/Contract`, name: 'Contract' },
+      { path: `${newJobFolderPath}/Brief`, name: 'Brief' },
+      { path: `${newJobFolderPath}/Supportingfiles`, name: 'Supportingfiles' },
+      { path: `${newJobFolderPath}/Invoice`, name: 'Invoice' },
+      { path: `${newJobFolderPath}/Content`, name: 'Content' },
+      { path: `${newJobFolderPath}/Analytics`, name: 'Analytics' },      
+    ];
+
+    for (const { path, name } of folders) {
+      const [folderFiles] = await bucket.getFiles({ prefix: path });
+      if (folderFiles.length === 0) {
+        console.log(`Folder '${name}' does not exist. Creating it...`);
+        await bucket.file(`${path}placeholder.txt`).save('This is a placeholder file to create the folder.');
+      }
+    }
+
     let filesToUpload = [];
 
     if (req.files.contractFile?.length > 0) {
-      filesToUpload.push({ key: 'contractFile', name: req.files.contractFile[0]?.originalname });
+      filesToUpload.push({ key: 'contractFile', name: `${newJobFolderPath}/Contract/${req.files.contractFile[0]?.originalname}` });
     }
     if (req.files.briefFile?.length > 0) {
-      filesToUpload.push({ key: 'briefFile', name: req.files.briefFile[0]?.originalname });
+      filesToUpload.push({ key: 'briefFile', name: `${newJobFolderPath}/Brief/${req.files.briefFile[0]?.originalname}` });
     }
     if (req.files.supportingFile?.length > 0) {
-      filesToUpload.push({ key: 'supportingFile', name: req.files.supportingFile[0]?.originalname });
+      filesToUpload.push({ key: 'supportingFile', name: `${newJobFolderPath}/Supportingfiles/${req.files.supportingFile[0]?.originalname}` });
     }
 
     const uploadPromises = filesToUpload.map(file => {
@@ -143,6 +190,7 @@ module.exports.AddJob = async (req, res, next) => {
       jobName: detailData?.jobName,
       talent: {
         talentName: detailData?.talentName,
+        email: detailData?.talentEmail,
         manager: detailData?.manager
       },
       labelColor: detailData?.labelColor,
@@ -198,11 +246,12 @@ module.exports.AddJob = async (req, res, next) => {
       endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
       jobDesc: ""
     };
+    const toEmail = newJob?.talent?.email || newJob?.contactDetails?.email;
     await sendEmail({
       filename: 'NewJob.ejs',
       data: emailData,
       subject: "New Job Notification",
-      toEmail: newJob?.contactDetails?.email,
+      toEmail: toEmail,
     });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
@@ -279,6 +328,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         jobName: detailData?.jobName,
         talent: {
           talentName: detailData?.talentName,
+          email: detailData?.talentEmail,
           manager: detailData?.manager
         },
         labelColor: detailData?.labelColor,
@@ -339,11 +389,12 @@ module.exports.UpdateJob = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
+      const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
         subject: "Update Job Notification",
-        toEmail: existJob?.contactDetails?.email,
+        toEmail: toEmail,
       });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
@@ -360,20 +411,21 @@ module.exports.updateJobStatus = async (req, res, next) => {
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
       await existJob.updateOne({ jobStatus: req.body.jobStatus });
-
+      const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
       const emailData = {
         jobTitle: existJob?.jobName,
         startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       }
+
       switch (req.body.jobStatus) {
         case 4: // Approved
           await sendEmail({
             filename: 'ApprovedJob.ejs',
             data: emailData,
             subject: "Approved Job Notification",
-            toEmail: existJob?.contactDetails?.email,
+            toEmail: toEmail,
           });
           break;
         case 5: // Invoice Request
@@ -381,7 +433,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
             filename: 'InvoiceRequest.ejs',
             data: emailData,
             subject: "Invoice Request Notification",
-            toEmail: existJob?.contactDetails?.email,
+            toEmail: toEmail,
           });
           break;
         case 6: // Invoiced
@@ -389,7 +441,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
             filename: 'JobHasBeenInvoiced.ejs',
             data: emailData,
             subject: "Job Has Been Invoiced Notification",
-            toEmail: existJob?.contactDetails?.email,
+            toEmail: toEmail,
           });
           break;
         case 7: // Paid
@@ -397,7 +449,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
             filename: 'JobHasBeenPaid.ejs',
             data: emailData,
             subject: "Job Has Been Paid Notification",
-            toEmail: existJob?.contactDetails?.email,
+            toEmail: toEmail,
           });
         default:
           break;
