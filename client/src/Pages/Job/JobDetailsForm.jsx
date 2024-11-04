@@ -75,18 +75,6 @@ const JobDetailsForm = () => {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB, payload: data });
           initialJobDetailsFormData(data);
-          const uploadedFiles = data?.details?.uploadedFiles;
-          let list = [];
-          if (uploadedFiles?.contractFile) {
-            list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
-          }
-          if (uploadedFiles?.briefFile) {
-            list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
-          }
-          if (uploadedFiles?.supportingFile) {
-            list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
-          }
-          setUploadedList(list);
         }
       });
     }
@@ -127,23 +115,18 @@ const JobDetailsForm = () => {
       endDate: data?.details?.endDate || "",
     });
 
-    setFileInfo({
-      contractFile: {
-        filename: data.details?.uploadedFiles?.contractFile || "",
-        fileSrc: data.details?.uploadedFiles?.contractFile || "",
-        isPreviewVisible: data.details?.uploadedFiles?.contractFile ? true : false
-      },
-      briefFile: {
-        filename: data.details?.uploadedFiles?.briefFile || "",
-        fileSrc: data.details?.uploadedFiles?.briefFile || "",
-        isPreviewVisible: data.details?.uploadedFiles?.briefFile ? true : false
-      },
-      supportingFile: {
-        filename: data.details?.uploadedFiles?.supportingFile || "",
-        fileSrc: data.details?.uploadedFiles?.supportingFile || "",
-        isPreviewVisible: data.details?.uploadedFiles?.supportingFile ? true : false
-      }
-    })
+    const uploadedFiles = data?.details?.uploadedFiles;
+    let list = [];
+    if (uploadedFiles?.contractFile) {
+      list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
+    }
+    if (uploadedFiles?.briefFile) {
+      list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
+    }
+    if (uploadedFiles?.supportingFile) {
+      list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
+    }
+    setUploadedList(list);
   }
 
   const handleChange = (e) => {
