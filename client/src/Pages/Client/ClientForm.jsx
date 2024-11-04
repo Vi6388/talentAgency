@@ -106,7 +106,7 @@ const ClientForm = () => {
     e.preventDefault();
     const requiredFields = ['firstname', 'surname', 'email'];
     const valid = isFormValid(clientForm, requiredFields);
-    if(!clientForm.avatar && !fileInfo.imageSrc) {
+    if (!clientForm.avatar && !fileInfo.imageSrc) {
       handleError("Please upload avatar.");
     }
     if (valid && clientForm.avatar && fileInfo.imageSrc) {
@@ -266,21 +266,18 @@ const ClientForm = () => {
         {location.pathname === "/client/add" &&
           <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm" type="button"
-            onClick={(e) => handleSubmit(e)}>Create</button>}
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm"
+            type="button" onClick={(e) => handleSubmit(e)}>Create</button>}
         <Link to={"/client/list"} className="w-full sm:w-fit">
-          <button className={`${location.pathname === "/client/add" ? 'bg-button-1 hover:bg-white-200 active:bg-white-100' : 'bg-button-6 hover:bg-[#a38b7b] active:bg-[#978172]'} 
+          <button className={`${location.pathname === "/client/add" ? 'bg-button-1 hover:bg-slate-500 focus:bg-gray-400' : 'bg-button-6 hover:bg-[#a38b7b] focus:bg-[#978172]'} 
                             h-12 md:h-9 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                             block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full md:w-[160px]
-                            hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                            active:bg-white-100 active:shadow-md text-sm`}>Close</button>
+                            hover:shadow-md  focus:shadow-md focus:outline-none focus:ring-0 text-sm`}>Close</button>
         </Link>
         {location.pathname.includes("/client/edit") &&
           <button className="bg-button-4 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-full md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out
-                            hover:bg-neutral-700 hover:shadow-lg focus:bg-neutral-700 focus:shadow-md focus:outline-none focus:ring-0 
-                            active:bg-neutral-600 active:shadow-lg text-sm" type="button"
+                            hover:bg-slate-700 hover:shadow-lg focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm" type="button"
             onClick={(e) => handleSubmit(e)}>Update</button>}
       </div>
     </div>

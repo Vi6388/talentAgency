@@ -71,8 +71,7 @@ const EstimateKanban = () => {
         <div className="col-span-2 sm:col-span-1 flex justify-end items-center">
           <button className="bg-white w-fit sm:w-full px-4 h-10 text-center rounded-[12px] text-input font-bold tracking-wider
                             block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out 
-                            hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-neutral-100 active:shadow-lg text-sm">Show all</button>
+                            hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Show all</button>
         </div>
       </div>
 

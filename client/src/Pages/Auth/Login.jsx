@@ -81,8 +81,8 @@ const Login = () => {
               <div className="my-8 w-full flex justify-center items-center">
                 <button className="bg-black w-64 h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                        active:bg-neutral-600 active:shadow-lg text-sm" type="button" onClick={handleSubmit}>Login</button>
+                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm"
+                  type="button" onClick={handleSubmit}>Login</button>
               </div>
               <div>
                 <span className="text-brown underline underline-offset-1 font-semibold cursor-pointer hover:text-[#61534c] text-sm">Forgot your password?</span>

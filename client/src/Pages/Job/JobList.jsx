@@ -47,8 +47,7 @@ const JobList = () => {
           placeholder="Search" type="text" />
         <button className="col-span-1 bg-white w-full px-2 h-10 text-center rounded-[12px] text-input font-bold tracking-wider
                             block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out 
-                            hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-neutral-100 active:shadow-lg text-sm">Show all</button>
+                            hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Show all</button>
       </div>
 
       <div className="w-full overflow-x-auto shadow-md">
@@ -86,8 +85,7 @@ const JobList = () => {
                     <Link to={`/job/edit/${item._id}/jobDetails`}>
                       <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] md:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">See job details</button>
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">See job details</button>
                     </Link>
                   </td>
                 </tr>

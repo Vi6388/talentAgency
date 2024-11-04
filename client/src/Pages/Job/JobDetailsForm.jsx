@@ -10,6 +10,7 @@ import { store } from "../../redux/store";
 import { CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
 import { JobApi } from "../../apis/job";
+import { TalentApi } from "../../apis/TalentApi";
 
 const JobDetailsForm = () => {
   const { id } = useParams();
@@ -29,6 +30,7 @@ const JobDetailsForm = () => {
     postcode: "",
     jobName: "",
     talentName: "",
+    talentEmail: "",
     manager: "",
     startDate: "",
     endDate: "",
@@ -62,6 +64,10 @@ const JobDetailsForm = () => {
     }
   });
 
+  const [talentList, setTalentList] = useState([]);
+  const [talentSearchList, setTalentSearchList] = useState([]);
+  const [showTalentList, setShowTalentList] = useState(false);
+
   useEffect(() => {
     if (id) {
       JobApi.getJobById(id).then((res) => {
@@ -72,7 +78,18 @@ const JobDetailsForm = () => {
         }
       });
     }
+
+    getTalentList();
   }, [id]);
+
+  const getTalentList = () => {
+    TalentApi.getTalentList().then((res) => {
+      if (res.data.status === 200) {
+        setTalentList(res.data.data);
+        setTalentSearchList(res.data.data);
+      }
+    });
+  }
 
   const initialJobDetailsFormData = (data) => {
     setJobDetailsForm({
@@ -91,6 +108,7 @@ const JobDetailsForm = () => {
       postcode: data?.details?.companyDetails?.postcode || "",
       jobName: data?.details?.jobName || "",
       talentName: data?.details?.talent?.talentName || "",
+      talentEmail: data?.details?.talent?.email || "",
       manager: data?.details?.talent?.manager || "",
       labelColor: data?.details?.labelColor || "",
       startDate: data?.details?.startDate || "",
@@ -121,6 +139,31 @@ const JobDetailsForm = () => {
       ...jobDetailsForm,
       [e.target.name]: e.target.value
     });
+    if (e.target.name === "talentName") {
+      if (e.target.value !== "") {
+        const list = talentList?.filter((item) => (item?.firstname?.toLowerCase()?.includes(e.target.value?.toLowerCase()) ||
+          item?.surname?.toLowerCase()?.includes(e.target.value?.toLowerCase()) || item?.email?.toLowerCase()?.includes(e.target.value?.toLowerCase())));
+        setTalentSearchList(list);
+        setShowTalentList(true);
+      } else {
+        setTalentSearchList(talentList);
+        setShowTalentList(false);
+      }
+    }
+  }
+
+  const focusTalent = () => {
+    setShowTalentList(!showTalentList);
+  }
+
+  const changeTalent = (item) => {
+    setJobDetailsForm({
+      ...jobDetailsForm,
+      talentName: item.firstname + " " + item.surname,
+      talentEmail: item.email
+    });
+    setTalentSearchList(talentList);
+    setShowTalentList(false);
   }
 
   const handleStartDateChange = (selectedDate) => {
@@ -263,85 +306,9 @@ const JobDetailsForm = () => {
         formData.append('supportingFile', supportingFile);
       }
     }
-    await JobApi.uploadFiles(formData).then((res) => {
-      if (res.data.status === 200) {
-        const data = res.data.data;
-        const contractFile = data?.filter((item) => item.key === "contractFile")[0];
-        const briefFile = data?.filter((item) => item.key === "briefFile")[0];
-        const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-        setJobDetailsForm({
-          ...jobDetailsForm,
-          uploadedFiles: {
-            contractFile: contractFile?.url || "",
-            briefFile: briefFile?.url || "",
-            supportingFile: supportingFile?.url || "",
-          }
-        });
-
-        const updateData = {
-          ...jobEstimate,
-          details: {
-            ...jobDetailsForm,
-            uploadedFiles: {
-              contractFile: contractFile?.url || "",
-              briefFile: briefFile?.url || "",
-              supportingFile: supportingFile?.url || "",
-            }
-          },
-        }
-        if (jobDetailsForm?.details?._id) {
-          JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
-            if (res.data.status === 401) {
-              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-            } else if (res.data.status === 200) {
-              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-              toast.success(res.data.message, {
-                position: "top-left",
-              });
-            } else {
-              toast.error(res.data.message, {
-                position: "top-left",
-              });
-            }
-          })
-        } else {
-          JobApi.add(updateData).then((res) => {
-            if (res.data.status === 401) {
-              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-            } else if (res.data.status === 200) {
-              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-              initialJobDetailsFormData(res.data.data);
-              toast.success(res.data.message, {
-                position: "top-left",
-              });
-            } else {
-              toast.error(res.data.message, {
-                position: "top-left",
-              });
-            }
-          })
-        }
-      }
-    });
-  }
-
-  const updateJob = async () => {
-    if (jobDetailsForm.id) {
-      const formData = new FormData();
-      if (jobDetailsForm?.uploadedFiles) {
-        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
-
-        // Check if files are valid before appending
-        if (contractFile instanceof File) {
-          formData.append('contractFile', contractFile);
-        }
-        if (briefFile instanceof File) {
-          formData.append('briefFile', briefFile);
-        }
-        if (supportingFile instanceof File) {
-          formData.append('supportingFile', supportingFile);
-        }
-      }
+    const newErrors = jobFormValidateForm(jobDetailsForm);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
       await JobApi.uploadFiles(formData).then((res) => {
         if (res.data.status === 200) {
           const data = res.data.data;
@@ -368,14 +335,12 @@ const JobDetailsForm = () => {
               }
             },
           }
-          JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
-            if (res.data.status === 401) {
-              const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-              openAuthPopup(authUrl, updateData);
-            } else {
-              if (res.data.status === 200) {
+          if (jobDetailsForm?.details?._id) {
+            JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
+              if (res.data.status === 401) {
+                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              } else if (res.data.status === 200) {
                 store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-                initialJobDetailsFormData(res.data.data);
                 toast.success(res.data.message, {
                   position: "top-left",
                 });
@@ -384,10 +349,96 @@ const JobDetailsForm = () => {
                   position: "top-left",
                 });
               }
-            }
-          });
+            })
+          } else {
+            JobApi.add(updateData).then((res) => {
+              if (res.data.status === 401) {
+                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              } else if (res.data.status === 200) {
+                store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+                initialJobDetailsFormData({ details: res.data.data });
+                toast.success(res.data.message, {
+                  position: "top-left",
+                });
+              } else {
+                toast.error(res.data.message, {
+                  position: "top-left",
+                });
+              }
+            })
+          }
         }
       });
+    }
+  }
+
+  const updateJob = async () => {
+    if (jobDetailsForm.id) {
+      const formData = new FormData();
+      if (jobDetailsForm?.uploadedFiles) {
+        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+
+        // Check if files are valid before appending
+        if (contractFile instanceof File) {
+          formData.append('contractFile', contractFile);
+        }
+        if (briefFile instanceof File) {
+          formData.append('briefFile', briefFile);
+        }
+        if (supportingFile instanceof File) {
+          formData.append('supportingFile', supportingFile);
+        }
+      }
+      const newErrors = jobFormValidateForm(jobDetailsForm);
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length === 0) {
+        await JobApi.uploadFiles(formData).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+            const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+            const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+            setJobDetailsForm({
+              ...jobDetailsForm,
+              uploadedFiles: {
+                contractFile: contractFile?.url || "",
+                briefFile: briefFile?.url || "",
+                supportingFile: supportingFile?.url || "",
+              }
+            });
+
+            const updateData = {
+              ...jobEstimate,
+              details: {
+                ...jobDetailsForm,
+                uploadedFiles: {
+                  contractFile: contractFile?.url || "",
+                  briefFile: briefFile?.url || "",
+                  supportingFile: supportingFile?.url || "",
+                }
+              },
+            }
+            JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
+              if (res.data.status === 401) {
+                const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+                openAuthPopup(authUrl, updateData);
+              } else {
+                if (res.data.status === 200) {
+                  store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+                  initialJobDetailsFormData({ details: res.data.data });
+                  toast.success(res.data.message, {
+                    position: "top-left",
+                  });
+                } else {
+                  toast.error(res.data.message, {
+                    position: "top-left",
+                  });
+                }
+              }
+            });
+          }
+        });
+      }
     }
   }
 
@@ -549,12 +600,22 @@ const JobDetailsForm = () => {
               <span className="text-base text-title-2 font-medium">Talent</span>
             </div>
             <div>
-              <div className="flex justify-between items-center gap-3 py-2">
+              <div className="flex justify-between items-center gap-3 py-2 relative">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
                                     placeholder:font-bold placeholder:uppercase ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
-                  onChange={(e) => handleChange(e)} />
+                  onChange={(e) => handleChange(e)} onFocus={focusTalent} />
+
+                <div className={`absolute top-[50px] w-full shadow-xl z-10 rounded-lg ${showTalentList ? 'block' : 'hidden'}`}>
+                  <ul className="bg-white rounded-lg w-full">
+                    {talentSearchList?.map((item, index) =>
+                      <li key={index} className={`p-3 hover:bg-[#f1f1f1] text-input ${index < talentList?.length ? 'border-b' : ''}`} onClick={() => changeTalent(item)}>
+                        {item.firstname + " " + item.surname} ({item.email})
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
@@ -581,12 +642,10 @@ const JobDetailsForm = () => {
               <div className="col-span-2 sm:col-span-1 md:col-span-2 w-full flex jutify-between items-center gap-3">
                 <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-white-100 hover:shadow-md focus:bg-primary-700 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">New</button>
+                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">New</button>
                 <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-white-100 hover:shadow-md focus:bg-primary-700 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Existing</button>
+                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Existing</button>
               </div>
               <div className="col-span-1 w-full flex justify-between items-center relative">
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
@@ -627,8 +686,8 @@ const JobDetailsForm = () => {
                 onChange={handleSupplierRequired}
                 className='sr-only'
               />
-              <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3' : 'bg-white'}`}>
-                <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3'}`}></span>
+              <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3 hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838]' : 'bg-white'}`}>
+                <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3 hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838]'}`}></span>
               </span>
               <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
                 Supplier setup required
@@ -711,30 +770,29 @@ const JobDetailsForm = () => {
       <div className="mt-12 grid grid-cols-3 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
         <div className="w-full">
           <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm"
+                        block rounded leading-normal shadow-md transition duration-150 ease-in-out w-full
+                        hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelJob}>Cancel</button>
         </div>
         <div className="w-full">
           <button className="bg-button-3 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-200 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm" type="button" onClick={nextFunc}>Next...</button>
+                        block rounded leading-normal shadow-md transition duration-150 ease-in-out w-full
+                        hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
+            type="button" onClick={nextFunc}>Next...</button>
         </div>
         {
           jobDetailsForm?.id ?
             <div className="w-full">
               <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm" type="button" onClick={updateJob}>Update</button>
+                        hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
+                type="button" onClick={updateJob}>Update</button>
             </div> :
             <div className="w-full">
               <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                       block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                      hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                      active:bg-white-100 active:shadow-md text-sm" type="button" onClick={submitJob}>Submit</button>
+                      hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
+                type="button" onClick={submitJob}>Submit</button>
             </div>
         }
       </div>

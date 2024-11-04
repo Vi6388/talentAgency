@@ -23,7 +23,7 @@ const Settings = () => {
     });
 
     TalentApi.getTalentList().then((res) => {
-      if(res.data.status === 200) {
+      if (res.data.status === 200) {
         setTalentList(res.data.data);
       }
     })
@@ -56,8 +56,7 @@ const Settings = () => {
                         <Link to={`/settings/user/edit/${item._id}`}>
                           <button className="bg-button-6 h-full lg:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] lg:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">Edit details</button>
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Edit details</button>
                         </Link>
                       </td>
                     </tr>
@@ -70,8 +69,7 @@ const Settings = () => {
           <div className="w-full my-5">
             <Link to={"/settings/user/add"} className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-fit md:w-[160px]
                             flex items-center justify-center rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm mx-auto px-4">New User</Link>
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm mx-auto px-4">New User</Link>
           </div>
         </div>
         <div className="w-full">
@@ -96,8 +94,7 @@ const Settings = () => {
                         <Link to={`/settings/talent/edit/${item._id}`}>
                           <button className="bg-button-6 h-full lg:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] lg:w-[160px]
                             block rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm">Edit details</button>
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Edit details</button>
                         </Link>
                       </td>
                     </tr>
@@ -110,8 +107,7 @@ const Settings = () => {
           <div className="w-full my-5">
             <Link to={"/settings/talent/add"} className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-fit md:w-[160px]
                             flex justify-center items-center rounded leading-normal shadow-md transition duration-150 ease-in-out uppercase
-                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                            active:bg-[#978172] active:shadow-lg text-sm mx-auto px-4">New Talent</Link>
+                            hover:bg-[#a38b7b] hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm mx-auto px-4">New Talent</Link>
           </div>
         </div>
       </div>
@@ -122,14 +118,12 @@ const Settings = () => {
             <div className="min-w-[160px]">
               <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Close</button>
+                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Close</button>
             </div>
             <div className="min-w-[160px]">
               <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
-                        hover:bg-white-100 hover:shadow-md focus:bg-white-200 focus:shadow-md focus:outline-none focus:ring-0 
-                        active:bg-white-100 active:shadow-md text-sm">Update</button>
+                        hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm">Update</button>
             </div>
           </div>
         </div>

@@ -47,15 +47,13 @@ const Navbar = () => {
                 <Link to={"/estimate/add/jobDetails"}>
                   <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out px-3
-                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                        active:bg-neutral-600 active:shadow-lg text-sm">New Job</button>
+                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">New Job</button>
                 </Link>
               ) : (location.pathname === "/job/kanban" || location.pathname === "/job/list") ? (
                 <Link to={"/job/add/jobDetails"}>
                   <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out px-3
-                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                        active:bg-neutral-600 active:shadow-lg text-sm">New Job</button>
+                        hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">New Job</button>
                 </Link>
               ) :
                 < button className="bg-main w-24 md:w-32 lg:w-48 h-9 md:h-11 hidden md:block"></button>
@@ -84,8 +82,7 @@ const Navbar = () => {
               <li>
                 <button className="bg-white w-[88px] h-10 tracking-wider text-center rounded-[12px] text-input font-bold 
                       block rounded bg-white leading-normal shadow-md transition duration-150 ease-in-out 
-                      hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 
-                      active:bg-neutral-100 active:shadow-lg text-sm">
+                      hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">
                   <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1"
                     src={loggedUser?.avatar ? loggedUser?.avatar :
                       "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"}
