@@ -4,7 +4,7 @@ import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { baseUrl, dateFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";

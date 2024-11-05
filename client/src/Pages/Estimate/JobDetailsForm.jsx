@@ -5,14 +5,18 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { jobFormValidateForm } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { EstimateApi } from "../../apis/EstimateApi";
+import { TalentApi } from "../../apis/TalentApi";
 
 const EstimateJobDetailsForm = () => {
   const { id } = useParams();
   const { jobEstimate } = useSelector((state) => state.job);
+  const [talentList, setTalentList] = useState([]);
+  const [talentSearchList, setTalentSearchList] = useState([]);
+  const [showTalentList, setShowTalentList] = useState(false);
   const [jobDetailsForm, setJobDetailsForm] = useState({
     firstname: "",
     surname: "",
@@ -27,6 +31,7 @@ const EstimateJobDetailsForm = () => {
     postcode: "",
     jobName: "",
     talentName: "",
+    talentEmail: "",
     manager: "",
     startDate: "",
     endDate: "",
@@ -48,7 +53,17 @@ const EstimateJobDetailsForm = () => {
     } else {
       initialJobEstimateFormData(jobEstimate)
     }
+    getTalentList();
   }, [id]);
+
+  const getTalentList = () => {
+    TalentApi.getTalentList().then((res) => {
+      if (res.data.status === 200) {
+        setTalentList(res.data.data);
+        setTalentSearchList(res.data.data);
+      }
+    })
+  }
 
   const initialJobEstimateFormData = (data) => {
     setJobDetailsForm({
@@ -67,6 +82,7 @@ const EstimateJobDetailsForm = () => {
       postcode: data?.details?.companyDetails?.postcode || "",
       jobName: data?.details?.jobName || "",
       talentName: data?.details?.talent?.talentName || "",
+      talentEmail: data?.details?.talent?.email || "",
       manager: data?.details?.talent?.manager || "",
       startDate: data?.details?.startDate || "",
       endDate: data?.details?.endDate || "",
@@ -78,6 +94,29 @@ const EstimateJobDetailsForm = () => {
       ...jobDetailsForm,
       [e.target.name]: e.target.value
     });
+
+    if (e.target.name === "talentName") {
+      if (e.target.value !== "") {
+        const list = talentList?.filter((item) => (item?.firstname?.toLowerCase()?.includes(e.target.value?.toLowerCase()) ||
+          item?.surname?.toLowerCase()?.includes(e.target.value?.toLowerCase()) || item?.email?.toLowerCase()?.includes(e.target.value?.toLowerCase())));
+        setTalentSearchList(list);
+        setShowTalentList(true);
+      } else {
+        setTalentSearchList(talentList);
+        setShowTalentList(false);
+      }
+    }
+  }
+
+  const changeTalent = (item) => {
+    setJobDetailsForm({
+      ...jobDetailsForm,
+      talentName: item.firstname + " " + item.surname,
+      talentEmail: item.email
+    });
+    setTalentSearchList(talentList);
+    setShowTalentList(false);
+    console.log(jobDetailsForm)
   }
 
   const handleStartDateChange = (selectedDate) => {
@@ -156,7 +195,7 @@ const EstimateJobDetailsForm = () => {
       EstimateApi.add(data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
-          initialJobEstimateFormData(res.data.data);
+          initialJobEstimateFormData({ details: res.data.data });
           toast.success(res.data.message, {
             position: "top-left",
           });
@@ -174,6 +213,7 @@ const EstimateJobDetailsForm = () => {
       EstimateApi.updateJobEstimateById(jobDetailsForm.id, jobDetailsForm).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+          initialJobEstimateFormData({ details: res.data.data })
           toast.success(res.data.message, {
             position: "top-left",
           });
@@ -330,12 +370,22 @@ const EstimateJobDetailsForm = () => {
               <span className="text-base text-title-2 font-medium">Talent</span>
             </div>
             <div>
-              <div className="flex justify-between items-center gap-3 py-2">
+              <div className="flex justify-between items-center gap-3 py-2 relative">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
                                     placeholder:font-bold placeholder:uppercase ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
                   onChange={(e) => handleChange(e)} />
+
+                <div className={`absolute top-[50px] w-full shadow-xl z-10 rounded-lg ${showTalentList ? 'block' : 'hidden'}`}>
+                  <ul className="bg-white rounded-lg w-full">
+                    {talentSearchList?.map((item, index) =>
+                      <li key={index} className={`p-3 hover:bg-[#f1f1f1] text-input ${index < talentList?.length ? 'border-b' : ''}`} onClick={() => changeTalent(item)}>
+                        {item.firstname + " " + item.surname} ({item.email})
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
