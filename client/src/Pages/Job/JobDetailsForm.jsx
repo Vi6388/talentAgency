@@ -15,7 +15,7 @@ import { TalentApi } from "../../apis/TalentApi";
 const JobDetailsForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { jobEstimate } = useSelector((state) => state.job);
+  const { job } = useSelector((state) => state.job);
   const [jobDetailsForm, setJobDetailsForm] = useState({
     firstname: "",
     surname: "",
@@ -78,7 +78,8 @@ const JobDetailsForm = () => {
         }
       });
     } else {
-      initialJobDetailsFormData(jobEstimate);
+      console.log(job)
+      initialJobDetailsFormData(job);
     }
 
     getTalentList();
@@ -97,36 +98,49 @@ const JobDetailsForm = () => {
     setJobDetailsForm({
       ...data?.details,
       id: data?.details?._id,
-      firstname: data?.details?.contactDetails?.firstname || "",
-      surname: data?.details?.contactDetails?.surname || "",
-      email: data?.details?.contactDetails?.email || "",
-      position: data?.details?.contactDetails?.position || "",
-      phoneNumber: data?.details?.contactDetails?.phoneNumber || "",
-      companyName: data?.details?.companyDetails?.companyName || "",
-      abn: data?.details?.companyDetails?.abn || "",
-      postalAddress: data?.details?.companyDetails?.postalAddress || "",
-      suburb: data?.details?.companyDetails?.suburb || "",
-      state: data?.details?.companyDetails?.state || "",
-      postcode: data?.details?.companyDetails?.postcode || "",
-      jobName: data?.details?.jobName || "",
-      talentName: data?.details?.talent?.talentName || "",
-      talentEmail: data?.details?.talent?.email || "",
-      manager: data?.details?.talent?.manager || "",
-      labelColor: data?.details?.labelColor || "",
-      startDate: data?.details?.startDate || "",
-      endDate: data?.details?.endDate || "",
+      firstname: data?.details?.contactDetails?.firstname || (data?.details?.firstname || ""),
+      surname: data?.details?.contactDetails?.surname || (data?.details?.surname || ""),
+      email: data?.details?.contactDetails?.email || (data?.details?.email || ""),
+      position: data?.details?.contactDetails?.position || (data?.details?.position || ""),
+      phoneNumber: data?.details?.contactDetails?.phoneNumber || (data?.details?.phoneNumber || ""),
+      companyName: data?.details?.companyDetails?.companyName || (data?.details?.companyName || ""),
+      abn: data?.details?.companyDetails?.abn || (data?.details?.abn || ""),
+      postalAddress: data?.details?.companyDetails?.postalAddress || (data?.details?.postalAddress || ""),
+      suburb: data?.details?.companyDetails?.suburb || (data?.details?.suburb || ""),
+      state: data?.details?.companyDetails?.state || (data?.details?.state || ""),
+      postcode: data?.details?.companyDetails?.postcode || (data?.details?.postcode || ""),
+      jobName: data?.details?.jobName || (data?.details?.jobName || ""),
+      talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
+      talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
+      manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
+      labelColor: data?.details?.labelColor || (data?.details?.labelColor || ""),
+      startDate: data?.details?.startDate || (data?.details?.startDate || ""),
+      endDate: data?.details?.endDate || (data?.details?.endDate || ""),
+      supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || ""),
     });
 
     const uploadedFiles = data?.details?.uploadedFiles;
     let list = [];
     if (uploadedFiles?.contractFile) {
-      list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
+      if(data?.details?._id) {
+        list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
+      } else {
+        list.push({ filename: uploadedFiles?.contractFile?.name, path: uploadedFiles?.contractFile?.name, type: 'contractFile' })
+      }
     }
     if (uploadedFiles?.briefFile) {
-      list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
+      if(data?.details?._id) {
+        list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
+      } else {
+        list.push({ filename: uploadedFiles?.briefFile?.name, path: uploadedFiles?.briefFile?.name, type: 'briefFile' })
+      }
     }
     if (uploadedFiles?.supportingFile) {
-      list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
+      if(data?.details?._id) {
+        list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
+      } else {
+        list.push({ filename: uploadedFiles?.supportingFile?.name, path: uploadedFiles?.supportingFile?.name, type: 'briefFile' })
+      }
     }
     setUploadedList(list);
   }
@@ -319,7 +333,7 @@ const JobDetailsForm = () => {
           });
 
           const updateData = {
-            ...jobEstimate,
+            ...job,
             details: {
               ...jobDetailsForm,
               uploadedFiles: {
@@ -403,7 +417,7 @@ const JobDetailsForm = () => {
             });
 
             const updateData = {
-              ...jobEstimate,
+              ...job,
               details: {
                 ...jobDetailsForm,
                 uploadedFiles: {
