@@ -35,7 +35,7 @@ const JobDetailsForm = () => {
     startDate: "",
     endDate: "",
     labelColor: "",
-    supplierRequired: true,
+    supplierRequired: false,
     uploadedFiles: {
       contractFile: "",
       briefFile: "",
@@ -78,7 +78,6 @@ const JobDetailsForm = () => {
         }
       });
     } else {
-      console.log(job)
       initialJobDetailsFormData(job);
     }
 
@@ -122,21 +121,21 @@ const JobDetailsForm = () => {
     const uploadedFiles = data?.details?.uploadedFiles;
     let list = [];
     if (uploadedFiles?.contractFile) {
-      if(data?.details?._id) {
+      if (data?.details?._id) {
         list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
       } else {
         list.push({ filename: uploadedFiles?.contractFile?.name, path: uploadedFiles?.contractFile?.name, type: 'contractFile' })
       }
     }
     if (uploadedFiles?.briefFile) {
-      if(data?.details?._id) {
+      if (data?.details?._id) {
         list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
       } else {
         list.push({ filename: uploadedFiles?.briefFile?.name, path: uploadedFiles?.briefFile?.name, type: 'briefFile' })
       }
     }
     if (uploadedFiles?.supportingFile) {
-      if(data?.details?._id) {
+      if (data?.details?._id) {
         list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
       } else {
         list.push({ filename: uploadedFiles?.supportingFile?.name, path: uploadedFiles?.supportingFile?.name, type: 'briefFile' })
@@ -637,8 +636,9 @@ const JobDetailsForm = () => {
           </div>
           <div className="w-full">
             <div className="w-full relative">
-              <input className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+              <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                 placeholder="Label Color"
                 type="text" value={jobDetailsForm.labelColor} readOnly />
               <input type="color" id="color-picker" value={jobDetailsForm.labelColor} className="absolute left-2 top-2 w-10 md:w-20"
@@ -659,8 +659,9 @@ const JobDetailsForm = () => {
               <div className="col-span-1 w-full flex justify-between items-center relative">
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -671,8 +672,9 @@ const JobDetailsForm = () => {
               <div className="col-span-1 w-full justify-between items-center relative">
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
-                    <input type="text" className="rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase"
+                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="End Date" value={jobDetailsForm.endDate} onFocus={() => setShowEnd(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />

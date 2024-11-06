@@ -116,7 +116,6 @@ const EstimateJobDetailsForm = () => {
     });
     setTalentSearchList(talentList);
     setShowTalentList(false);
-    console.log(jobDetailsForm)
   }
 
   const handleStartDateChange = (selectedDate) => {

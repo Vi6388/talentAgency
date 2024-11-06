@@ -56,9 +56,16 @@ export const isFormValid = (form, requiredFields) => {
 
 export const jobFormValidateForm = (data) => {
   const errors = {};
+  const validList = ['firstname', 'surname', 'email', 'companyName', 'position', 'phoneNumber', 'postalAddress', 'abn', 'suburb', 'state', 'postcode', 'jobName', 'talentName', 'manager', 'labelColor',
+    'poNumber', 'fee', 'usage', 'asf', 'royalities', 'commission', 'paymentTerms', 'expenses', 'miscellaneous',
+    'jobTitle', 'conceptDueDate', 'contentDueDate', 'liveDate',
+    'eventDate', 'eventStartTime', 'eventEndTime',
+    'startDate', 'endDate', 'numberOfEpisodes',
+    'firstDraftDate', 'secondDraftDate', 'finalDate', 'publisher',
+    'departureDate', 'departureTime', 'arrivalDate', 'arrivalTime', 'preferredCarrier', 'frequentFlyerNumber', 'carHireRequired'];
 
   for (const [field, value] of Object.entries(data)) {
-    if (typeof value === "string" && !value?.trim()) {
+    if (validList.includes(field) && !value?.trim()) {
       errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
     }
   }

@@ -206,7 +206,7 @@ const JobEventForm = () => {
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
                         ${errors.eventDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
-                      placeholder="Concept Due Date" value={eventForm.eventDate} onFocus={() => setShow({ ...show, eventDate: true })} readOnly />
+                      placeholder="Event Date" value={eventForm.eventDate} onFocus={() => setShow({ ...show, eventDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
                     </div>

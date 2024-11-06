@@ -15,35 +15,23 @@ import {
 const initialState = {
   job: {
     details: {
-      companyDetails: {
-        companyName: "",
-        abn: "",
-        postalAddress: "",
-        suburb: "",
-        state: "",
-        postcode: "",
-      },
-      contactDetails: {
-        firstname: "",
-        surname: "",
-        email: "",
-        position: "",
-        phoneNumber: "",
-      },
+      firstname: "",
+      surname: "",
+      email: "",
+      position: "",
+      phoneNumber: "",
+      companyName: "",
+      abn: "",
+      postalAddress: "",
+      suburb: "",
+      state: "",
+      postcode: "",
       jobName: "",
-      talent: {
-        talentName: "",
-        manager: "",
-        talentEmail: "",
-      },
+      talentName: "",
+      manager: "",
       startDate: "",
       endDate: "",
-      supplierRequired: true,
-      uploadedFiles: {
-        contractFile: "",
-        briefFile: "",
-        supportingFile: ""
-      }
+      supplierRequired: false,
     },
     invoiceList: [],
     jobSummaryList: [],
@@ -51,35 +39,22 @@ const initialState = {
 
   jobEstimate: {
     details: {
-      companyDetails: {
-        companyName: "",
-        abn: "",
-        postalAddress: "",
-        suburb: "",
-        state: "",
-        postcode: "",
-      },
-      contactDetails: {
-        firstname: "",
-        surname: "",
-        email: "",
-        position: "",
-        phoneNumber: "",
-      },
+      firstname: "",
+      surname: "",
+      email: "",
+      position: "",
+      phoneNumber: "",
+      companyName: "",
+      abn: "",
+      postalAddress: "",
+      suburb: "",
+      state: "",
+      postcode: "",
       jobName: "",
-      talent: {
-        talentName: "",
-        manager: "",
-        talentEmail: "",
-      },
+      talentName: "",
+      manager: "",
       startDate: "",
       endDate: "",
-      supplierRequired: true,
-      uploadedFiles: {
-        contractFile: "",
-        briefFile: "",
-        supportingFile: ""
-      }
     },
     invoiceList: [],
     jobSummaryList: [],
@@ -122,35 +97,23 @@ export const jobReducer = (state = initialState, action) => {
         ...state,
         job: {
           details: {
-            companyDetails: {
-              companyName: "",
-              abn: "",
-              postalAddress: "",
-              suburb: "",
-              state: "",
-              postcode: "",
-            },
-            contactDetails: {
-              firstname: "",
-              surname: "",
-              email: "",
-              position: "",
-              phoneNumber: "",
-            },
+            firstname: "",
+            surname: "",
+            email: "",
+            position: "",
+            phoneNumber: "",
+            companyName: "",
+            abn: "",
+            postalAddress: "",
+            suburb: "",
+            state: "",
+            postcode: "",
             jobName: "",
-            talent: {
-              talentName: "",
-              manager: "",
-              talentEmail: "",
-            },
+            talentName: "",
+            manager: "",
             startDate: "",
             endDate: "",
-            supplierRequired: true,
-            uploadedFiles: {
-              contractFile: "",
-              briefFile: "",
-              supportingFile: ""
-            }
+            supplierRequired: false
           },
           invoiceList: [],
           jobSummaryList: [],
@@ -192,35 +155,22 @@ export const jobReducer = (state = initialState, action) => {
         ...state,
         jobEstimate: {
           details: {
-            companyDetails: {
-              companyName: "",
-              abn: "",
-              postalAddress: "",
-              suburb: "",
-              state: "",
-              postcode: "",
-            },
-            contactDetails: {
-              firstname: "",
-              surname: "",
-              email: "",
-              position: "",
-              phoneNumber: "",
-            },
+            firstname: "",
+            surname: "",
+            email: "",
+            position: "",
+            phoneNumber: "",
+            companyName: "",
+            abn: "",
+            postalAddress: "",
+            suburb: "",
+            state: "",
+            postcode: "",
             jobName: "",
-            talent: {
-              talentName: "",
-              manager: "",
-              talentEmail: "",
-            },
+            talentName: "",
+            manager: "",
             startDate: "",
             endDate: "",
-            supplierRequired: true,
-            uploadedFiles: {
-              contractFile: "",
-              briefFile: "",
-              supportingFile: ""
-            }
           },
           invoiceList: [],
           jobSummaryList: [],
