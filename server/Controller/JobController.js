@@ -172,6 +172,7 @@ module.exports.AddJob = async (req, res, next) => {
         email: detailData?.talentEmail,
         manager: detailData?.manager
       },
+      supplierRequired: detailData?.supplierRequired,
       labelColor: detailData?.labelColor,
       startDate: new Date(detailData?.startDate),
       endDate: new Date(detailData?.endDate),
@@ -310,6 +311,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           email: detailData?.talentEmail,
           manager: detailData?.manager
         },
+        supplierRequired: detailData?.supplierRequired,
         labelColor: detailData?.labelColor,
         startDate: new Date(detailData?.startDate),
         endDate: new Date(detailData?.endDate),

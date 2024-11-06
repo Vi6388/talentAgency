@@ -77,6 +77,8 @@ const JobDetailsForm = () => {
           initialJobDetailsFormData(data);
         }
       });
+    } else {
+      initialJobDetailsFormData(jobEstimate);
     }
 
     getTalentList();

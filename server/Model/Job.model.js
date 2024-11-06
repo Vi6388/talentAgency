@@ -74,6 +74,9 @@ const jobSchema = new mongoose.Schema({
       type: String
     },
   },
+  supplierRequired: {
+    type: Boolean,
+  },
   estimateStatus: {
     type: Boolean,
     default: false,
