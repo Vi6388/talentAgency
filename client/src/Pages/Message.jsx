@@ -17,7 +17,7 @@ const Message = ({ routeName }) => {
           </svg>
         </div>
         <div>
-          <p className="font-bold capitalize">
+          <p className="font-gotham-bold capitalize">
             {routeName.substring(1)} Page Under Progress
           </p>
           <p className="text-sm">

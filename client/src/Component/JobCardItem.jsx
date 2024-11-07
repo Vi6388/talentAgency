@@ -20,7 +20,7 @@ function JobCardItem({ item, index, talent }) {
         >
           <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-between" onClick={() => editJob(item._id)}>
             <div className="client-name">
-              <span className="text-[8px] text-kanban font-bold">Client: {item.contactDetails?.firstname} {item.contactDetails?.surname}</span>
+              <span className="text-[8px] text-kanban font-gotham-bold">Client: {item.contactDetails?.firstname} {item.contactDetails?.surname}</span>
             </div>
             <div className="title py-2">
               <span className="text-[12px] md:text-[14px] text-kanban font-semibold kanban-title-leading tracking-wide">{item.title}</span>

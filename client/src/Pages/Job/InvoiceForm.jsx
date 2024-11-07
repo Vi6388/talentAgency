@@ -155,8 +155,8 @@ const JobInvoiceForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">finance - </span>
-        <span className="text-title-2 uppercase font-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">finance - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-fit mx-4 md:w-2/3 sm:mx-auto gap-8">
@@ -169,13 +169,13 @@ const JobInvoiceForm = () => {
               <div className="flex justify-between items-center gap-3 py-2">
                 <span className="w-[15%] text-label text-sm">Po Number: </span>
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-[35%] tracking-wider text-sm text-right pr-4
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.poNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Po Number" type="text" value={invoiceForm.poNumber} name="poNumber" onChange={(e) => handleChange(e)} />
                 <span className="w-[15%] text-label text-sm">Fee: $ </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-right text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.fee ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.fee} name="fee" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -184,9 +184,9 @@ const JobInvoiceForm = () => {
               <div className="flex justify-between items-center gap-3 py-2">
                 <span className="w-[15%] text-label text-sm">Gst 10%: </span>
                 <div className="w-[35%]">
-                  <div className="flex flex-row">
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group4" className="flex w-full cursor-pointer items-center justify-end">
+                  <div className="flex flex-row justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all mr-2">
+                      <label htmlFor="check-vertical-list-group4" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm" htmlFor="check-vertical-list-group4">Yes</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group4">
@@ -206,8 +206,8 @@ const JobInvoiceForm = () => {
                         </div>
                       </label>
                     </div>
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group5" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group5" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm" htmlFor="check-vertical-list-group5">No</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group5">
@@ -232,7 +232,7 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Usage: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.usage ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.usage} name="usage" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -242,14 +242,14 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Asf: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.asf ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.asf} name="asf" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Royalities: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.royalities ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.royalities} name="royalities" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -259,14 +259,14 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Commission: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.commission ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.commission} name="commission" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Payment Terms: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.paymentTerms ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={invoiceForm.paymentTerms} name="paymentTerms" placeholder="Days" onChange={(e) => handleNumberChange(e)} />
                 </div>
@@ -277,13 +277,13 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.expenses ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       type="text" value={invoiceForm.expenses} name="expenses" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
                     <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.expensesDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="expenses"
                       type="text" value={invoiceForm.expensesDesc} name="expensesDesc" rows={4} onChange={(e) => handleChange(e)} />
@@ -296,13 +296,13 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.miscellaneous ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       type="text" value={invoiceForm.miscellaneous} name="miscellaneous" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
                     <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.miscellaneousDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="miscellaneous"
                       type="text" value={invoiceForm.miscellaneousDesc} name="miscellaneousDesc" rows={4} onChange={(e) => handleChange(e)} />
@@ -350,24 +350,24 @@ const JobInvoiceForm = () => {
 
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
         <div className="w-full">
-          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelJob}>Cancel</button>
         </div>
         <Link to={job?.details?._id ? `/job/edit/${job?.details?._id}/jobDetails` : "/job/add/jobDetails"} className="w-full">
-          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Previous</button>
         </Link>
         <div className="w-full">
-          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={nextFunc}>Next...</button>
         </div>
         <div className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={updateJob}>Update</button>

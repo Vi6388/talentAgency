@@ -55,7 +55,30 @@
 }
 
 .font-gotham-bold {
-  font-family: "Gotham-Bold";
+  font-family: "Gotham-Bold" !important;
+}
+
+input {
+  font-family: "Gotham-Book";
+}
+
+input::placeholder, textarea::placeholder {
+  font-family: "Gotham-Bold" !important;
+  color: #d4d5d6;
+  text-transform: uppercase;
+}
+
+textarea {
+  white-space: 'pre-line';
+}
+
+textarea::placeholder {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* @layer base {
@@ -152,7 +175,7 @@
 }
 
 .text-kanban {
-  color: #242c36;
+  color: #242c36 !important;
 }
 
 .text-estimateDate {

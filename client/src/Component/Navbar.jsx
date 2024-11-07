@@ -45,13 +45,13 @@ const Navbar = () => {
             <div className="flex">
               {location.pathname === "/estimate/kanban" ? (
                 <Link to={"/estimate/add/jobDetails"}>
-                  <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
+                  <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-gotham-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out px-3
                         hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">New Job</button>
                 </Link>
               ) : (location.pathname === "/job/kanban" || location.pathname === "/job/list") ? (
                 <Link to={"/job/add/jobDetails"}>
-                  <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
+                  <button className="bg-black w-24 md:w-32 lg:w-48 h-9 md:h-11 tracking-wider text-center rounded-[12px] text-white font-gotham-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out px-3
                         hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">New Job</button>
                 </Link>
@@ -80,7 +80,7 @@ const Navbar = () => {
             <ul className="flex flex-row justify-between md:justify-start px-4 md:p-0 font-gotham-medium items-center rounded-lg md:space-x-8 rtl:space-x-reverse 
                             md:mt-0 md:border-0">
               <li>
-                <button className="bg-white w-[88px] h-10 tracking-wider text-center rounded-[12px] text-input font-bold 
+                <button className="bg-white w-[88px] h-10 tracking-wider text-center rounded-[12px] text-input font-gotham-bold 
                       block rounded bg-white leading-normal shadow-md transition duration-150 ease-in-out 
                       hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">
                   <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1"

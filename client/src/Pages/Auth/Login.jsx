@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../hooks/useAuth";
 import { api } from "../../apis";
+import { store } from "../../redux/store";
+import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       api.login(loginForm).then((res) => {
         if (res.data.status === 200) {
           handleSuccess(res.data.message);
@@ -50,6 +53,7 @@ const Login = () => {
         } else {
           handleError(res.data.message);
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } catch (error) {
       console.log(error);
@@ -68,18 +72,18 @@ const Login = () => {
               </div>
               <div className="my-2 w-full flex justify-center items-center">
                 <input className="rounded-[16px] text-input shadow-lg shadow-500 text-center h-11 sm:w-96 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold" placeholder="EMAIL ADDRESS"
+                        outline-none focus:border-[#d4d5d6] border-none" placeholder="EMAIL ADDRESS"
                   type="text" name="email" value={loginForm.email}
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="my-2 w-full flex justify-center items-center">
                 <input className="rounded-[16px] text-input shadow-lg shadow-500 text-center h-11 sm:w-96 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] border-none placeholder:text-[#d4d5d6] placeholder:font-bold" placeholder="PASSWORD"
+                        outline-none focus:border-[#d4d5d6] border-none" placeholder="PASSWORD"
                   type="password" value={loginForm.password} name="password"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="my-8 w-full flex justify-center items-center">
-                <button className="bg-black w-64 h-11 tracking-wider text-center rounded-[12px] text-white font-bold 
+                <button className="bg-black w-64 h-11 tracking-wider text-center rounded-[12px] text-white font-gotham-bold 
                         block rounded bg-black uppercase leading-normal shadow-md transition duration-150 ease-in-out 
                         hover:bg-neutral-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={handleSubmit}>Login</button>

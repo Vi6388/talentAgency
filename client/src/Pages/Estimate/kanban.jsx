@@ -64,16 +64,16 @@ const EstimateKanban = () => {
     <div className="p-5 flex flex-col h-full bg-main">
       <ToastContainer />
       <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <select className="col-span-1 sm:col-span-2 bg-white text-kanban border-none outline-none text-sm rounded-lg w-52 text-input font-bold tracking-wider
+        <select className="col-span-1 sm:col-span-2 bg-white text-kanban border-none outline-none text-sm rounded-lg w-52 text-input tracking-wider
                           focus:ring-neutral-500 focus:border-neutral-100 shadow-lg block w-full p-2">
           <option>Sort jobs by talent</option>
         </select>
-        <select className="col-span-1 sm:col-span-2 bg-white text-kanban border-none outline-none text-sm rounded-lg w-52 text-input font-bold tracking-wider
+        <select className="col-span-1 sm:col-span-2 bg-white text-kanban border-none outline-none text-sm rounded-lg w-52 text-input tracking-wider
                           focus:ring-neutral-500 focus:border-neutral-100 shadow-lg block w-full p-2">
           <option>Sort jobs by client</option>
         </select>
         <div className="col-span-2 sm:col-span-1 flex justify-end items-center">
-          <button className="bg-white w-fit sm:w-full px-4 h-10 text-center rounded-[12px] text-input font-bold tracking-wider
+          <button className="bg-white w-fit sm:w-full px-4 h-10 text-center rounded-[12px] text-input tracking-wider
                             block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out 
                             hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Show all</button>
         </div>

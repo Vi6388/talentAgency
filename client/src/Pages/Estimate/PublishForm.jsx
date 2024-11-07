@@ -223,8 +223,8 @@ const EstimatePublishForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">estimate - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -236,7 +236,7 @@ const EstimatePublishForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="job title" type="text" value={publishForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
@@ -246,7 +246,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("firstDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.firstDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -259,7 +259,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("secondDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.secondDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -272,7 +272,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("finalDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.finalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -284,21 +284,21 @@ const EstimatePublishForm = () => {
 
               <div className="w-full gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.publisher ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="publisher" type="text" value={publishForm.publisher} name="publisher" onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
-                  placeholder="Brief Copy Tags Key Messages" type="text" value={publishForm.keyMessages} name="keyMessages" rows={5} onChange={(e) => handleChange(e)} />
+                  placeholder="Brief Copy&#10;Tags&#10;Key Messages" type="text" value={publishForm.keyMessages} name="keyMessages" rows={5} onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Deleverables" type="text" value={publishForm.deleverables} name="deleverables" rows={5} onChange={(e) => handleChange(e)} />
               </div>
@@ -345,18 +345,18 @@ const EstimatePublishForm = () => {
 
       <div className={`mt-12 grid grid-cols-2 sm:grid-cols-3 ${jobEstimate?.details?._id ? 'md:grid-cols-5' : 'md:grid-cols-4'} w-full px-4 sm:w-2/3 lg:w-1/2 sm:mx-auto gap-3`}>
         <div className="w-full">
-          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelEstimate}>Cancel</button>
         </div>
         <Link to={jobEstimate?.details?._id ? `/estimate/edit/${jobEstimate?.details?._id}/media` : "/estimate/add/media"} className="w-full">
-          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Previous</button>
         </Link>
         <div className="w-full">
-          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={nextFunc}>Next...</button>
@@ -365,20 +365,20 @@ const EstimatePublishForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>
               </div>
               <div className="w-full">
-                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#b57687] hover:shadow-md focus:bg-[#7c4050] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={makeJobLive}>Make job live</button>
               </div>
             </> :
             <div className="w-full">
-              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                 type="button" onClick={sendEstimate}>Send Estimate</button>

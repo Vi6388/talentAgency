@@ -222,8 +222,8 @@ const EstimateTravelForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">estimate - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -235,7 +235,7 @@ const EstimateTravelForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="job title" type="text" value={travelForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
@@ -246,7 +246,7 @@ const EstimateTravelForm = () => {
                     setShow={(state) => handleState("departureDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
                       <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.departureDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                         placeholder="START Date" value={travelForm.departureDate} onFocus={() => setShow({ ...show, departureDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
@@ -258,7 +258,7 @@ const EstimateTravelForm = () => {
                   <div className="relative w-full col-span-1">
                     <input type={inputType.departureTime} name="departureTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.departureTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={travelForm.departureTime} placeholder="DEPARTURE TIME"
                       onChange={handleChange}
@@ -275,7 +275,7 @@ const EstimateTravelForm = () => {
                     setShow={(state) => handleState("arrivalDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
                       <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.arrivalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                         placeholder="END Date" value={travelForm.arrivalDate} onFocus={() => setShow({ ...show, arrivalDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
@@ -287,7 +287,7 @@ const EstimateTravelForm = () => {
                   <div className="relative w-full col-span-1">
                     <input type={inputType.arrivalTime} name="arrivalTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.arrivalTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={travelForm.arrivalTime} placeholder="ARRIVAL TIME"
                       onChange={handleChange}
@@ -303,7 +303,7 @@ const EstimateTravelForm = () => {
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 py-2">
                 <div className="relative w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.preferredCarrier ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.preferredCarrier} name="preferredCarrier" placeholder="PREFERRED CARRIER"
                     onChange={(e) => handleChange(e)} />
@@ -313,7 +313,7 @@ const EstimateTravelForm = () => {
                 </div>
                 <div className="relative w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.frequentFlyerNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.frequentFlyerNumber} name="frequentFlyerNumber" placeholder="FREQUENT FLYER NUMBER"
                     onChange={(e) => handleChange(e)} />
@@ -327,10 +327,10 @@ const EstimateTravelForm = () => {
                 <div className="relative w-full">
                   <div className="flex flex-row">
                     <div className="w-full">
-                      <label className="cursor-pointer text-label text-sm">Is client paying for travel</label>
+                      <label className="cursor-pointer text-label text-sm flex">Is client paying for travel</label>
                     </div>
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group4" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all mr-2">
+                      <label htmlFor="check-vertical-list-group4" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label font-semibold text-sm" htmlFor="check-vertical-list-group4">Yes</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group4">
@@ -350,8 +350,8 @@ const EstimateTravelForm = () => {
                         </div>
                       </label>
                     </div>
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group5" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group5" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label font-semibold text-sm" htmlFor="check-vertical-list-group5">No</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group5">
@@ -375,7 +375,7 @@ const EstimateTravelForm = () => {
                 </div>
                 <div className="w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.carHireRequired ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     type="text" value={travelForm.carHireRequired} name="carHireRequired" placeholder="Car Hire Required"
                     onChange={(e) => handleChange(e)} />
@@ -384,7 +384,7 @@ const EstimateTravelForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.travelDetails ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Transfer and any other travel details"
                   type="text" value={travelForm.travelDetails} name="travelDetails" rows={10}
@@ -433,13 +433,13 @@ const EstimateTravelForm = () => {
 
       <div className={`mt-12 grid grid-cols-2 sm:grid-cols-3 ${jobEstimate?.details?.id ? 'md:grid-cols-4' : 'md:grid-cols-3'} w-full px-4 sm:w-2/3 lg:w-1/2 sm:mx-auto gap-3`}>
         <div className="w-full">
-          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelEstimate}>Cancel</button>
         </div>
         <Link to={jobEstimate?.details?._id ? `/estimate/edit/${jobEstimate?.details?._id}/publish` : "/estimate/add/publish"} className="w-full">
-          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Previous</button>
         </Link>
@@ -447,20 +447,20 @@ const EstimateTravelForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>
               </div>
               <div className="w-full">
-                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#b57687] hover:shadow-md focus:bg-[#7c4050] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={makeJobLive}>Make job live</button>
               </div>
             </> :
             <div className="w-full">
-              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                 type="button" onClick={sendEstimate}>Send Estimate</button>

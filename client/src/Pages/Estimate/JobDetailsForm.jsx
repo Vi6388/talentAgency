@@ -261,8 +261,8 @@ const EstimateJobDetailsForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{jobDetailsForm.jobName === "" ? '{ Job Name }' : jobDetailsForm.jobName}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">estimate - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{jobDetailsForm.jobName === "" ? '{ Job Name }' : jobDetailsForm.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-fit mx-4 md:w-2/3 sm:mx-auto gap-8">
@@ -274,32 +274,32 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.firstname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.firstname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="First Name"
                   type="text" value={jobDetailsForm.firstname} name="firstname"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.surname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.surname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="surname"
                   type="text" value={jobDetailsForm.surname} name="surname"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.email ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.email ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="Email Address"
                   type="text" value={jobDetailsForm.email} name="email"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="position"
                   type="text" value={jobDetailsForm.position} name="position"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="phone Number"
                   type="text" value={jobDetailsForm.phoneNumber} name="phoneNumber"
                   onChange={(e) => handleChange(e)} />
@@ -314,41 +314,38 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.companyName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.companyName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="Company Name"
                   type="text" value={jobDetailsForm.companyName} name="companyName"
                   onChange={(e) => handleChange(e)} />
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.abn ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.abn ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="abn"
                   type="text" value={jobDetailsForm.abn} name="abn"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.postalAddress ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.postalAddress ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="Postal Address"
                   type="text" value={jobDetailsForm.postalAddress} name="postalAddress"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.suburb ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.suburb ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="suburb"
                   type="text" value={jobDetailsForm.suburb} name="suburb"
                   onChange={(e) => handleChange(e)} />
                 <div className="flex items-center justify-between gap-3 w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.state ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.state ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     placeholder="State"
                     type="text" value={jobDetailsForm.state} name="state"
                     onChange={(e) => handleChange(e)} />
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.postcode ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.postcode ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                     placeholder="postcode"
                     type="text" value={jobDetailsForm.postcode} name="postcode"
                     onChange={(e) => handleChange(e)} />
@@ -364,8 +361,8 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.jobName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.jobName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="job name"
                   type="text" value={jobDetailsForm.jobName} name="jobName"
                   onChange={(e) => handleChange(e)} />
@@ -378,8 +375,8 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2 relative">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm placeholder:text-[#d4d5d6] 
-                                    placeholder:font-bold placeholder:uppercase ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
+                                    ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
                   onChange={(e) => handleChange(e)} />
@@ -396,8 +393,7 @@ const EstimateJobDetailsForm = () => {
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="mananger"
                   type="text" value={jobDetailsForm.manager} name="manager"
                   onChange={(e) => handleChange(e)} />
@@ -411,8 +407,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -424,8 +419,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6]                         ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="End Date" value={jobDetailsForm.endDate} onFocus={() => setShowEnd(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -440,13 +434,13 @@ const EstimateJobDetailsForm = () => {
 
       <div className={`mt-10 md:mt-52 grid grid-cols-2 ${jobDetailsForm?.id ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-5/12 sm:mx-auto gap-3`}>
         <div className="w-full">
-          <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelEstimate}>Cancel</button>
         </div>
         <div className="w-full">
-          <button className="bg-button-3 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-3 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={nextFunc}>Next...</button>
@@ -455,20 +449,20 @@ const EstimateJobDetailsForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold
+                <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>
               </div>
               <div className="w-full">
-                <button className="bg-button-5 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-5 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#b57687] hover:shadow-md focus:bg-[#7c4050] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={makeJobLive}>Make job live</button>
               </div>
             </> :
             <div className="w-full">
-              <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+              <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                 type="button" onClick={sendEstimate}>Send Estimate</button>

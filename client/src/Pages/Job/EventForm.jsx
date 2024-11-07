@@ -179,8 +179,8 @@ const JobEventForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">event - </span>
-        <span className="text-title-2 uppercase font-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">event - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -192,7 +192,7 @@ const JobEventForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="job title"
                   type="text" value={eventForm.jobTitle} name="jobTitle"
@@ -204,7 +204,7 @@ const JobEventForm = () => {
                   setShow={(state) => handleState("eventDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.eventDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Event Date" value={eventForm.eventDate} onFocus={() => setShow({ ...show, eventDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -216,7 +216,7 @@ const JobEventForm = () => {
                   <div className="relative w-full">
                     <input type={inputType.startTime} name="eventStartTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.eventStartTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={eventForm.eventStartTime} placeholder="EVENT START TIME"
                       onChange={handleChange}
@@ -230,7 +230,7 @@ const JobEventForm = () => {
                   <div className="relative w-full">
                     <input type={inputType.endTime} name="eventEndTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.eventEndTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       min="09:00" max="18:00" value={eventForm.eventEndTime} placeholder="EVENT END TIME"
                       onChange={handleChange}
@@ -245,16 +245,16 @@ const JobEventForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
-                  placeholder="Brief Copy Tags Key Messages"
+                  placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={eventForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Deleverables"
                   type="text" value={eventForm.deleverables} name="deleverables" rows={5}
@@ -303,24 +303,24 @@ const JobEventForm = () => {
 
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 w-full px-4 sm:w-2/3 lg:w-1/2 xl:w-1/3 sm:mx-auto gap-3">
         <div className="w-full">
-          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelJob}>Cancel</button>
         </div>
         <Link to={job?.details?._id ? `/job/edit/${job?.details?._id}/social` : "/job/add/social"} className="w-full">
-          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Previous</button>
         </Link>
         <div className="w-full">
-          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={nextFunc}>Next...</button>
         </div>
         <div className="w-full">
-          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={updateJob}>Update</button>

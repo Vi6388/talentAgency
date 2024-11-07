@@ -219,8 +219,8 @@ const EstimateMediaForm = () => {
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
-        <span className="text-title-1 uppercase font-bold italic">estimate - </span>
-        <span className="text-title-2 uppercase font-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
+        <span className="text-title-1 uppercase font-gotham-bold italic">estimate - </span>
+        <span className="text-title-2 uppercase font-gotham-bold">{jobEstimate?.details?.jobName ? jobEstimate?.details?.jobName : `{ JOB Name }`}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
@@ -232,7 +232,7 @@ const EstimateMediaForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="job title" type="text" value={mediaForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
@@ -242,7 +242,7 @@ const EstimateMediaForm = () => {
                   setShow={(state) => handleState("startDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="START Date" value={mediaForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -255,7 +255,7 @@ const EstimateMediaForm = () => {
                   setShow={(state) => handleState("endDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        outline-none focus:border-[#d4d5d6]
                         ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="END Date" value={mediaForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
@@ -268,8 +268,8 @@ const EstimateMediaForm = () => {
               <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-3 py-2">
                 <div className="w-full col-span-2 flex flex-wrap xl:flex-nowrap justify-between items-center gap-2">
                   <div className="flex flex-row">
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group4" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group4" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm uppercase" htmlFor="check-vertical-list-group4">podcast</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group4">
@@ -291,8 +291,8 @@ const EstimateMediaForm = () => {
                     </div>
                   </div>
                   <div className="flex flex-row">
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group1" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group1" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm uppercase" htmlFor="check-vertical-list-group1">radio</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group1">
@@ -314,8 +314,8 @@ const EstimateMediaForm = () => {
                     </div>
                   </div>
                   <div className="flex flex-row">
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group2" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group2" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm uppercase" htmlFor="check-vertical-list-group2">Web Series</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group2">
@@ -337,8 +337,8 @@ const EstimateMediaForm = () => {
                     </div>
                   </div>
                   <div className="flex flex-row">
-                    <div role="button" className="flex w-full items-center rounded-lg p-0 transition-all">
-                      <label htmlFor="check-vertical-list-group3" className="flex w-full cursor-pointer items-center justify-end">
+                    <div role="button" className="flex w-fit items-center rounded-lg p-0 transition-all">
+                      <label htmlFor="check-vertical-list-group3" className="flex w-fit cursor-pointer items-center justify-end">
                         <div className="inline-flex items-center gap-2">
                           <label className="cursor-pointer text-label text-sm uppercase" htmlFor="check-vertical-list-group3">tv</label>
                           <label className="flex items-center cursor-pointer relative" htmlFor="check-vertical-list-group3">
@@ -362,7 +362,7 @@ const EstimateMediaForm = () => {
                 </div>
                 <div className="w-full col-span-1">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                      outline-none focus:border-[#d4d5d6]
                       ${errors.numberOfEpisodes ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                     placeholder="number Of Episodes"
                     type="text" value={mediaForm.numberOfEpisodes} name="numberOfEpisodes"
@@ -372,16 +372,16 @@ const EstimateMediaForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
-                  placeholder="Brief Copy Tags Key Messages"
+                  placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={mediaForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[# d4d5d6]
-                        placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase placeholder:text-center
+                       placeholder:text-center
                         ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="Deleverables"
                   type="text" value={mediaForm.deleverables} name="deleverables" rows={5}
@@ -432,18 +432,18 @@ const EstimateMediaForm = () => {
 
       <div className={`mt-12 grid grid-cols-2 sm:grid-cols-3 ${jobEstimate?.details?._id ? 'md:grid-cols-5' : 'md:grid-cols-4'} w-full px-4 sm:w-2/3 lg:w-1/2 sm:mx-auto gap-3`}>
         <div className="w-full">
-          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-1 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-gray-300 hover:shadow-md focus:bg-gray-400 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={cancelEstimate}>Cancel</button>
         </div>
         <Link to={jobEstimate?.details?._id ? `/estimate/edit/${jobEstimate?.details?._id}/event` : "/estimate/add/event"} className="w-full">
-          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-2 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Previous</button>
         </Link>
         <div className="w-full">
-          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+          <button className="bg-button-3 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
             type="button" onClick={nextFunc}>Next...</button>
@@ -452,20 +452,20 @@ const EstimateMediaForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>
               </div>
               <div className="w-full">
-                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-5 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-[#b57687] hover:shadow-md focus:bg-[#7c4050] focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={makeJobLive}>Make job live</button>
               </div>
             </> :
             <div className="w-full">
-              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+              <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                 type="button" onClick={sendEstimate}>Send Estimate</button>
