@@ -69,7 +69,7 @@ const JobList = () => {
                 <tr className="border-table border-b last:border-b-0" key={index}>
                   <td className="p-2">
                     <div className="flex justify-start items-center gap-2">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.labelColor ? `${item.labelColor}` : "" }}></div>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item?.talent?.hightlightColor ? `${item?.talent?.hightlightColor}` : "" }}></div>
                       <span className="text-input text-sm font-gotham-regular">{item.talent?.talentName}</span>
                     </div>
                   </td>
