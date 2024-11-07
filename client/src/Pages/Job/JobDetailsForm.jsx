@@ -119,7 +119,7 @@ const JobDetailsForm = () => {
       labelColor: data?.details?.labelColor || (data?.details?.labelColor || "#000000"),
       startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
       endDate: dueDateFormat(data?.details?.endDate) || (dueDateFormat(data?.details?.endDate) || ""),
-      supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || ""),
+      supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || false),
     });
 
     const uploadedFiles = data?.details?.uploadedFiles;
