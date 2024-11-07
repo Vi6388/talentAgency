@@ -44,7 +44,7 @@ function EstimateCardItem({ item, index }) {
               </div>
               <div className="flex flex-col justify-between w-full">
                 <div className="font-semibold text-[8px] leading-5 text-kanban">{item.contactDetails?.firstname} {item.contactDetails?.surname}</div>
-                <div className="w-full h-1" style={{ backgroundColor: item.labelColor }}></div>
+                <div className="w-full h-1" style={{ backgroundColor: item?.talent?.highlightColor }}></div>
               </div>
             </div>
           </div>

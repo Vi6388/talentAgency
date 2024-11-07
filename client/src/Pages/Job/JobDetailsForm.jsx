@@ -31,6 +31,7 @@ const JobDetailsForm = () => {
     jobName: "",
     talentName: "",
     talentEmail: "",
+    highlightColor: "#000000",
     manager: "",
     startDate: "",
     endDate: "",
@@ -113,6 +114,7 @@ const JobDetailsForm = () => {
       jobName: data?.details?.jobName || (data?.details?.jobName || ""),
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
+      highlightColor: data?.details?.talent?.highlightColor || (data?.details?.highlightColor || "#000000"),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
       labelColor: data?.details?.labelColor || (data?.details?.labelColor || "#000000"),
       startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
@@ -172,7 +174,8 @@ const JobDetailsForm = () => {
     setJobDetailsForm({
       ...jobDetailsForm,
       talentName: item.firstname + " " + item.surname,
-      talentEmail: item.email
+      talentEmail: item.email,
+      highlightColor: item.highlightColor
     });
     setTalentSearchList(talentList);
     setShowTalentList(false);
