@@ -171,12 +171,13 @@ const JobDetailsForm = () => {
   }
 
   const changeTalent = (item) => {
-    setJobDetailsForm({
+    const data = {
       ...jobDetailsForm,
       talentName: item.firstname + " " + item.surname,
       talentEmail: item.email,
       highlightColor: item.highlightColor
-    });
+    }
+    setJobDetailsForm(data);
     setTalentSearchList(talentList);
     setShowTalentList(false);
   }
@@ -390,6 +391,7 @@ const JobDetailsForm = () => {
   }
 
   const updateJob = async () => {
+    console.log(jobDetailsForm)
     if (jobDetailsForm.id) {
       const formData = new FormData();
       if (jobDetailsForm?.uploadedFiles) {
