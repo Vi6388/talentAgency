@@ -5,6 +5,8 @@ import { EstimateApi } from "../../apis/EstimateApi";
 import { toast, ToastContainer } from "react-toastify";
 import { estimageStatusList } from "../../utils/utils";
 import { useNavigate } from "react-router-dom";
+import { store } from "../../redux/store";
+import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
 
 const EstimateKanban = () => {
   const [ready, setReady] = useState(false);
@@ -16,6 +18,7 @@ const EstimateKanban = () => {
       setReady(true);
     }
 
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.list().then((res) => {
       if (res.data.status === 200) {
         const result = estimageStatusList.map(status => ({
@@ -25,6 +28,7 @@ const EstimateKanban = () => {
         })).sort((a, b) => a.sort - b.sort);
         setEstimateList(result)
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
   }, []);
 
@@ -80,7 +84,7 @@ const EstimateKanban = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
             {estimateList.map((board, bIndex) => (
               <div key={board.name}>
-                <Droppable droppableId={bIndex}>
+                <Droppable droppableId={`${bIndex}`}>
                   {(provided, snapshot) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
                       <div

@@ -10,7 +10,7 @@ function EstimateCardItem({ item, index }) {
     navigate(`/estimate/edit/${id}/jobDetails`);
   }
   return (
-    <Draggable index={index} draggableId={item._id}>
+    <Draggable index={index} draggableId={`${item._id}`}>
       {(provided) => (
         <div
           ref={provided.innerRef}

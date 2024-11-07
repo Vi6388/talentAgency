@@ -77,7 +77,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isOpen ? 'block' : 'hidden'}`} id="navbar-sticky">
-            <ul className="flex flex-row justify-between md:justify-start px-4 md:p-0 font-medium items-center rounded-lg md:space-x-8 rtl:space-x-reverse 
+            <ul className="flex flex-row justify-between md:justify-start px-4 md:p-0 font-gotham-medium items-center rounded-lg md:space-x-8 rtl:space-x-reverse 
                             md:mt-0 md:border-0">
               <li>
                 <button className="bg-white w-[88px] h-10 tracking-wider text-center rounded-[12px] text-input font-bold 

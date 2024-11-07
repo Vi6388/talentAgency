@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { dateFormat, jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
@@ -100,9 +100,9 @@ const JobTravelForm = () => {
       let list = travelList;
       const data = {
         ...travelForm,
-        departureDate: dateFormat(travelForm.departureDate),
+        departureDate: dueDateFormat(travelForm.departureDate),
         departureTime: travelForm.departureTime,
-        arrivalDate: dateFormat(travelForm.arrivalDate),
+        arrivalDate: dueDateFormat(travelForm.arrivalDate),
         arrivalTime: travelForm.arrivalTime,
         type: 'travel'
       }
@@ -187,18 +187,18 @@ const JobTravelForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">travel - </span>
-        <span className="text-title-2 uppercase font-bold">{`{ JOB Name }`}</span>
+        <span className="text-title-2 uppercase font-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
         <div className="col-span-1">
           <div className="flex flex-col justify-between">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Deliverable details</span>
+              <span className="text-base text-title-2 font-gotham-medium">Deliverable details</span>
             </div>
             <div>
               <div className="w-full py-2">
@@ -372,7 +372,7 @@ const JobTravelForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between items-center h-full w-full">
             <div className="w-full pt-2">
-              <span className="text-base text-title-2 font-medium">Job Summary</span>
+              <span className="text-base text-title-2 font-gotham-medium">Job Summary</span>
             </div>
             <div className="rounded-[16px] shadow-md shadow-500 h-full min-h-[160px] w-full tracking-wider text-md bg-white px-5 py-2">
               {travelList?.length > 0 ?

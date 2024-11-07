@@ -10,7 +10,7 @@ function JobCardItem({ item, index, talent }) {
   }
   
   return (
-    <Draggable index={index} draggableId={item._id}>
+    <Draggable index={index} draggableId={`${item._id}`}>
       {(provided) => (
         <div
           ref={provided.innerRef}

@@ -10,7 +10,7 @@
 
 @layer base {
   html {
-    font-family: "Inter", sans-serif;
+    font-family: "Gotham-Book", sans-serif;
   }
 }
 
@@ -20,6 +20,42 @@
 
 .active {
   @apply bg-purple-100 text-[#0D062D] rounded-md font-semibold;
+}
+
+@font-face {
+  font-family: "Gotham-Bold";
+  src:
+    local("Gotham-Bold"),
+    url("./utils/fonts/Gotham-Bold.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-Book";
+  src:
+    local("Gotham-Book"),
+    url("./utils/fonts/Gotham-Book.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-Medium";
+  src:
+    local("Gotham-Medium"),
+    url("./utils/fonts/Gotham-Medium.otf") format("opentype");
+  font-display: swap;
+}
+
+.font-gotham-regular {
+  font-family: "Gotham-Book";
+}
+
+.font-gotham-medium {
+  font-family: "Gotham-Medium";
+}
+
+.font-gotham-bold {
+  font-family: "Gotham-Bold";
 }
 
 /* @layer base {
@@ -121,6 +157,7 @@
 
 .text-estimateDate {
   color: #5b493b;
+  font-family: "Gotham-Medium", sans-serif;
 }
 
 .text-success {
@@ -133,6 +170,7 @@
 
 .text-title-2 {
   color: #554234;
+  font-family: "Gotham-Medium", sans-serif;
 }
 
 .text-suffix {

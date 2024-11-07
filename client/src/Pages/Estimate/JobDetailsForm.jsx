@@ -3,9 +3,9 @@ import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import { useNavigate, useParams } from "react-router-dom";
-import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
-import { jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -43,12 +43,14 @@ const EstimateJobDetailsForm = () => {
 
   useEffect(() => {
     if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.getJobEstimateById(id).then((res) => {
         if (res.data.status === 200) {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
           initialJobEstimateFormData(data);
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } else {
       initialJobEstimateFormData(jobEstimate)
@@ -84,8 +86,8 @@ const EstimateJobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
-      startDate: data?.details?.startDate || (data?.details?.startDate || ""),
-      endDate: data?.details?.endDate || (data?.details?.endDate || ""),
+      startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
+      endDate: dueDateFormat(data?.details?.endDate) || (dueDateFormat(data?.details?.endDate) || ""),
     })
   }
 
@@ -191,6 +193,7 @@ const EstimateJobDetailsForm = () => {
         ...jobEstimate,
         details: jobDetailsForm,
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -203,12 +206,14 @@ const EstimateJobDetailsForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }
 
   const updateEstimate = () => {
     if (jobDetailsForm.id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.updateJobEstimateById(jobDetailsForm.id, jobDetailsForm).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -221,6 +226,7 @@ const EstimateJobDetailsForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -230,6 +236,7 @@ const EstimateJobDetailsForm = () => {
   }
 
   const makeJobLive = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
       if (res.data.status === 200) {
         store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -241,6 +248,7 @@ const EstimateJobDetailsForm = () => {
           position: "top-left",
         });
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
   }
 
@@ -250,7 +258,7 @@ const EstimateJobDetailsForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">estimate - </span>
@@ -261,8 +269,8 @@ const EstimateJobDetailsForm = () => {
         <div className="col-span-1">
           <div className="mb-3">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Contact Details</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
+              <span className="text-sm text-title-2 font-gotham-medium">Contact Details</span>
+              <img src={SearchIcon} className="w-5 h-5" alt="search icon" />
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -301,8 +309,8 @@ const EstimateJobDetailsForm = () => {
 
           <div className="mb-3">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Company Details</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
+              <span className="text-sm text-title-2 font-gotham-medium">Company Details</span>
+              <img src={SearchIcon} className="w-5 h-5" alt="search icon" />
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -352,7 +360,7 @@ const EstimateJobDetailsForm = () => {
         <div className="col-span-1 flex flex-col justify-between items-center">
           <div className="mb-3 w-full">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Job Name</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Job Name</span>
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -366,7 +374,7 @@ const EstimateJobDetailsForm = () => {
           </div>
           <div className="mb-3 w-full">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Talent</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Talent</span>
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2 relative">
@@ -398,15 +406,7 @@ const EstimateJobDetailsForm = () => {
           </div>
 
           <div className="mb-3 w-full">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 w-full gap-3">
-              <div className="col-span-2 sm:col-span-1 md:col-span-2 w-full flex jutify-between items-center gap-3">
-                <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">New</button>
-                <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Existing</button>
-              </div>
+            <div className="grid grid-cols-2 w-full gap-3 py-2">
               <div className="col-span-1 w-full flex justify-between items-center relative">
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
@@ -455,7 +455,7 @@ const EstimateJobDetailsForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-4 h-9 md:h-10 tracking-wider text-center rounded-[12px] text-white font-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>

@@ -10,9 +10,11 @@ import {
   SAVE_JOB_ESTIMATE_INVOICE_LIST,
   SAVE_JOB_ESTIMATE,
   CLEAN_JOB_ESTIMATE,
+  CHANGE_IS_LOADING,
 } from "../actionTypes";
 
 const initialState = {
+  isLoading: false,
   job: {
     details: {
       firstname: "",
@@ -63,6 +65,11 @@ const initialState = {
 
 export const jobReducer = (state = initialState, action) => {
   switch (action.type) {
+    case CHANGE_IS_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload
+      };
     case SAVE_JOB_DETAILS_FORM:
       return {
         ...state,

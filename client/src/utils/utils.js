@@ -92,8 +92,10 @@ export const dateFormat = (date) => {
 }
 
 export const dueDateFormat = (date) => {
-  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date") {
-    const day = new Date(date).toISOString().split('T')[0];
-    return day.replaceAll("-", "/");
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
+    const day = new Date(date).getDate();
+    const month = new Date(date).getMonth() + 1;
+    const year = new Date(date).getFullYear();
+    return day + "/" + month + "/" + year;
   }
 }

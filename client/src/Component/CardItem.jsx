@@ -17,7 +17,7 @@ function CardItem({ data, index }) {
         >
           <div className="flex justify-between items-center">
             <label
-              className={`px-2 py-1 rounded-[4px] text-[12px] font-medium	 bg-opacity-20		
+              className={`px-2 py-1 rounded-[4px] text-[12px] font-gotham-medium	 bg-opacity-20		
               ${
                 data.priority === 0
                   ? "bg-[#DFA874] text-[#D58D49]"
@@ -64,12 +64,12 @@ function CardItem({ data, index }) {
                   })}
                 </div>
               </li>
-              <li className="flex items-center gap-1 font-medium text-[#787486]	text-[12px]">
+              <li className="flex items-center gap-1 font-gotham-medium text-[#787486]	text-[12px]">
                 <img src={Message} w="13px" h="13px" alt="home" />
                 <span>{data.comments}</span>
                 comments
               </li>
-              <li className="flex items-center gap-1 font-medium text-[#787486]	text-[12px]">
+              <li className="flex items-center gap-1 font-gotham-medium text-[#787486]	text-[12px]">
                 <img src={Files} w="13px" h="13px" alt="home" />
                 <span>{data.files}</span>
                 files

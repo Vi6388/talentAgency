@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
-import { dateFormat, jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -85,7 +85,7 @@ const EstimateEventForm = () => {
       let list = eventList;
       const data = {
         ...eventForm,
-        eventDate: dateFormat(eventForm.eventDate),
+        eventDate: dueDateFormat(eventForm.eventDate),
         eventStartTime: eventForm.eventStartTime,
         eventEndTime: eventForm.eventEndTime,
         type: "event"
@@ -198,7 +198,7 @@ const EstimateEventForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">estimate - </span>
@@ -209,7 +209,7 @@ const EstimateEventForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Deliverable details</span>
+              <span className="text-base text-title-2 font-gotham-medium">Deliverable details</span>
             </div>
             <div>
               <div className="w-full py-2">
@@ -288,7 +288,7 @@ const EstimateEventForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between items-center h-full w-full">
             <div className="w-full pt-2">
-              <span className="text-base text-title-2 font-medium">Job Summary</span>
+              <span className="text-base text-title-2 font-gotham-medium">Job Summary</span>
             </div>
             <div className="rounded-[16px] shadow-md shadow-500 h-full min-h-[160px] w-full tracking-wider text-md bg-white px-5 py-2">
               {eventList?.length > 0 ?
@@ -301,7 +301,7 @@ const EstimateEventForm = () => {
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobEvent(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="w-5 h-5" />
                         </button>
@@ -338,7 +338,7 @@ const EstimateEventForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>

@@ -48,10 +48,10 @@ const Settings = () => {
                 {userList?.map((item, index) => {
                   return (
                     <tr className="border-table border-b last:border-b-0" key={index}>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium">{item.firstname + " " + item.surname}</span></td>
-                      <td className="p-2"><span className="text-input text-sm font-medium">{item.email}</span></td>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium">{item.phoneNumber}</span></td>
-                      <td className="p-2"><span className="text-input text-sm font-medium">{item.username}</span></td>
+                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-gotham-medium">{item.firstname + " " + item.surname}</span></td>
+                      <td className="p-2"><span className="text-input text-sm font-gotham-medium">{item.email}</span></td>
+                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-gotham-medium">{item.phoneNumber}</span></td>
+                      <td className="p-2"><span className="text-input text-sm font-gotham-medium">{item.username}</span></td>
                       <td className="p-2 w-full lg:w-[160px]">
                         <Link to={`/settings/user/edit/${item._id}`}>
                           <button className="bg-button-6 h-full lg:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] lg:w-[160px]
@@ -87,9 +87,9 @@ const Settings = () => {
                 {talentList?.map((item, index) => {
                   return (
                     <tr className="border-table border-b last:border-b-0" key={index}>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium">{item.firstname + " " + item.surname}</span></td>
-                      <td className="p-2"><span className="text-input text-sm font-medium">{item.email}</span></td>
-                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-medium w-full">{item.phoneNumber}</span></td>
+                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-gotham-medium">{item.firstname + " " + item.surname}</span></td>
+                      <td className="p-2"><span className="text-input text-sm font-gotham-medium">{item.email}</span></td>
+                      <td className="p-2 w-[20%]"><span className="text-input text-sm font-gotham-medium w-full">{item.phoneNumber}</span></td>
                       <td className="p-2 w-full lg:w-[160px]">
                         <Link to={`/settings/talent/edit/${item._id}`}>
                           <button className="bg-button-6 h-full lg:h-9 text-center rounded-[12px] text-white font-bold tracking-wider w-[100px] lg:w-[160px]

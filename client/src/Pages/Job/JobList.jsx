@@ -65,16 +65,16 @@ const JobList = () => {
                 <tr className="border-table border-b last:border-b-0" key={index}>
                   <td className="p-2">
                     <div className="flex justify-start items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full bg-[${item.color}]`} style={{ backgroundColor: `#${item.labelColor}` }}></div>
-                      <span className="text-input text-sm font-medium">{item.talent?.talentName}</span>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.labelColor ? `${item.labelColor}` : "" }}></div>
+                      <span className="text-input text-sm font-gotham-regular">{item.talent?.talentName}</span>
                     </div>
                   </td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.companyDetails?.companyName}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.contactDetails?.firstname} {item.contactDetails?.surname}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{item.jobName}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.startDate)}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.startDate)}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-medium">{dueDateFormat(item.endDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.companyDetails?.companyName}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.contactDetails?.firstname} {item.contactDetails?.surname}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.jobName}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.startDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.startDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.endDate)}</span></td>
                   <td className="p-2">
                     <img src={item.jobStatus === 6 ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
                   </td>

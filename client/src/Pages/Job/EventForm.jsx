@@ -10,7 +10,7 @@ import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { dateFormat, jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobEventForm = () => {
   const navigate = useNavigate();
@@ -84,7 +84,7 @@ const JobEventForm = () => {
       let list = eventList;
       const data = {
         ...eventForm,
-        eventDate: dateFormat(eventForm.eventDate),
+        eventDate: dueDateFormat(eventForm.eventDate),
         eventStartTime: eventForm.eventStartTime,
         eventEndTime: eventForm.eventEndTime,
         type: "event"
@@ -176,18 +176,18 @@ const JobEventForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">event - </span>
-        <span className="text-title-2 uppercase font-bold">{job.jobName === "" ? '{ Job Name }' : job.jobName}</span>
+        <span className="text-title-2 uppercase font-bold">{job?.details?.jobName === "" ? '{ Job Name }' : job?.details?.jobName}</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full px-4 md:w-2/3 sm:mx-auto gap-8">
         <div className="col-span-1">
           <div className="flex flex-col justify-between">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Deliverable details</span>
+              <span className="text-base text-title-2 font-gotham-medium">Deliverable details</span>
             </div>
             <div>
               <div className="w-full py-2">
@@ -273,7 +273,7 @@ const JobEventForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between items-center h-full w-full">
             <div className="w-full pt-2">
-              <span className="text-base text-title-2 font-medium">Job Summary</span>
+              <span className="text-base text-title-2 font-gotham-medium">Job Summary</span>
             </div>
             <div className="rounded-[16px] shadow-md shadow-500 h-full min-h-[160px] w-full tracking-wider text-md bg-white px-5 py-2">
               {eventList?.length > 0 ?
@@ -286,7 +286,7 @@ const JobEventForm = () => {
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobEvent(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>

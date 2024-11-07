@@ -6,7 +6,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
-import { dateFormat, dateTimeFormat, jobFormValidateForm } from "../../utils/utils";
+import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -216,7 +216,7 @@ const EstimateMediaForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">estimate - </span>
@@ -227,7 +227,7 @@ const EstimateMediaForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Deliverable details</span>
+              <span className="text-base text-title-2 font-gotham-medium">Deliverable details</span>
             </div>
             <div>
               <div className="w-full py-2">
@@ -400,7 +400,7 @@ const EstimateMediaForm = () => {
         <div className="col-span-1">
           <div className="flex flex-col justify-between items-center h-full w-full">
             <div className="w-full pt-2">
-              <span className="text-base text-title-2 font-medium">Job Summary</span>
+              <span className="text-base text-title-2 font-gotham-medium">Job Summary</span>
             </div>
             <div className="rounded-[16px] shadow-md shadow-500 h-full min-h-[160px] w-full tracking-wider text-md bg-white px-5 py-2">
               {mediaList?.length > 0 ?
@@ -415,7 +415,7 @@ const EstimateMediaForm = () => {
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dateFormat(item.createdAt)}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobEpisode(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="w-5 h-5" />
                         </button>
@@ -452,7 +452,7 @@ const EstimateMediaForm = () => {
           jobEstimate?.details?._id ?
             <>
               <div className="w-full">
-                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold px-3
+                <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-bold
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
                   type="button" onClick={updateAndResend}>Update and ReSend</button>

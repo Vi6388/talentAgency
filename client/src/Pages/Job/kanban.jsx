@@ -5,6 +5,8 @@ import { JobApi } from "../../apis/job";
 import { statusList } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { TalentApi } from "../../apis/TalentApi";
+import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
+import { store } from "../../redux/store";
 
 const JobKanban = () => {
   const [ready, setReady] = useState(false);
@@ -16,6 +18,13 @@ const JobKanban = () => {
       setReady(true);
     }
 
+    TalentApi.getTalentList().then((res) => {
+      if (res.data.status === 200) {
+        setTalentList(res.data.data);
+      }
+    });
+
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     JobApi.list().then((res) => {
       if (res.data.status === 200) {
         const result = statusList.map(status => ({
@@ -25,13 +34,8 @@ const JobKanban = () => {
         })).sort((a, b) => a.sort - b.sort);
         setJobList(result)
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     });
-
-    TalentApi.getTalentList().then((res) => {
-      if(res.data.status === 200) {
-        setTalentList(res.data.data);
-      }
-    })
   }, []);
 
   const onDragEnd = (re) => {
@@ -89,7 +93,7 @@ const JobKanban = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-9 gap-5 my-5">
             {jobList.map((board, bIndex) => (
               <div key={bIndex}>
-                <Droppable droppableId={bIndex}>
+                <Droppable droppableId={`${bIndex}`}>
                   {(provided, snapshot) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
                       <div

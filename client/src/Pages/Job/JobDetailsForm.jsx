@@ -4,10 +4,10 @@ import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { jobFormValidateForm } from "../../utils/utils";
+import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
-import { CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
 import { JobApi } from "../../apis/job";
 import { TalentApi } from "../../apis/TalentApi";
@@ -34,7 +34,7 @@ const JobDetailsForm = () => {
     manager: "",
     startDate: "",
     endDate: "",
-    labelColor: "",
+    labelColor: "#000000",
     supplierRequired: false,
     uploadedFiles: {
       contractFile: "",
@@ -70,11 +70,13 @@ const JobDetailsForm = () => {
 
   useEffect(() => {
     if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.getJobById(id).then((res) => {
         if (res.data.status === 200) {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB, payload: data });
           initialJobDetailsFormData(data);
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         }
       });
     } else {
@@ -112,9 +114,9 @@ const JobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
-      labelColor: data?.details?.labelColor || (data?.details?.labelColor || ""),
-      startDate: data?.details?.startDate || (data?.details?.startDate || ""),
-      endDate: data?.details?.endDate || (data?.details?.endDate || ""),
+      labelColor: data?.details?.labelColor || (data?.details?.labelColor || "#000000"),
+      startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
+      endDate: dueDateFormat(data?.details?.endDate) || (dueDateFormat(data?.details?.endDate) || ""),
       supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || ""),
     });
 
@@ -122,23 +124,23 @@ const JobDetailsForm = () => {
     let list = [];
     if (uploadedFiles?.contractFile) {
       if (data?.details?._id) {
-        list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contractFile' })
+        list.push({ filename: uploadedFiles?.contractFile.split('/').pop(), path: uploadedFiles?.contractFile, type: 'contract' })
       } else {
-        list.push({ filename: uploadedFiles?.contractFile?.name, path: uploadedFiles?.contractFile?.name, type: 'contractFile' })
+        list.push({ filename: uploadedFiles?.contractFile?.name, path: uploadedFiles?.contractFile?.name, type: 'contract' })
       }
     }
     if (uploadedFiles?.briefFile) {
       if (data?.details?._id) {
-        list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'briefFile' })
+        list.push({ filename: uploadedFiles?.briefFile.split('/').pop(), path: uploadedFiles?.briefFile, type: 'brief' })
       } else {
-        list.push({ filename: uploadedFiles?.briefFile?.name, path: uploadedFiles?.briefFile?.name, type: 'briefFile' })
+        list.push({ filename: uploadedFiles?.briefFile?.name, path: uploadedFiles?.briefFile?.name, type: 'brief' })
       }
     }
     if (uploadedFiles?.supportingFile) {
       if (data?.details?._id) {
-        list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supportingFile' })
+        list.push({ filename: uploadedFiles?.supportingFile.split('/').pop(), path: uploadedFiles?.supportingFile, type: 'supporting' })
       } else {
-        list.push({ filename: uploadedFiles?.supportingFile?.name, path: uploadedFiles?.supportingFile?.name, type: 'briefFile' })
+        list.push({ filename: uploadedFiles?.supportingFile?.name, path: uploadedFiles?.supportingFile?.name, type: 'supporting' })
       }
     }
     setUploadedList(list);
@@ -316,6 +318,7 @@ const JobDetailsForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       formData.append('talentName', jobDetailsForm?.talentName);
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       await JobApi.uploadFiles(formData).then((res) => {
         if (res.data.status === 200) {
           const data = res.data.data;
@@ -375,6 +378,7 @@ const JobDetailsForm = () => {
             })
           }
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -400,6 +404,7 @@ const JobDetailsForm = () => {
       setErrors(newErrors);
       if (Object.keys(newErrors).length === 0) {
         formData.append('talentName', jobDetailsForm?.talentName);
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         await JobApi.uploadFiles(formData).then((res) => {
           if (res.data.status === 200) {
             const data = res.data.data;
@@ -445,6 +450,7 @@ const JobDetailsForm = () => {
               }
             });
           }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         });
       }
     }
@@ -489,19 +495,19 @@ const JobDetailsForm = () => {
   }
 
   return (
-    <div className="mt-7 w-full bg-main">
+    <div className="mt-7 w-full bg-main relative pt-12">
       <ToastContainer />
       <div className="w-full text-center text-xl md:text-3xl mb-5">
         <span className="text-title-1 uppercase font-bold italic">{jobDetailsForm.jobName === "" ? "new job -" : ""} </span>
         <span className="text-title-2 uppercase font-bold">{jobDetailsForm.jobName === "" ? 'Details' : jobDetailsForm.jobName}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 w-fit mx-4 md:w-2/3 sm:mx-auto gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-fit mx-4 md:w-2/3 sm:mx-auto gap-12">
         <div className="col-span-1">
           <div className="mb-3">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Contact Details</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
+              <span className="text-sm text-title-2 font-gotham-medium">Contact Details</span>
+              <img src={SearchIcon} className="w-5 h-5" alt="search icon" />
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -543,8 +549,8 @@ const JobDetailsForm = () => {
 
           <div className="">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Company Details</span>
-              <img src={SearchIcon} className="w-4 h-4" alt="search icon" />
+              <span className="text-sm text-title-2 font-gotham-medium">Company Details</span>
+              <img src={SearchIcon} className="w-5 h-5" alt="search icon" />
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -591,7 +597,7 @@ const JobDetailsForm = () => {
         <div className="col-span-1 flex flex-col justify-between items-center">
           <div className="mb-3 w-full">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Job Name</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Job Name</span>
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
@@ -605,7 +611,7 @@ const JobDetailsForm = () => {
           </div>
           <div className="mb-3 w-full">
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base text-title-2 font-medium">Talent</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Talent</span>
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2 relative">
@@ -634,28 +640,11 @@ const JobDetailsForm = () => {
               </div>
             </div>
           </div>
-          <div className="w-full">
-            <div className="w-full relative">
-              <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
-                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
-                placeholder="Label Color"
-                type="text" value={jobDetailsForm.labelColor} readOnly />
-              <input type="color" id="color-picker" value={jobDetailsForm.labelColor} className="absolute left-2 top-2 w-10 md:w-20"
-                onChange={(e) => handleChange(e)} name="labelColor" />
-            </div>
-          </div>
-
           <div className="mb-3 w-full">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 w-full gap-3">
-              <div className="col-span-2 sm:col-span-1 md:col-span-2 w-full flex jutify-between items-center gap-3">
-                <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">New</button>
-                <button className="bg-button-2 w-full px-2 h-10 tracking-wider text-center rounded-[12px] text-white font-bold 
-                        block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out 
-                        hover:bg-[#afa098] hover:shadow-md focus:bg-[#6a5b53] focus:shadow-md focus:outline-none focus:ring-0 text-sm">Existing</button>
-              </div>
+            <div className="flex justify-between items-center pt-2">
+              <span className="text-sm text-title-2 font-gotham-medium">Ambassadorship</span>
+            </div>
+            <div className="grid grid-cols-2 w-full gap-3 py-2">
               <div className="col-span-1 w-full flex justify-between items-center relative">
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
@@ -683,6 +672,17 @@ const JobDetailsForm = () => {
                 </Datepicker>
               </div>
             </div>
+            <div className="w-full pt-2">
+              <div className="w-full relative">
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] placeholder:font-bold placeholder:uppercase
+                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                  placeholder="Label Color"
+                  type="text" value={jobDetailsForm.labelColor} readOnly />
+                <input type="color" id="color-picker" value={jobDetailsForm.labelColor} className="absolute left-2 top-2 w-10 md:w-20"
+                  onChange={(e) => handleChange(e)} name="labelColor" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -697,8 +697,8 @@ const JobDetailsForm = () => {
                 onChange={handleSupplierRequired}
                 className='sr-only'
               />
-              <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3 hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838]' : 'bg-white'}`}>
-                <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3 hover:bg-[#9b8579] hover:shadow-md focus:bg-[#664838]'}`}></span>
+              <span className={`slider mr-4 flex h-8 w-[60px] items-center rounded-full p-0.5 duration-200 border-button-3  ${jobDetailsForm.supplierRequired ? 'bg-button-3 hover:shadow-md' : 'bg-white'}`}>
+                <span className={`dot h-6 w-6 rounded-full duration-200 ${jobDetailsForm.supplierRequired ? 'translate-x-[28px] bg-white' : 'bg-button-3 hover:shadow-md'}`}></span>
               </span>
               <span className='label flex items-center text-sm font-semibold text-estimateDate text-estimateDate'>
                 Supplier setup required
@@ -710,58 +710,59 @@ const JobDetailsForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <div className="col-span-1">
             <div className="text-center my-3">
-              <span className="text-base text-title-2 font-medium">Uploaded Files</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Uploaded Files</span>
             </div>
-            <div className="rounded-[16px] shadow-md shadow-500 w-full tracking-wider text-md bg-white px-3 py-1">
+            <div className="rounded-[16px] shadow-md shadow-500 w-full tracking-wider text-md bg-white px-3 py-1 h-[120px]">
               {uploadedList?.length > 0 ?
                 uploadedList?.map((item, index) => {
                   return (
-                    <div className="flex justify-between items-center border-b divider-line-color last:border-none py-2 overflow-hidden"
+                    <div className={`flex justify-between items-center border-b divider-line-color py-2 overflow-hidden
+                      ${item.type === "supporting" ? "border-none" : ""}`}
                       key={index}>
-                      <div className="flex items-center gap-1 overflow-hidden w-full">
+                      <div className="flex items-center gap-1 overflow-hidden w-1/2">
                         <img src={DescriptionIcon} alt="file" className="w-4 h-4" />
-                        <span className="text-summary-item text-sm">({item.type}) {item.filename}</span>
+                        <span className="text-summary-item text-sm capitalize">{item.type} file name</span>
                       </div>
-                      <div className="flex items-center w-20 md:w-fit px-2 overflow-hidden w-full">
+                      <div className="flex items-center w-20 px-2 overflow-hidden w-full justify-end">
                         {item?.path?.includes("storage.googleapis.com") ?
-                          <Link className="text-summary-item text-sm hover:underline" to={item.path} target="_blank">{item.path}</Link> :
+                          <Link className="text-summary-item text-sm hover:underline" title={item.path} to={item.path} target="_blank">{item.path}</Link> :
                           <div className="text-summary-item text-sm cursor-pointer">{item.path}</div>
                         }
                       </div>
                     </div>
                   )
                 })
-                : <div className="w-full text-center">No data</div>
+                : <div className="w-full flex items-center justify-center h-full font-gotham-medium text-gray">No data</div>
               }
             </div>
           </div>
           <div className="col-span-1 flex flex-col justify-between">
             <div className="text-center my-3">
-              <span className="text-base text-title-2 font-medium">Uploaded Files</span>
+              <span className="text-sm text-title-2 font-gotham-medium">Uploaded Files</span>
             </div>
             <div className="flex justify-between h-full">
               <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-1 lg:gap-4 md:gap-8">
                 <div className="flex justify-center items-center">
-                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                  <label className="w-full min:w-[120px] h-[120px] mx-auto border-2 border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="contractFile">
-                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Contract</div>
+                    <div className="text-gray text-sm font-gotham-medium uppercase w-1/3 flex justify-center items-center text-center">Contract</div>
                   </label>
-                  <input type="file" id="contractFile" name="contractFile" onChange={handleFileChange} hidden accept="*" />
+                  <input type="file" id="contractFile" name="contract" onChange={handleFileChange} hidden accept="*" />
                 </div>
                 <div className="flex justify-center items-center">
-                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                  <label className="w-full min:w-[120px] h-[120px] mx-auto border-2 border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="briefFile">
-                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
+                    <div className="text-gray text-sm font-gotham-medium uppercase w-1/3 flex justify-center items-center text-center">Brief</div>
                   </label>
-                  <input type="file" id="briefFile" name="briefFile" onChange={handleFileChange} hidden accept="*" />
+                  <input type="file" id="briefFile" name="brief" onChange={handleFileChange} hidden accept="*" />
                 </div>
 
                 <div className="flex justify-center items-center">
-                  <label className="w-[120px] h-[120px] mx-auto border border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
+                  <label className="w-full min:w-[120px] h-[120px] mx-auto border-2 border-dashed border-dashed-color rounded-lg flex justify-center items-center cursor-pointer"
                     htmlFor="supportingFile">
-                    <div className="text-gray text-sm uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
+                    <div className="text-gray text-sm font-gotham-medium uppercase w-1/3 flex justify-center items-center text-center">Supporting Files</div>
                   </label>
-                  <input type="file" id="supportingFile" name="supportingFile" onChange={handleFileChange} hidden accept="*" />
+                  <input type="file" id="supportingFile" name="supporting" onChange={handleFileChange} hidden accept="*" />
                 </div>
               </div>
             </div>
