@@ -7,11 +7,13 @@ import { estimageStatusList } from "../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
+import { TalentApi } from "../../apis/TalentApi";
 
 const EstimateKanban = () => {
   const [ready, setReady] = useState(false);
   const navigate = useNavigate();
   const [estimateList, setEstimateList] = useState([]);
+  const [talentList, setTalentList] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -29,7 +31,13 @@ const EstimateKanban = () => {
         setEstimateList(result)
       }
       store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-    })
+    });
+
+    TalentApi.getTalentList().then((res) => {
+      if (res.data.status === 200) {
+        setTalentList(res.data.data);
+      }
+    });
   }, []);
 
   const onDragEnd = (re) => {
@@ -102,7 +110,7 @@ const EstimateKanban = () => {
                         >
                           {board.items.length > 0 &&
                             board.items.map((item, iIndex) => (
-                              <EstimateCardItem key={item._id} item={item} index={iIndex}></EstimateCardItem>
+                              <EstimateCardItem key={item._id} item={item} index={iIndex} talent={talentList.filter((talent) => talent.email === item.talent?.email)[0]}></EstimateCardItem>
                             ))}
                           {provided.placeholder}
                         </div>
