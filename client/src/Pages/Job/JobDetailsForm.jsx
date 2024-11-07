@@ -362,6 +362,7 @@ const JobDetailsForm = () => {
                   position: "top-left",
                 });
               }
+              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
             })
           } else {
             JobApi.add(updateData).then((res) => {
@@ -378,10 +379,12 @@ const JobDetailsForm = () => {
                   position: "top-left",
                 });
               }
+              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
             })
           }
+        } else {
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         }
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -451,9 +454,11 @@ const JobDetailsForm = () => {
                   });
                 }
               }
+              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
             });
+          } else {
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
           }
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         });
       }
     }
