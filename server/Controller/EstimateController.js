@@ -40,6 +40,7 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       talent: {
         talentName: detailData?.talentName,
         email: detailData?.talentEmail,
+        highlightColor: detailData?.highlightColor,
         manager: detailData?.manager
       },
       labelColor: detailData?.labelColor,
@@ -188,6 +189,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         talent: {
           talentName: detailData?.talentName,
           email: detailData?.talentEmail,
+          highlightColor: detailData?.highlightColor,
           manager: detailData?.manager
         },
         labelColor: detailData?.labelColor,
