@@ -110,6 +110,10 @@ const EstimateJobDetailsForm = () => {
     }
   }
 
+  const focusTalent = () => {
+    setShowTalentList(!showTalentList);
+  }
+
   const changeTalent = (item) => {
     setJobDetailsForm({
       ...jobDetailsForm,
@@ -379,7 +383,7 @@ const EstimateJobDetailsForm = () => {
                                     ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
-                  onChange={(e) => handleChange(e)} />
+                  onChange={(e) => handleChange(e)} onFocus={focusTalent} />
 
                 <div className={`absolute top-[50px] w-full shadow-xl z-10 rounded-lg ${showTalentList ? 'block' : 'hidden'}`}>
                   <ul className="bg-white rounded-lg w-full">
@@ -393,7 +397,7 @@ const EstimateJobDetailsForm = () => {
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                   placeholder="mananger"
                   type="text" value={jobDetailsForm.manager} name="manager"
                   onChange={(e) => handleChange(e)} />
@@ -407,7 +411,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -419,7 +423,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
                       placeholder="End Date" value={jobDetailsForm.endDate} onFocus={() => setShowEnd(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
