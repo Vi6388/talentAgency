@@ -37,11 +37,11 @@ function JobCardItem({ item, index, talent }) {
               <div className="mr-2 w-14">
                 <img src={talent?.avatar ? talent?.avatar :
                   "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"
-                } alt={item.contactDetails?.firstname} className="w-7 h-7 rounded-full" />
+                } alt={talent?.firstname} className="w-7 h-7 rounded-full" />
               </div>
               <div className="flex flex-col justify-between w-full">
-                <div className="font-semibold text-[8px] leading-5 text-kanban">{item.contactDetails?.firstname} {item.contactDetails?.surname}</div>
-                <div className="w-full h-1" style={{ backgroundColor: item?.talent?.highlightColor }}></div>
+                <div className="font-semibold text-[8px] leading-5 text-kanban">{talent?.firstname} {talent?.surname}</div>
+                <div className="w-full h-1" style={{ backgroundColor: talent?.highlightColor }}></div>
               </div>
             </div>
           </div>

@@ -170,7 +170,6 @@ module.exports.AddJob = async (req, res, next) => {
       talent: {
         talentName: detailData?.talentName,
         email: detailData?.talentEmail,
-        highlightColor: detailData?.highlightColor,
         manager: detailData?.manager
       },
       supplierRequired: detailData?.supplierRequired,
@@ -310,7 +309,6 @@ module.exports.UpdateJob = async (req, res, next) => {
         talent: {
           talentName: detailData?.talentName,
           email: detailData?.talentEmail,
-          highlightColor: detailData?.highlightColor,
           manager: detailData?.manager
         },
         supplierRequired: detailData?.supplierRequired,
@@ -372,13 +370,13 @@ module.exports.UpdateJob = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
-      const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
-      await sendEmail({
-        filename: 'UpdateJob.ejs', // Ensure the correct file extension
-        data: emailData,
-        subject: "Update Job Notification",
-        toEmail: toEmail,
-      });
+      // const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
+      // await sendEmail({
+      //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      //   data: emailData,
+      //   subject: "Update Job Notification",
+      //   toEmail: toEmail,
+      // });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
