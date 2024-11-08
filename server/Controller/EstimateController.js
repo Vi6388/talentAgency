@@ -167,7 +167,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
     // Update Job Model
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
-      const updatedJob = await existJob.save({
+      const updatedJob = await existJob.updateOne({
         contactDetails: {
           firstname: detailData?.firstname,
           surname: detailData?.surname,

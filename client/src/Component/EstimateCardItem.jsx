@@ -37,8 +37,8 @@ function EstimateCardItem({ item, index, talent }) {
               </div>
             </div>
             <div className="flex flex-row items-center w-full">
-              <div className="mr-2 w-14">
-                <img src={item.avatar ? item.avatar :
+              <div className="w-14">
+                <img src={talent.avatar ? talent.avatar :
                   "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"
                 } alt={talent?.firstname} className="w-7 h-7 rounded-full" />
               </div>
