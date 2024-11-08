@@ -110,7 +110,7 @@ const EstimateKanban = () => {
                         >
                           {board.items.length > 0 &&
                             board.items.map((item, iIndex) => (
-                              <EstimateCardItem key={item._id} item={item} index={iIndex} talent={talentList.filter((talent) => talent.email === item.talent?.email)[0]}></EstimateCardItem>
+                              <EstimateCardItem key={item._id} item={item} index={iIndex} talent={talentList.filter((talent) => talent.email === item?.talent?.email)[0]}></EstimateCardItem>
                             ))}
                           {provided.placeholder}
                         </div>

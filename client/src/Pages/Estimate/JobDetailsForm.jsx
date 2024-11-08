@@ -5,7 +5,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -119,6 +119,11 @@ const EstimateJobDetailsForm = () => {
       ...jobDetailsForm,
       talentName: item.firstname + " " + item.surname,
       talentEmail: item.email,
+      talent: {
+        ...jobDetailsForm?.talent,
+        talentName: item.firstname + " " + item.surname,
+        email: item.email,
+      }
     });
     setTalentSearchList(talentList);
     setShowTalentList(false);
@@ -195,7 +200,11 @@ const EstimateJobDetailsForm = () => {
     } else {
       const data = {
         ...jobEstimate,
-        details: jobDetailsForm,
+        details: {
+          ...jobDetailsForm,
+          startDate: convertDueDate(jobDetailsForm?.startDate),
+          endDate: convertDueDate(jobDetailsForm?.endDate)
+        },
       }
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(data).then((res) => {
@@ -218,7 +227,12 @@ const EstimateJobDetailsForm = () => {
   const updateEstimate = () => {
     if (jobDetailsForm.id) {
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      EstimateApi.updateJobEstimateById(jobDetailsForm.id, jobDetailsForm).then((res) => {
+      const data = {
+        ...jobDetailsForm,
+        startDate: convertDueDate(jobDetailsForm?.startDate),
+        endDate: convertDueDate(jobDetailsForm?.endDate)
+      }
+      EstimateApi.updateJobEstimateById(jobDetailsForm.id, data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
           initialJobEstimateFormData({ details: res.data.data })

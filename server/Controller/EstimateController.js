@@ -5,7 +5,6 @@ const JobFinance = require("../Model/Job.Finance.model");
 const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
-const { sendEmail } = require("../util/SendMail");
 
 module.exports.getJobEstimateList = async (req, res, next) => {
   try {
@@ -40,12 +39,11 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       talent: {
         talentName: detailData?.talentName,
         email: detailData?.talentEmail,
-        highlightColor: detailData?.highlightColor,
         manager: detailData?.manager
       },
       labelColor: detailData?.labelColor,
-      startDate: new Date(detailData?.startDate),
-      endDate: new Date(detailData?.endDate),
+      startDate: detailData?.startDate,
+      endDate: detailData?.endDate,
       estimateStatus: true,
       isLive: false,
       jobStatus: 1
@@ -54,8 +52,8 @@ module.exports.AddJobEstimate = async (req, res, next) => {
     // Create Invoice List
     const jobInvoiceList = req.body.invoiceList;
     if (jobInvoiceList?.length > 0) {
-      jobInvoiceList?.forEach(invoice => {
-        return JobFinance.create({
+      jobInvoiceList?.forEach(async (invoice) => {
+        return await JobFinance.create({
           ...invoice,
           jobId: newJob?._id
         });
@@ -65,33 +63,33 @@ module.exports.AddJobEstimate = async (req, res, next) => {
     // Create Job Summary List
     const jobSummaryList = req.body.jobSummaryList;
     if (jobSummaryList?.length > 0) {
-      jobSummaryList?.forEach(summary => {
+      jobSummaryList?.forEach(async (summary) => {
         if (summary.type === 'social') {
-          return JobSocialModel.create({
+          return await JobSocialModel.create({
             ...summary,
             jobId: newJob?._id
           });
         }
         if (summary.type === 'event') {
-          return JobEventModel.create({
+          return await JobEventModel.create({
             ...summary,
             jobId: newJob?._id,
           });
         }
         if (summary.type === 'publishing') {
-          return JobPublishModel.create({
+          return await JobPublishModel.create({
             ...summary,
             jobId: newJob?._id
           });
         }
         if (summary.type === 'travel') {
-          return JobTravelModel.create({
+          return await JobTravelModel.create({
             ...summary,
             jobId: newJob?._id
           });
         }
         if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv') {
-          return JobMediaModel.create({
+          return await JobMediaModel.create({
             ...summary,
             jobId: newJob?._id
           });
@@ -165,11 +163,11 @@ module.exports.getJobEstimateById = async (req, res, next) => {
 
 module.exports.UpdateJobEstimate = async (req, res, next) => {
   try {
-    const detailData = req.body.details;
+    const detailData = req.body;
     // Update Job Model
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
-      existJob.updateOne({
+      const updatedJob = await existJob.save({
         contactDetails: {
           firstname: detailData?.firstname,
           surname: detailData?.surname,
@@ -187,14 +185,13 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         },
         jobName: detailData?.jobName,
         talent: {
-          talentName: detailData?.talentName,
-          email: detailData?.talentEmail,
-          highlightColor: detailData?.highlightColor,
+          talentName: detailData?.talent?.talentName,
+          email: detailData?.talent?.email,
           manager: detailData?.manager
         },
         labelColor: detailData?.labelColor,
-        startDate: new Date(detailData?.startDate),
-        endDate: new Date(detailData?.endDate),
+        startDate: detailData?.startDate,
+        endDate: detailData?.endDate,
       });
 
       // Dalete Exist Invoice List By jobEstimate id and Create new Invoice List
@@ -204,8 +201,8 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
       }
       const jobInvoiceList = req.body.invoiceList;
       if (jobInvoiceList?.length > 0) {
-        jobInvoiceList?.forEach(invoice => {
-          return JobFinance.create({
+        jobInvoiceList?.forEach(async (invoice) => {
+          return await JobFinance.create({
             ...invoice,
             jobId: existJob?._id
           });
@@ -221,41 +218,40 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
 
       const jobSummaryList = req.body.jobSummaryList;
       if (jobSummaryList?.length > 0) {
-        jobSummaryList?.forEach(summary => {
+        jobSummaryList?.forEach(async (summary) => {
           if (summary.type === 'social') {
-            return JobSocialModel.create({
+            return await JobSocialModel.create({
               ...summary,
               jobId: existJob?._id
             });
           }
           if (summary.type === 'event') {
-            return JobEventModel.create({
+            return await JobEventModel.create({
               ...summary,
               jobId: existJob?._id,
             });
           }
           if (summary.type === 'publishing') {
-            return JobPublishModel.create({
+            return await JobPublishModel.create({
               ...summary,
               jobId: existJob?._id
             });
           }
           if (summary.type === 'travel') {
-            return JobTravelModel.create({
+            return await JobTravelModel.create({
               ...summary,
               jobId: existJob?._id
             });
           }
           if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv') {
-            return JobMediaModel.create({
+            return await JobMediaModel.create({
               ...summary,
               jobId: existJob?._id
             });
           }
         })
       }
-
-      return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
+      return res.json({ status: 200, success: true, data: updatedJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
     }

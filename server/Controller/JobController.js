@@ -174,8 +174,8 @@ module.exports.AddJob = async (req, res, next) => {
       },
       supplierRequired: detailData?.supplierRequired,
       labelColor: detailData?.labelColor,
-      startDate: new Date(detailData?.startDate),
-      endDate: new Date(detailData?.endDate),
+      startDate: detailData?.startDate,
+      endDate: detailData?.endDate,
       estimateStatus: false,
       isLive: true,
       jobStatus: 1,
@@ -313,8 +313,8 @@ module.exports.UpdateJob = async (req, res, next) => {
         },
         supplierRequired: detailData?.supplierRequired,
         labelColor: detailData?.labelColor,
-        startDate: new Date(detailData?.startDate),
-        endDate: new Date(detailData?.endDate),
+        startDate: detailData?.startDate,
+        endDate: detailData?.endDate,
         uploadedFiles: {
           contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile,
           briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
@@ -370,13 +370,13 @@ module.exports.UpdateJob = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
-      // const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
-      // await sendEmail({
-      //   filename: 'UpdateJob.ejs', // Ensure the correct file extension
-      //   data: emailData,
-      //   subject: "Update Job Notification",
-      //   toEmail: toEmail,
-      // });
+      const toEmail = existJob?.talent?.email;
+      await sendEmail({
+        filename: 'UpdateJob.ejs', // Ensure the correct file extension
+        data: emailData,
+        subject: "Update Job Notification",
+        toEmail: toEmail,
+      });
       return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
@@ -392,7 +392,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
       await existJob.updateOne({ jobStatus: req.body.jobStatus });
-      const toEmail = existJob?.talent?.email || existJob?.contactDetails?.email;
+      const toEmail = existJob?.talent?.email;
       const emailData = {
         jobTitle: existJob?.jobName,
         startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),

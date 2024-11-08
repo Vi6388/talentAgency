@@ -4,7 +4,7 @@ import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
@@ -339,6 +339,8 @@ const JobDetailsForm = () => {
             ...job,
             details: {
               ...jobDetailsForm,
+              startDate: convertDueDate(jobDetailsForm?.startDate),
+              endDate: convertDueDate(jobDetailsForm?.endDate),
               uploadedFiles: {
                 contractFile: contractFile?.url || "",
                 briefFile: briefFile?.url || "",
@@ -429,6 +431,8 @@ const JobDetailsForm = () => {
               ...job,
               details: {
                 ...jobDetailsForm,
+                startDate: convertDueDate(jobDetailsForm?.startDate),
+                endDate: convertDueDate(jobDetailsForm?.endDate),
                 uploadedFiles: {
                   contractFile: contractFile?.url || "",
                   briefFile: briefFile?.url || "",
