@@ -420,6 +420,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
         jobDesc: ""
       }
 
+      const invoice = JobFinance.findOne({ jobId: existJob?._id });
       switch (req.body.jobStatus) {
         case 4: // Approved
           await sendEmail({
@@ -430,9 +431,25 @@ module.exports.updateJobStatus = async (req, res, next) => {
           });
           break;
         case 5: // Invoice Request
+          const data = {
+            talent: {
+              name: existJob?.talent?.talentName
+            },
+            companyName: existJob?.companyDetails?.companyName,
+            abn: "",
+            companyAddress: existJob?.companyDetails?.companyAddress,
+            contactDetails: {
+              name: existJob?.contactDetails?.firstname + " " + existJob?.contactDetails?.surname,
+              email: existJob?.contactDetails?.email,
+            },
+            gst: invoice?.gst,
+            asf: invoice?.asf,
+            commission: invoice?.commission,
+            paymentTerms: invoice?.paymentTerms + " days"
+          };
           await sendEmail({
             filename: 'InvoiceRequest.ejs',
-            data: existJob,
+            data: data,
             subject: "PLEASE SETUP SUPPLIER",
             toEmail: toEmail,
           });
