@@ -182,14 +182,14 @@ const JobDetailsForm = () => {
   const handleStartDateChange = (selectedDate) => {
     setJobDetailsForm({
       ...jobDetailsForm,
-      startDate: new Date(selectedDate).toLocaleDateString("en-US")
+      startDate: dueDateFormat(new Date(selectedDate))
     })
   }
 
   const handleEndDateChange = (selectedDate) => {
     setJobDetailsForm({
       ...jobDetailsForm,
-      endDate: new Date(selectedDate).toLocaleDateString("en-US")
+      endDate: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -391,40 +391,40 @@ const JobDetailsForm = () => {
 
   const updateJob = async () => {
     if (jobDetailsForm.id) {
-      // const formData = new FormData();
-      // if (jobDetailsForm?.uploadedFiles) {
-      //   const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+      const formData = new FormData();
+      if (jobDetailsForm?.uploadedFiles) {
+        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
 
-      //   // Check if files are valid before appending
-      //   if (contractFile instanceof File) {
-      //     formData.append('contractFile', contractFile);
-      //   }
-      //   if (briefFile instanceof File) {
-      //     formData.append('briefFile', briefFile);
-      //   }
-      //   if (supportingFile instanceof File) {
-      //     formData.append('supportingFile', supportingFile);
-      //   }
-      // }
-      // const newErrors = jobFormValidateForm(jobDetailsForm);
-      // setErrors(newErrors);
-      // if (Object.keys(newErrors).length === 0) {
-      //   formData.append('talentName', jobDetailsForm?.talentName);
-      //   store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      //   await JobApi.uploadFiles(formData).then((res) => {
-      //     if (res.data.status === 200) {
-      //       const data = res.data.data;
-      //       const contractFile = data?.filter((item) => item.key === "contractFile")[0];
-      //       const briefFile = data?.filter((item) => item.key === "briefFile")[0];
-      //       const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-      //       setJobDetailsForm({
-      //         ...jobDetailsForm,
-      //         uploadedFiles: {
-      //           contractFile: contractFile?.url || "",
-      //           briefFile: briefFile?.url || "",
-      //           supportingFile: supportingFile?.url || "",
-      //         }
-      //       });
+        // Check if files are valid before appending
+        if (contractFile instanceof File) {
+          formData.append('contractFile', contractFile);
+        }
+        if (briefFile instanceof File) {
+          formData.append('briefFile', briefFile);
+        }
+        if (supportingFile instanceof File) {
+          formData.append('supportingFile', supportingFile);
+        }
+      }
+      const newErrors = jobFormValidateForm(jobDetailsForm);
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length === 0) {
+        formData.append('talentName', jobDetailsForm?.talentName);
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        await JobApi.uploadFiles(formData).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+            const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+            const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+            setJobDetailsForm({
+              ...jobDetailsForm,
+              uploadedFiles: {
+                contractFile: contractFile?.url || "",
+                briefFile: briefFile?.url || "",
+                supportingFile: supportingFile?.url || "",
+              }
+            });
 
             const updateData = {
               ...job,
@@ -432,11 +432,11 @@ const JobDetailsForm = () => {
                 ...jobDetailsForm,
                 startDate: convertDueDate(jobDetailsForm?.startDate),
                 endDate: convertDueDate(jobDetailsForm?.endDate),
-                // uploadedFiles: {
-                //   contractFile: contractFile?.url || "",
-                //   briefFile: briefFile?.url || "",
-                //   supportingFile: supportingFile?.url || "",
-                // }
+                uploadedFiles: {
+                  contractFile: contractFile?.url || "",
+                  briefFile: briefFile?.url || "",
+                  supportingFile: supportingFile?.url || "",
+                }
               },
             }
             JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
@@ -458,11 +458,11 @@ const JobDetailsForm = () => {
               }
               store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
             });
-          // } else {
-          //   store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          // }
-    //     });
-    //   }
+          } else {
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      }
     }
   }
 

@@ -26,7 +26,6 @@ const JobKanban = () => {
 
     store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     JobApi.list().then((res) => {
-      console.log(res.data.data);
       if (res.data.status === 200) {
         const result = statusList.map(status => ({
           name: status.name,

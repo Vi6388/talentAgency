@@ -251,7 +251,9 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           }
         })
       }
-      return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
+
+      const updateJob = await JobModel.findById(req.params.id);
+      return res.json({ status: 200, success: true, data: updateJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
     }

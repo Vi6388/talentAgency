@@ -397,7 +397,9 @@ module.exports.UpdateJob = async (req, res, next) => {
         subject: "Update To Brief",
         toEmail: toEmail,
       });
-      return res.status(200).json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
+
+      const updateJob = await JobModel.findById(req.params.id);
+      return res.status(200).json({ status: 200, success: true, data: updateJob, message: "Job updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
     }
@@ -420,9 +422,8 @@ module.exports.updateJobStatus = async (req, res, next) => {
         jobDesc: ""
       }
 
-      const invoice = JobFinance.findOne({ jobId: existJob?._id });
       switch (req.body.jobStatus) {
-        case 4: // Approved
+        case 5: // Approved
           await sendEmail({
             filename: 'ApprovedJob.ejs',
             data: emailData,
@@ -430,7 +431,8 @@ module.exports.updateJobStatus = async (req, res, next) => {
             toEmail: toEmail,
           });
           break;
-        case 5: // Invoice Request
+        case 6: // Invoice Request
+          const invoice = await JobFinance.findOne({ jobId: req.params.id });
           const data = {
             talent: {
               name: existJob?.talent?.talentName
@@ -454,7 +456,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
             toEmail: toEmail,
           });
           break;
-        case 6: // Invoiced
+        case 7: // Invoiced
           await sendEmail({
             filename: 'JobHasBeenInvoiced.ejs',
             data: emailData,
@@ -462,15 +464,15 @@ module.exports.updateJobStatus = async (req, res, next) => {
             toEmail: toEmail,
           });
           break;
-        case 7: // Paid
+        case 8: // Paid
           await sendEmail({
             filename: 'JobHasBeenPaid.ejs',
             data: emailData,
             subject: "JOB HAS BEEN PAID",
             toEmail: toEmail,
           });
-        case 8: // Completed
-          await this.moveToCompletedFolde();
+        case 9: // Completed
+          await this.moveToCompletedFolder(req, res);
         default:
           break;
       }
