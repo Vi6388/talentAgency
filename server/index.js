@@ -12,13 +12,13 @@ const talentRoute = require("./Routes/TalentRoute");
 const clientRoute = require("./Routes/ClientRoute");
 const estimateRoute = require("./Routes/EstimateRoute");
 const jobRoute = require("./Routes/JobRoute");
+const session = require('express-session');
 
-const oauth2Client = new google.auth.OAuth2
-  (
-    process.env.CALENDAR_CLIENT_ID,
-    process.env.CALENDAR_CLIENT_SECRET,
-    process.env.CALENDAR_REDIRECT_URL
-  );
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CALENDAR_CLIENT_ID,
+  process.env.CALENDAR_CLIENT_SECRET,
+  process.env.CALENDAR_REDIRECT_URL
+);
 
 const app = express();
 const { MONGO_URL, PORT } = process.env;
@@ -39,7 +39,7 @@ const corsOpts = {
 app.use(cors(corsOpts));
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname)); // Serve static files from the root directory
 
 // Routes
@@ -63,8 +63,18 @@ app.get('/auth', (req, res) => {
 app.get("/auth/redirect", async (req, res) => {
   const { tokens } = await oauth2Client.getToken(req.query.code);
   oauth2Client.setCredentials(tokens);
-  res.send('Authentication successful! Please return to the console.');
+  if(tokens) {
+    res.redirect('http://localhost:3000/auth/redirect');
+  }
+  // return res.json({ status: 200, success: true, message: 'Authentication successful! Please return to the console.' });
 });
+
+
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true,
+}));
 
 // Start the server
 app.listen(PORT, () => {

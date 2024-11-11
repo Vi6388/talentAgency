@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
@@ -11,9 +11,10 @@ import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
 
 const JobTravelForm = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { job } = useSelector((state) => state.job);
   const [travelForm, setTravelForm] = useState({
@@ -43,8 +44,24 @@ const JobTravelForm = () => {
   });
 
   useEffect(() => {
-    setTravelList(job?.jobSummaryList);
-  }, [job]);
+    if (!job?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        JobApi.getJobById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB, payload: data });
+            setTravelList(data?.jobSummaryList)
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      } else {
+        setTravelList(job?.jobSummaryList);
+      }
+    } else {
+      setTravelList(job?.jobSummaryList);
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setTravelForm({
@@ -385,7 +402,7 @@ const JobTravelForm = () => {
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
-                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {item.arrivalDate}</span>
+                        <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
                         <button onClick={() => cancelJobTravel(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>

@@ -27,6 +27,7 @@ import Settings from "../Pages/Settings/Settings";
 import UserForm from "../Pages/Settings/UserForm";
 import TalentForm from "../Pages/Settings/TalentForm";
 import ClientForm from "../Pages/Client/ClientForm";
+import AuthRedirectPage from "../Component/AuthRedirectPage";
 
 const routes = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const routes = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/auth/redirect",
+    element: <AuthRedirectPage />
   },
 
   // Estimate Route

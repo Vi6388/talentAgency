@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
-import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_INVOICE_LIST } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_INVOICE_LIST } from "../../redux/actionTypes";
 import { EstimateApi } from "../../apis/EstimateApi";
 
 const EstimateInvoiceForm = () => {
+  const { id } = useParams();
   const [invoiceForm, setInvoiceForm] = useState({
     poNumber: "",
     fee: "",
@@ -33,8 +34,24 @@ const EstimateInvoiceForm = () => {
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    setInvoiceList(jobEstimate?.invoiceList);
-  }, [jobEstimate]);
+    if (!jobEstimate?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        EstimateApi.getJobEstimateById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
+            setInvoiceList(data?.invoiceList);
+          }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        });
+      } else {
+        setInvoiceList(jobEstimate?.invoiceList);
+      }
+    } else {
+      setInvoiceList(jobEstimate?.invoiceList)
+    }
+  }, [id]);
 
 
   const handleNumberChange = (e) => {

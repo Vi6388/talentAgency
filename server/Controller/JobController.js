@@ -164,13 +164,13 @@ module.exports.AddJob = async (req, res, next) => {
         postalAddress: detailData?.postalAddress,
         suburb: detailData?.suburb,
         state: detailData?.state,
-        postcode: detailData?.postcode
+        postcode: detailData?.postcode,
       },
       jobName: detailData?.jobName,
       talent: {
         talentName: detailData?.talentName,
         email: detailData?.talentEmail,
-        manager: detailData?.manager
+        manager: detailData?.manager,
       },
       supplierRequired: detailData?.supplierRequired,
       labelColor: detailData?.labelColor,
@@ -303,13 +303,13 @@ module.exports.UpdateJob = async (req, res, next) => {
           postalAddress: detailData?.postalAddress,
           suburb: detailData?.suburb,
           state: detailData?.state,
-          postcode: detailData?.postcode
+          postcode: detailData?.postcode,
         },
         jobName: detailData?.jobName,
         talent: {
           talentName: detailData?.talentName,
           email: detailData?.talentEmail,
-          manager: detailData?.manager
+          manager: detailData?.manager,
         },
         supplierRequired: detailData?.supplierRequired,
         labelColor: detailData?.labelColor,
@@ -334,29 +334,49 @@ module.exports.UpdateJob = async (req, res, next) => {
         }));
       }
 
-      await JobSocialModel.deleteMany({ jobId: req.params.id });
-      await JobEventModel.deleteMany({ jobId: req.params.id });
-      await JobPublishModel.deleteMany({ jobId: req.params.id });
-      await JobTravelModel.deleteMany({ jobId: req.params.id });
-      await JobMediaModel.deleteMany({ jobId: req.params.id });
+      const jobSocialCount = await JobSocialModel.countDocuments({ jobId: existJob._id });
+      const jobEventCount = await JobEventModel.countDocuments({ jobId: existJob._id });
+      const jobPublishCount = await JobPublishModel.countDocuments({ jobId: existJob._id });
+      const jobTravelCount = await JobTravelModel.countDocuments({ jobId: existJob._id });
+      const jobMediaCount = await JobMediaModel.countDocuments({ jobId: existJob._id });
+      const deletePromises = [];
+
+      if (jobSocialCount > 0) {
+        deletePromises.push(JobSocialModel.deleteMany({ jobId: existJob._id }));
+      }
+      if (jobEventCount > 0) {
+        deletePromises.push(JobEventModel.deleteMany({ jobId: existJob._id }));
+      }
+      if (jobPublishCount > 0) {
+        deletePromises.push(JobPublishModel.deleteMany({ jobId: existJob._id }));
+      }
+      if (jobTravelCount > 0) {
+        deletePromises.push(JobTravelModel.deleteMany({ jobId: existJob._id }));
+      }
+      if (jobMediaCount > 0) {
+        deletePromises.push(JobMediaModel.deleteMany({ jobId: existJob._id }));
+      }
+      console.log(jobSocialCount)
+      await Promise.all(deletePromises);
 
       const jobSummaryList = req.body.jobSummaryList;
       if (jobSummaryList?.length > 0) {
-        await Promise.all(jobSummaryList.map(summary => {
+        await Promise.all(jobSummaryList.map(async (summary) => {
+          delete summary._id;
           switch (summary.type) {
             case 'social':
-              return JobSocialModel.create({ ...summary, jobId: existJob?._id });
+              return await JobSocialModel.create({ ...summary, jobId: existJob?._id });
             case 'event':
-              return JobEventModel.create({ ...summary, jobId: existJob?._id });
+              return await JobEventModel.create({ ...summary, jobId: existJob?._id });
             case 'publishing':
-              return JobPublishModel.create({ ...summary, jobId: existJob?._id });
+              return await JobPublishModel.create({ ...summary, jobId: existJob?._id });
             case 'travel':
-              return JobTravelModel.create({ ...summary, jobId: existJob?._id });
+              return await JobTravelModel.create({ ...summary, jobId: existJob?._id });
             case 'podcast':
             case 'radio':
             case 'webSeries':
             case 'tv':
-              return JobMediaModel.create({ ...summary, jobId: existJob?._id });
+              return await JobMediaModel.create({ ...summary, jobId: existJob?._id });
             default:
               return null;
           }
@@ -377,7 +397,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         subject: "Update Job Notification",
         toEmail: toEmail,
       });
-      return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
+      return res.status(200).json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
     }
@@ -501,46 +521,62 @@ module.exports.moveToCompletedFolder = async (req, res) => {
 module.exports.createCalendarEvent = async (req, res, next) => {
   try {
     const jobSummaryList = req.body.jobSummaryList;
-    if (!oauth2Client.credentials || !oauth2Client.credentials.access_token) {
-      return res.json({ success: false, status: 401, redirectUrl: '/auth' });
-    } else {
-      if (jobSummaryList?.length > 0) {
-        await Promise.all(jobSummaryList.map(async summary => {
-          const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-          if (summary.type === "social" || summary.type === "event") {
-            const conceptDueDateObj = new Date(summary.conceptDueDate);
-            const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
-            const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
+    if (jobSummaryList?.length > 0) {
+      let eventList = [];
+      jobSummaryList.map(async (summary) => {
+        if (summary.type === "social" || summary.type === "event") {
+          const conceptDueDateObj = new Date(summary.conceptDueDate);
+          const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
+          const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
 
-            const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
-            const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
-            const event = {
-              summary: summary.jobTitle,
-              location: 'https://atarimaewf.com',
-              description: summary.deleverables,
-              start: {
-                dateTime: start
-              },
-              end: {
-                dateTime: end
-              },
-              colorId: 1,
-              attendees: [
-                { email: newJob?.contactDetails?.email },
-              ]
+          const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
+          const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
+          const event = {
+            summary: summary.jobTitle,
+            location: 'https://atarimaewf.com',
+            description: summary.deleverables,
+            start: {
+              dateTime: start
+            },
+            end: {
+              dateTime: end
+            },
+            colorId: 1,
+            attendees: [
+              { email: newJob?.contactDetails?.email },
+            ]
 
-            };
-            const result = await calendar.events.insert({
-              calendarId: 'primary',
-              auth: oauth2Client,
-              conferenceDataVersion: 1,
-              sendUpdates: 'all',
-              resource: event
-            });
-          }
+          };
+          eventList.push(event);
+        }
+      });
+
+      if (eventList?.length > 0) {
+        // Check if the OAuth token is available in the session
+        if (!req.session.tokens || !req.session.tokens.access_token) {
+          return res.json({ success: false, status: 401, redirectUrl: '/auth/google' });  // Send a redirect URL to initiate OAuth
+        }
+
+        // If we have tokens, we proceed to create events
+        const oauth2Client = new google.auth.OAuth2(
+          process.env.GOOGLE_CLIENT_ID,
+          process.env.GOOGLE_CLIENT_SECRET,
+          process.env.GOOGLE_REDIRECT_URI
+        );
+        oauth2Client.setCredentials(req.session.tokens);
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+        await Promise.all(eventList.map(async (event) => {
+          await calendar.events.insert({
+            calendarId: 'primary',
+            auth: oauth2Client,
+            conferenceDataVersion: 1,
+            sendUpdates: 'all',
+            resource: event
+          });
         }));
-        return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
       }
+      return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
     }
   } catch (err) {
     return res.json({ success: false, status: 401, redirectUrl: '/auth' });

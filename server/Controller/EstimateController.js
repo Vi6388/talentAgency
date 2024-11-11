@@ -33,13 +33,13 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         postalAddress: detailData?.postalAddress,
         suburb: detailData?.suburb,
         state: detailData?.state,
-        postcode: detailData?.postcode
+        postcode: detailData?.postcode,
       },
       jobName: detailData?.jobName,
       talent: {
         talentName: detailData?.talentName,
         email: detailData?.talentEmail,
-        manager: detailData?.manager
+        manager: detailData?.manager,
       },
       labelColor: detailData?.labelColor,
       startDate: detailData?.startDate,
@@ -163,11 +163,11 @@ module.exports.getJobEstimateById = async (req, res, next) => {
 
 module.exports.UpdateJobEstimate = async (req, res, next) => {
   try {
-    const detailData = req.body;
+    const detailData = req.body.details;
     // Update Job Model
     const existJob = await JobModel.findById(req.params.id);
     if (existJob) {
-      const updatedJob = await existJob.updateOne({
+      await existJob.updateOne({
         contactDetails: {
           firstname: detailData?.firstname,
           surname: detailData?.surname,
@@ -181,13 +181,13 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           postalAddress: detailData?.postalAddress,
           suburb: detailData?.suburb,
           state: detailData?.state,
-          postcode: detailData?.postcode
+          postcode: detailData?.postcode,
         },
         jobName: detailData?.jobName,
         talent: {
-          talentName: detailData?.talent?.talentName,
-          email: detailData?.talent?.email,
-          manager: detailData?.manager
+          talentName: detailData?.talentName,
+          email: detailData?.talentEmail,
+          manager: detailData?.manager,
         },
         labelColor: detailData?.labelColor,
         startDate: detailData?.startDate,
@@ -251,7 +251,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           }
         })
       }
-      return res.json({ status: 200, success: true, data: updatedJob, message: "Job updated successfully." });
+      return res.json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
     }

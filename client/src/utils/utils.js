@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 
 export const baseUrl = "http://82.112.255.74:3000/";
 export const uploadUrl = "http://82.112.255.74:3000/uploads/";
+export const SERVER_URL = process.env.REACT_APP_API_BACKEND_URL;
 
 export const statusList = [
   { statusIndex: 1, name: "New Job" },

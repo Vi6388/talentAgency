@@ -390,42 +390,41 @@ const JobDetailsForm = () => {
   }
 
   const updateJob = async () => {
-    console.log(jobDetailsForm)
     if (jobDetailsForm.id) {
-      const formData = new FormData();
-      if (jobDetailsForm?.uploadedFiles) {
-        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+      // const formData = new FormData();
+      // if (jobDetailsForm?.uploadedFiles) {
+      //   const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
 
-        // Check if files are valid before appending
-        if (contractFile instanceof File) {
-          formData.append('contractFile', contractFile);
-        }
-        if (briefFile instanceof File) {
-          formData.append('briefFile', briefFile);
-        }
-        if (supportingFile instanceof File) {
-          formData.append('supportingFile', supportingFile);
-        }
-      }
-      const newErrors = jobFormValidateForm(jobDetailsForm);
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length === 0) {
-        formData.append('talentName', jobDetailsForm?.talentName);
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        await JobApi.uploadFiles(formData).then((res) => {
-          if (res.data.status === 200) {
-            const data = res.data.data;
-            const contractFile = data?.filter((item) => item.key === "contractFile")[0];
-            const briefFile = data?.filter((item) => item.key === "briefFile")[0];
-            const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-            setJobDetailsForm({
-              ...jobDetailsForm,
-              uploadedFiles: {
-                contractFile: contractFile?.url || "",
-                briefFile: briefFile?.url || "",
-                supportingFile: supportingFile?.url || "",
-              }
-            });
+      //   // Check if files are valid before appending
+      //   if (contractFile instanceof File) {
+      //     formData.append('contractFile', contractFile);
+      //   }
+      //   if (briefFile instanceof File) {
+      //     formData.append('briefFile', briefFile);
+      //   }
+      //   if (supportingFile instanceof File) {
+      //     formData.append('supportingFile', supportingFile);
+      //   }
+      // }
+      // const newErrors = jobFormValidateForm(jobDetailsForm);
+      // setErrors(newErrors);
+      // if (Object.keys(newErrors).length === 0) {
+      //   formData.append('talentName', jobDetailsForm?.talentName);
+      //   store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      //   await JobApi.uploadFiles(formData).then((res) => {
+      //     if (res.data.status === 200) {
+      //       const data = res.data.data;
+      //       const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+      //       const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+      //       const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+      //       setJobDetailsForm({
+      //         ...jobDetailsForm,
+      //         uploadedFiles: {
+      //           contractFile: contractFile?.url || "",
+      //           briefFile: briefFile?.url || "",
+      //           supportingFile: supportingFile?.url || "",
+      //         }
+      //       });
 
             const updateData = {
               ...job,
@@ -433,17 +432,17 @@ const JobDetailsForm = () => {
                 ...jobDetailsForm,
                 startDate: convertDueDate(jobDetailsForm?.startDate),
                 endDate: convertDueDate(jobDetailsForm?.endDate),
-                uploadedFiles: {
-                  contractFile: contractFile?.url || "",
-                  briefFile: briefFile?.url || "",
-                  supportingFile: supportingFile?.url || "",
-                }
+                // uploadedFiles: {
+                //   contractFile: contractFile?.url || "",
+                //   briefFile: briefFile?.url || "",
+                //   supportingFile: supportingFile?.url || "",
+                // }
               },
             }
             JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
               if (res.data.status === 401) {
                 const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-                openAuthPopup(authUrl, updateData);
+                openAuthPopup(authUrl, () => retryCreateCalendarEvent(updateData));
               } else {
                 if (res.data.status === 200) {
                   store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
@@ -459,45 +458,51 @@ const JobDetailsForm = () => {
               }
               store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
             });
-          } else {
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          }
-        });
-      }
+          // } else {
+          //   store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          // }
+    //     });
+    //   }
     }
   }
 
-  const openAuthPopup = (url, updateData) => {
+  const openAuthPopup = (url, retryCallback) => {
     const width = 600;
     const height = 700;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
-    const popup = window.open(url, 'OAuth Popup', `width=${width},height=${height},top=${top},left=${left}`);
+    const popup = window.open(url, '_blank', 'OAuth Popup', `width=${width},height=${height},top=${top},left=${left}`);
 
-    // Poll for the popup to close
+    // Poll for the popup to close and then retry the calendar event creation
     const interval = setInterval(() => {
       if (popup.closed) {
         clearInterval(interval);
-        // After the popup is closed, call the backend to create the calendar event
-        retryCreateCalendarEvent(updateData);
+        navigate(-2);
+        retryCallback(); // Once popup is closed, retry creating the event
+      } else {
+        navigate(-2);
       }
     }, 1000);
   };
 
   const retryCreateCalendarEvent = async (updateData) => {
-    JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
-      if (res.data.status === 200) {
-        store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-        initialJobDetailsFormData(res.data.data);
-        toast.success(res.data.message, {
-          position: "top-left",
-        });
-      } else {
-        toast.error(res.data.message, {
-          position: "top-left",
-        });
-      }
-    });
+    try {
+      JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
+        if (res.data.status === 200) {
+          store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+          initialJobDetailsFormData(res.data.data);
+          toast.success(res.data.message, {
+            position: "top-left",
+          });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
+        }
+      });
+    } catch (error) {
+      toast.error('Error creating event: ' + error.message);
+    }
   };
 
   const cancelJob = async () => {

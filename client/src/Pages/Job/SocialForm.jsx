@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { CLEAN_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobSocialForm = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [socialForm, setSocialForm] = useState({
     jobTitle: "",
@@ -25,8 +26,24 @@ const JobSocialForm = () => {
   const { job } = useSelector(state => state.job);
 
   useEffect(() => {
-    setSocialList(job?.jobSummaryList);
-  }, [job]);
+    if (!job?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        JobApi.getJobById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB, payload: data });
+            setSocialList(data?.jobSummaryList)
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      } else {
+        setSocialList(job?.jobSummaryList);
+      }
+    } else {
+      setSocialList(job?.jobSummaryList);
+    }
+  }, [id]);
 
   const [socialList, setSocialList] = useState([]);
   const [errors, setErrors] = useState({});

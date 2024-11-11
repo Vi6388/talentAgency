@@ -21,14 +21,23 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         });
 
         // Send email
+        // const info = await transporter.sendMail({
+        //     from: process.env.PUBLIC_URL,
+        //     to: toEmail,
+        //     subject: subject,
+        //     html: emailContent,
+        //     attachments: [{
+        //         content: data
+        //     }],
+        // });
+
+        console.log(toEmail, subject);
         const info = await transporter.sendMail({
             from: process.env.PUBLIC_URL,
             to: toEmail,
             subject: subject,
-            html: emailContent,
-            attachments: [{
-                content: data
-            }],
+            text: "Test",
+            html: "<b>This is Test</b>"
         });
 
         console.log('Email sent:', info.messageId);

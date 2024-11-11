@@ -228,24 +228,28 @@ const EstimateJobDetailsForm = () => {
     if (jobDetailsForm.id) {
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       const data = {
-        ...jobDetailsForm,
-        startDate: convertDueDate(jobDetailsForm?.startDate),
-        endDate: convertDueDate(jobDetailsForm?.endDate)
+        ...jobEstimate,
+        details: {
+          ...jobDetailsForm,
+          startDate: convertDueDate(jobDetailsForm?.startDate),
+          endDate: convertDueDate(jobDetailsForm?.endDate)
+        },
       }
-      EstimateApi.updateJobEstimateById(jobDetailsForm.id, data).then((res) => {
-        if (res.data.status === 200) {
-          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
-          initialJobEstimateFormData({ details: res.data.data })
-          toast.success(res.data.message, {
-            position: "top-left",
-          });
-        } else {
-          toast.error(res.data.message, {
-            position: "top-left",
-          });
-        }
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-      });
+      console.log(data)
+      // EstimateApi.updateJobEstimateById(jobDetailsForm.id, data).then((res) => {
+      //   if (res.data.status === 200) {
+      //     store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+      //     initialJobEstimateFormData({ details: res.data.data })
+      //     toast.success(res.data.message, {
+      //       position: "top-left",
+      //     });
+      //   } else {
+      //     toast.error(res.data.message, {
+      //       position: "top-left",
+      //     });
+      //   }
+      //   store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+      // });
     }
   }
 
