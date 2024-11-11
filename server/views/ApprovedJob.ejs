@@ -1,39 +1,265 @@
 <!DOCTYPE html>
 
 <head>
-    <link rel="stylesheet" href="/email-template.css">
     <title>.atarimae // Workflow</title>
+    <style type="text/css">
+        body {
+            background-color: #b99e8b;
+            margin: 0;
+            font-family: Gotham-Book, serif;
+        }
+
+        .main {
+            width: 80%;
+            margin: auto;
+            background-color: #f9f6f4;
+            padding: 5px;
+        }
+
+        .center-box {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-title {
+            font-size: 40px;
+            font-weight: 600;
+            color: #5b493b;
+            font-family: "Gotham-Bold", serif;
+            text-transform: uppercase;
+        }
+
+        @font-face {
+            font-family: "Gotham-Bold";
+            src: url("https://storage.googleapis.com/atarimaeagency/assets/Gotham-Bold.otf") format("opentype");
+        }
+
+        @font-face {
+            font-family: "Gotham-Book";
+            src:
+                local("Gotham-Book"),
+                url("https://storage.googleapis.com/atarimaeagency/assets/Gotham-Book.otf") format("opentype");
+        }
+
+        @font-face {
+            font-family: "Gotham-Medium";
+            src:
+                local("Gotham-Medium"),
+                url("https://storage.googleapis.com/atarimaeagency/assets/Gotham-Medium.otf") format("opentype");
+        }
+
+        .content-box {
+            margin: 60px auto;
+            width: 75%;
+        }
+
+        .data-input:focus {
+            border-color: #1C64F2;
+        }
+
+        .my-5 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .date-box {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .detail-text {
+            color: #242c32;
+            font-family: "Gotham-Book", serif;
+            font-size: 16px;
+            letter-spacing: 0.05em;
+            line-height: 1.25rem;
+        }
+
+        .detail-note-text {
+            color: #d9d8d9;
+            font-family: "Gotham-Medium", serif;
+            font-size: 16px;
+            letter-spacing: 0.05em;
+            line-height: 1.25rem;
+            text-align: center;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .tip-text {
+            color: #5b493b;
+            font-family: "Gotham-Bold", serif;
+            font-size: 16px;
+            line-height: 2rem;
+            text-align: center;
+            margin: 1.5rem auto;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .job-folder-button {
+            background-color: #b99e8b;
+            color: white;
+            font-size: 16px;
+            width: 200px;
+            height: 45px;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Gotham-Book', serif;
+            letter-spacing: 2px;
+        }
+
+        .updated-text {
+            color: #9b57a3 !important;
+        }
+
+        .paid-text {
+            color: #939598 !important;
+        }
+
+        .form-box {
+            margin: 25px 0;
+        }
+
+        .form-item {
+            padding-top: 10px;
+        }
+
+        .form-item label {
+            color: #5b493b;
+            font-size: 16px;
+            font-family: "Gotham-Bold", serif;
+        }
+
+        .form-item span {
+            color: #000;
+            font-size: 16px;
+            font-family: "Gotham-Book", serif;
+        }
+
+        .mt-20 {
+            margin-top: 80px;
+        }
+
+        .text-black {
+            color: black !important;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .calendar-icon {
+            right: 10px;
+            top: 11px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .detail-box {
+            width: 100%;
+            border-radius: 16px;
+            color: #242c32;
+            height: 100%;
+            border-style: none;
+            padding: 2rem 1.8rem 0.8rem 2rem;
+            background-color: white;
+            display: flex;
+        }
+
+        .title-input {
+            width: 100%;
+            border-radius: 16px;
+            color: #242c32;
+            height: 1.8rem;
+            letter-spacing: 0.05em;
+            font-size: 1.25rem;
+            line-height: 1.25rem;
+            text-align: center;
+            border-style: none;
+            border: 1px solid #fff;
+            padding: 0.5rem 0.75rem;
+            font-family: 'Gotham-Bold', serif;
+            outline: none;
+        }
+
+        .date-input {
+            width: 100%;
+            border-radius: 16px;
+            color: #242c32;
+            height: 1.8rem;
+            letter-spacing: 0.05em;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            text-align: center;
+            border-style: none;
+            border: 1px solid #fff;
+            padding: 0.5rem 0.75rem;
+            font-family: 'Gotham-Bold', serif;
+            outline: none;
+        }
+    </style>
 </head>
 
 <body>
     <div class="main">
-        <div class="center-box">
-            <img src="/workflowLogo.png" alt="logo" class="logo-image" />
+        <div class="w-full text-center">
+            <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
+                style="padding: 50px 0; width: 50%; height: 100%;" />
         </div>
 
-        <div class="center-box">
+        <div class="w-full text-center">
             <div class="main-title">
                 Approved
             </div>
         </div>
 
         <div class="content-box">
-            <div class="d-flex my-5">
-                <input type="text" readonly class="data-input" value="<%=result.jobTitle %>" />
+            <div class="w-full my-5 d-flex">
+                <input type="text" class="title-input" value="<%=result.jobTitle %>" readonly />
             </div>
-            <div class="date-box">
-                <div class="relative d-flex w-full">
-                    <input type="text" readonly class="data-input" value="<%=result.startDate %>" />
-                    <img src="/calendar_month.svg" alt="calendar" class="absolute calendar-icon" />
+            <div style="display: flex;">
+                <div class="d-flex w-full" style="position: relative; margin-right: 10px;">
+                    <input type="text" readonly value="<%=result.startDate %>" class="date-input" />
+                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
+                        <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
+                            height="25" width="22" />
+                    </svg>
                 </div>
-                <div class="relative d-flex w-full">
-                    <input type="text" readonly class="data-input" value="<%=result.endDate %>" />
-                    <img src="/calendar_month.svg" alt="calendar" class="absolute calendar-icon" />
+                <div class="d-flex w-full" style="position: relative; margin-left: 10px;">
+                    <input type="text" readonly value="<%=result.endDate %>" class="date-input" />
+                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
+                        <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
+                            height="25" width="22" />
+                    </svg>
                 </div>
             </div>
-            <div class="my-5 ">
+            <div class="my-5 d-flex">
                 <div class="detail-box">
-                    <span class="detail-text">
+                    <span class="detail-text updated-text">
                         <%= result.jobDesc %>
                     </span>
 
@@ -45,12 +271,13 @@
 
             <div class="d-flex justify-center items-center">
                 <span class="tip-text">
-                    A copy of the brief, contract and any supporting files are in the job folder in your share drive. <br/>
+                    A copy of the brief, contract and any supporting files are in the job folder in your share drive.
+                    <br />
                     You can access the job folder in your share drive in the link below
                 </span>
             </div>
 
-            <div class="d-flex justify-center items-center">
+            <div class="w-full text-center">
                 <button class="job-folder-button">Job Folder</button>
             </div>
         </div>

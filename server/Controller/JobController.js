@@ -230,7 +230,7 @@ module.exports.AddJob = async (req, res, next) => {
     await sendEmail({
       filename: 'NewJob.ejs',
       data: emailData,
-      subject: "New Job Notification",
+      subject: "New Job",
       toEmail: toEmail,
     });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
@@ -394,7 +394,7 @@ module.exports.UpdateJob = async (req, res, next) => {
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
-        subject: "Update Job Notification",
+        subject: "Update To Brief",
         toEmail: toEmail,
       });
       return res.status(200).json({ status: 200, success: true, data: existJob, message: "Job updated successfully." });
@@ -425,7 +425,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
           await sendEmail({
             filename: 'ApprovedJob.ejs',
             data: emailData,
-            subject: "Approved Job Notification",
+            subject: "Approved",
             toEmail: toEmail,
           });
           break;
@@ -433,7 +433,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
           await sendEmail({
             filename: 'InvoiceRequest.ejs',
             data: emailData,
-            subject: "Invoice Request Notification",
+            subject: "PLEASE SETUP SUPPLIER",
             toEmail: toEmail,
           });
           break;
@@ -441,7 +441,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
           await sendEmail({
             filename: 'JobHasBeenInvoiced.ejs',
             data: emailData,
-            subject: "Job Has Been Invoiced Notification",
+            subject: "JOB HAS BEEN INVOICED",
             toEmail: toEmail,
           });
           break;
@@ -449,7 +449,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
           await sendEmail({
             filename: 'JobHasBeenPaid.ejs',
             data: emailData,
-            subject: "Job Has Been Paid Notification",
+            subject: "JOB HAS BEEN PAID",
             toEmail: toEmail,
           });
         case 8: // Completed
