@@ -432,7 +432,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
         case 5: // Invoice Request
           await sendEmail({
             filename: 'InvoiceRequest.ejs',
-            data: emailData,
+            data: existJob,
             subject: "PLEASE SETUP SUPPLIER",
             toEmail: toEmail,
           });

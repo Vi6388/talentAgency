@@ -56,7 +56,7 @@ const EstimateKanban = () => {
     );
     const job = estimateList?.filter((item, index) => index === parseInt(re.destination.droppableId))[0]?.items[0] || [];
     if (job) {
-      const jobStatus = re.destination.droppableId + 1;
+      const jobStatus = parseInt(re.destination.droppableId) + 1;
       EstimateApi.updateJobEstimateById(job._id, { jobStatus: jobStatus }).then((res) => {
         if (res.data.status === 200) {
           setEstimateList(newBoardData);

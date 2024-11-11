@@ -26,6 +26,7 @@ const JobKanban = () => {
 
     store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     JobApi.list().then((res) => {
+      console.log(res.data.data);
       if (res.data.status === 200) {
         const result = statusList.map(status => ({
           name: status.name,
@@ -54,7 +55,7 @@ const JobKanban = () => {
     );
     const job = jobList?.filter((item, index) => index === parseInt(re.destination.droppableId))[0]?.items[0] || [];
     if (job) {
-      const jobStatus = re.destination.droppableId + 1;
+      const jobStatus = parseInt(re.destination.droppableId) + 1;
       JobApi.updateJobStatusById(job._id, { jobStatus: jobStatus }).then((res) => {
         if (res.data.status === 200) {
           setJobList(newBoardData);
