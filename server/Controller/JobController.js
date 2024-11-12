@@ -575,18 +575,19 @@ module.exports.createCalendarEvent = async (req, res, next) => {
       return res.json({ status: 400, success: false, message: "No valid events to create." });
     }
 
-    const auth = new JWT({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      scopes: process.env.CALENDAR_SCOPES
-    });
-    await auth.authorize();
-    const calendar = google.calendar({ version: 'v3', auth });
+    const auth = await authenticate();
+    if (!auth) {
+      console.error('Authentication failed, cannot proceed with event creation');
+      return;
+    }
+    const calendar = google.calendar({ version: 'v3' });
 
     // Create events in parallel
     await Promise.all(eventList.map(async (event) => {
       try {
         await calendar.events.insert({
           calendarId: 'primary',
+          auth: auth,
           conferenceDataVersion: 1,
           resource: event,
         });
@@ -673,5 +674,20 @@ const convertDateStr = (date) => {
     const month = new Date(date).getMonth() + 1;
     const year = new Date(date).getFullYear();
     return day + "/" + month + "/" + year;
+  }
+}
+
+async function authenticate() {
+  try {
+    const auth = new JWT({
+      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      scopes: process.env.CALENDAR_SCOPES,
+    });
+
+    await auth.authorize();
+    return auth;
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    return null; // return null if authentication fails
   }
 }
