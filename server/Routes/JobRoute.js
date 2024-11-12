@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const passport = require('passport');
 const { AddJob, UpdateJob, getJobById, getJobList, updateJobStatus, uploadFile } = require('../Controller/JobController');
 
 const multer = require('multer');

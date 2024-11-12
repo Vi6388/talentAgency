@@ -9,7 +9,7 @@ import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
-import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobPublishForm = () => {
   const { id } = useParams();
@@ -65,7 +65,7 @@ const JobPublishForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setPublishForm({
       ...publishForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -122,9 +122,9 @@ const JobPublishForm = () => {
       let list = publishList;
       const data = {
         ...publishForm,
-        firstDraftDate: dateTimeFormat(publishForm.firstDraftDate),
-        secondDraftDate: dateTimeFormat(publishForm.secondDraftDate),
-        finalDate: dateTimeFormat(publishForm.finalDate),
+        firstDraftDate: convertDueDate(publishForm.firstDraftDate),
+        secondDraftDate: convertDueDate(publishForm.secondDraftDate),
+        finalDate: convertDueDate(publishForm.finalDate),
         type: "publishing"
       }
       list.push(data);

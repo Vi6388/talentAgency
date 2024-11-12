@@ -9,21 +9,13 @@ const { sendEmail } = require("../util/SendMail");
 const dotenv = require("dotenv");
 const { google } = require('googleapis');
 const { format } = require("util");
+const path = require('path');
 const { Storage } = require("@google-cloud/storage");
+const { JWT } = require('google-auth-library');
 
 dotenv.config();
 
-const key = require("../public/verdant-oven-438907-b1-6b1cb6f3f747.json");
-
 const bucketName = "atarimaeagency";
-
-const oauth2Client = new google.auth.OAuth2
-  (
-    process.env.CALENDAR_CLIENT_ID,
-    process.env.CALENDAR_CLIENT_SECRET,
-    process.env.CALENDAR_REDIRECT_URL
-  );
-
 const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 
 const bucket = storage.bucket("atarimaeagency");
@@ -142,7 +134,7 @@ module.exports.getJobList = async (req, res, next) => {
     return res.json({ status: 200, message: "Get Job list", success: true, data: jobList });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Error fetching job list", error: error.message });
+    return res.json({ status: 500, success: false, message: "Error fetching job list", error: error.message });
   }
 }
 
@@ -276,7 +268,7 @@ module.exports.getJobById = async (req, res, next) => {
     if (job) {
       return res.json({ success: true, status: 200, message: "Job exists", data: data });
     } else {
-      return res.status(404).json({ success: false, status: 404, message: "Job not found" });
+      return res.json({ status: 404, success: false, status: 404, message: "Job not found" });
     }
   } catch (error) {
     console.error(error);
@@ -356,7 +348,6 @@ module.exports.UpdateJob = async (req, res, next) => {
       if (jobMediaCount > 0) {
         deletePromises.push(JobMediaModel.deleteMany({ jobId: existJob._id }));
       }
-      console.log(jobSocialCount)
       await Promise.all(deletePromises);
 
       const jobSummaryList = req.body.jobSummaryList;
@@ -382,7 +373,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           }
         }));
       }
-      // await this.createCalendarEvent(req, res, next);
+      const calendarEventCreated = await this.createCalendarEvent(req, res, next);
 
       const emailData = {
         jobTitle: existJob?.jobName,
@@ -399,9 +390,9 @@ module.exports.UpdateJob = async (req, res, next) => {
       });
 
       const updateJob = await JobModel.findById(req.params.id);
-      return res.status(200).json({ status: 200, success: true, data: updateJob, message: "Job updated successfully." });
+      return res.json({ status: 200, success: true, data: updateJob, message: "Job updated successfully." });
     } else {
-      return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
+      return res.json({ status: 404, success: false, message: "Job doesn't exist." });
     }
   } catch (err) {
     console.error(err);
@@ -479,7 +470,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
 
       return res.json({ status: 200, success: true, message: "Status updated successfully." });
     } else {
-      return res.status(404).json({ status: 404, success: false, message: "Job doesn't exist." });
+      return res.json({ status: 404, success: false, message: "Job doesn't exist." });
     }
   } catch (err) {
     console.error(err);
@@ -539,65 +530,148 @@ module.exports.moveToCompletedFolder = async (req, res) => {
 
 module.exports.createCalendarEvent = async (req, res, next) => {
   try {
+    const detailData = req.body.details;
     const jobSummaryList = req.body.jobSummaryList;
-    if (jobSummaryList?.length > 0) {
-      let eventList = [];
-      jobSummaryList.map(async (summary) => {
-        if (summary.type === "social" || summary.type === "event") {
-          const conceptDueDateObj = new Date(summary.conceptDueDate);
-          const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
-          const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
-
-          const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
-          const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
-          const event = {
-            summary: summary.jobTitle,
-            location: 'https://atarimaewf.com',
-            description: summary.deleverables,
-            start: {
-              dateTime: start
-            },
-            end: {
-              dateTime: end
-            },
-            colorId: 1,
-            attendees: [
-              { email: newJob?.contactDetails?.email },
-            ]
-
-          };
-          eventList.push(event);
-        }
-      });
-
-      if (eventList?.length > 0) {
-        // Check if the OAuth token is available in the session
-        if (!req.session.tokens || !req.session.tokens.access_token) {
-          return res.json({ success: false, status: 401, redirectUrl: '/auth/google' });  // Send a redirect URL to initiate OAuth
-        }
-
-        // If we have tokens, we proceed to create events
-        const oauth2Client = new google.auth.OAuth2(
-          process.env.GOOGLE_CLIENT_ID,
-          process.env.GOOGLE_CLIENT_SECRET,
-          process.env.GOOGLE_REDIRECT_URI
-        );
-        oauth2Client.setCredentials(req.session.tokens);
-        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
-        await Promise.all(eventList.map(async (event) => {
-          await calendar.events.insert({
-            calendarId: 'primary',
-            auth: oauth2Client,
-            conferenceDataVersion: 1,
-            sendUpdates: 'all',
-            resource: event
-          });
-        }));
-      }
-      return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
+    if (!jobSummaryList || jobSummaryList.length === 0) {
+      return res.json({ status: 400, success: false, message: "No job summaries provided." });
     }
+    let eventList = [];
+    // Create events based on job summaries
+    for (const summary of jobSummaryList) {
+      if (summary.type === "social" || summary.type === "event") {
+        let start = "";
+        let end = "";
+
+        if (summary.type === "social") {
+          start = new Date(summary.conceptDueDate)?.toISOString();
+          end = new Date(summary.contentDueDate)?.toISOString();
+        }
+        if (summary.type === "event") {
+          start = new Date(convertDateStr(summary.eventDate) + ' ' + summary.eventStartTime)?.toISOString();
+          end = new Date(convertDateStr(summary.eventDate) + ' ' + summary.eventEndTime)?.toISOString();
+        }
+
+        const event = {
+          summary: summary.jobTitle,
+          location: 'https://atarimaewf.com',
+          description: summary.deleverables,
+          start: {
+            dateTime: start,
+          },
+          end: {
+            dateTime: end,
+          },
+          colorId: 1,
+          attendees: [
+            { email: detailData?.talent?.email }, // Ensure newJob is defined or replace it with appropriate reference
+          ],
+        };
+        eventList.push(event);
+      }
+    }
+
+    // Check if there are events to create
+    if (eventList.length === 0) {
+      return res.json({ status: 400, success: false, message: "No valid events to create." });
+    }
+
+    const auth = new JWT({
+      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      scopes: process.env.CALENDAR_SCOPES
+    });
+    await auth.authorize();
+    const calendar = google.calendar({ version: 'v3', auth });
+
+    // Create events in parallel
+    await Promise.all(eventList.map(async (event) => {
+      try {
+        await calendar.events.insert({
+          calendarId: 'primary',
+          conferenceDataVersion: 1,
+          resource: event,
+        });
+      } catch (error) {
+        console.error("Error creating calendar event:", error);
+        // Handle individual event creation errors if needed
+      }
+    }));
+    // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
   } catch (err) {
-    return res.json({ success: false, status: 401, redirectUrl: '/auth' });
+    console.error("Error in createCalendarEvent:", err);
+    return res.json({ status: 500, success: false, message: "An error occurred while creating events." });
+  }
+};
+
+// module.exports.createCalendarEvent = async (req, res, next) => {
+//   try {
+//     const jobSummaryList = req.body.jobSummaryList;
+//     if (jobSummaryList?.length > 0) {
+//       let eventList = [];
+//       jobSummaryList.map(async (summary) => {
+//         if (summary.type === "social" || summary.type === "event") {
+//           const conceptDueDateObj = new Date(summary.conceptDueDate);
+//           const startDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventStartTime + ':00');
+//           const endDateTime = new Date(conceptDueDateObj.toISOString().slice(0, 10) + 'T' + summary.eventEndTime + ':00');
+
+//           const start = summary.type === "social" ? new Date(summary?.conceptDueDate) : startDateTime.toISOString();
+//           const end = summary.type === "social" ? new Date(summary?.contentDueDate) : endDateTime.toISOString();
+//           const event = {
+//             summary: summary.jobTitle,
+//             location: 'https://atarimaewf.com',
+//             description: summary.deleverables,
+//             start: {
+//               dateTime: start
+//             },
+//             end: {
+//               dateTime: end
+//             },
+//             colorId: 1,
+//             attendees: [
+//               { email: newJob?.contactDetails?.email },
+//             ]
+
+//           };
+//           eventList.push(event);
+//         }
+//       });
+
+//       if (eventList?.length > 0) {
+//         // Check if the OAuth token is available in the session
+//         if (!req.session.tokens || !req.session.tokens.access_token) {
+//           return res.json({ success: false, status: 401, redirectUrl: '/auth/google' });  // Send a redirect URL to initiate OAuth
+//         }
+
+//         // If we have tokens, we proceed to create events
+//         const oauth2Client = new google.auth.OAuth2(
+//           process.env.GOOGLE_CLIENT_ID,
+//           process.env.GOOGLE_CLIENT_SECRET,
+//           process.env.GOOGLE_REDIRECT_URI
+//         );
+//         oauth2Client.setCredentials(req.session.tokens);
+//         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+//         await Promise.all(eventList.map(async (event) => {
+//           await calendar.events.insert({
+//             calendarId: 'primary',
+//             auth: oauth2Client,
+//             conferenceDataVersion: 1,
+//             sendUpdates: 'all',
+//             resource: event
+//           });
+//         }));
+//       }
+//       return res.json({ status: 200, success: true, message: "Calendar Event Created Successfully." });
+//     }
+//   } catch (err) {
+//     return res.json({ success: false, status: 401, redirectUrl: '/auth' });
+//   }
+// }
+
+const convertDateStr = (date) => {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
+    const day = new Date(date).getDate();
+    const month = new Date(date).getMonth() + 1;
+    const year = new Date(date).getFullYear();
+    return day + "/" + month + "/" + year;
   }
 }

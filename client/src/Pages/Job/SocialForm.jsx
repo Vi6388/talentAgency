@@ -9,7 +9,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
-import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobSocialForm = () => {
   const { id } = useParams();
@@ -61,9 +61,9 @@ const JobSocialForm = () => {
       let list = socialList;
       const data = {
         ...socialForm,
-        conceptDueDate: dateTimeFormat(socialForm.conceptDueDate),
-        contentDueDate: dateTimeFormat(socialForm.contentDueDate),
-        liveDate: dateTimeFormat(socialForm.liveDate),
+        conceptDueDate: convertDueDate(socialForm.conceptDueDate),
+        contentDueDate: convertDueDate(socialForm.contentDueDate),
+        liveDate: convertDueDate(socialForm.liveDate),
         type: "social"
       }
       list.push(data);
@@ -104,9 +104,10 @@ const JobSocialForm = () => {
   }
 
   const handleDateChange = (action, selectedDate) => {
+    console.log(selectedDate)
     setSocialForm({
       ...socialForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -140,13 +141,9 @@ const JobSocialForm = () => {
   }
 
   const updateJob = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "social");
-    socialList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...job,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: socialList
     }
     if (job?.details?._id) {
       JobApi.updateJobById(job?.details?._id, data).then((res) => {

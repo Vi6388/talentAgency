@@ -9,7 +9,7 @@ import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
-import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobMediaForm = () => {
   const { id } = useParams();
@@ -65,7 +65,7 @@ const JobMediaForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setMediaForm({
       ...mediaForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -117,8 +117,8 @@ const JobMediaForm = () => {
       let list = mediaList;
       const data = {
         ...mediaForm,
-        startDate: dateTimeFormat(mediaForm.startDate),
-        endDate: dateTimeFormat(mediaForm.endDate)
+        startDate: convertDueDate(mediaForm.startDate),
+        endDate: convertDueDate(mediaForm.endDate)
       }
       list.push(data);
       setMediaList(list);

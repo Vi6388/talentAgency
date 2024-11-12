@@ -10,7 +10,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 
 const JobEventForm = () => {
   const { id } = useParams();
@@ -70,7 +70,7 @@ const JobEventForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setEventForm({
       ...eventForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -101,7 +101,7 @@ const JobEventForm = () => {
       let list = eventList;
       const data = {
         ...eventForm,
-        eventDate: dueDateFormat(eventForm.eventDate),
+        eventDate: convertDueDate(eventForm.eventDate),
         eventStartTime: eventForm.eventStartTime,
         eventEndTime: eventForm.eventEndTime,
         type: "event"

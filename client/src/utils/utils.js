@@ -105,6 +105,6 @@ export const convertDueDate = (date) => {
   if(date) {
     const dateStrs = date?.split("/");
     const newDateStr = dateStrs[2] + "/" + dateStrs[1] + "/" + dateStrs[0];
-    return new Date(newDateStr);
+    return new Date(newDateStr)?.toISOString();
   }
 }

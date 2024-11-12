@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
@@ -73,7 +73,7 @@ const JobTravelForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setTravelForm({
       ...travelForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -117,9 +117,9 @@ const JobTravelForm = () => {
       let list = travelList;
       const data = {
         ...travelForm,
-        departureDate: dueDateFormat(travelForm.departureDate),
+        departureDate: convertDueDate(travelForm.departureDate),
         departureTime: travelForm.departureTime,
-        arrivalDate: dueDateFormat(travelForm.arrivalDate),
+        arrivalDate: convertDueDate(travelForm.arrivalDate),
         arrivalTime: travelForm.arrivalTime,
         type: 'travel'
       }
@@ -398,7 +398,7 @@ const JobTravelForm = () => {
                     <div className="flex justify-between items-center border-b divider-line-color py-3"
                       key={index}>
                       <div className="flex items-center">
-                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">Travel - </span>
+                        <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">{item.type} - </span>
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
