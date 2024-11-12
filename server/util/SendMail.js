@@ -29,14 +29,16 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         });
 
         // Send email
-        const info = await transporter.sendMail({
-            from: process.env.SMTP_USERNAME,
-            to: toEmail,
-            subject: subject,
-            html: html,
-        });
+        if (toEmail) {
+            const info = await transporter.sendMail({
+                from: process.env.SMTP_USERNAME,
+                to: toEmail,
+                subject: subject,
+                html: html,
+            });
 
-        console.log('Email sent:', info.messageId);
+            console.log('Email sent:', info.messageId);
+        }
     } catch (error) {
         console.error('Error sending email:', error);
     }
