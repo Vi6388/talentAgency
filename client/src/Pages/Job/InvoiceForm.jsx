@@ -34,22 +34,18 @@ const JobInvoiceForm = () => {
   const { job } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (!job?.details?.id) {
-      if (id) {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        JobApi.getJobById(id).then((res) => {
-          if (res.data.status === 200) {
-            const data = res.data.data;
-            store.dispatch({ type: SAVE_JOB, payload: data });
-            setInvoiceList(data?.invoiceList)
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          }
-        });
-      } else {
-        setInvoiceList(job?.invoiceList);
-      }
+    if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      JobApi.getJobById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB, payload: data });
+          setInvoiceList(data?.invoiceList)
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        }
+      });
     } else {
-      setInvoiceList(job?.invoiceList)
+      setInvoiceList(job?.invoiceList);
     }
   }, [id]);
 

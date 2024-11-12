@@ -41,20 +41,16 @@ const JobEventForm = () => {
   })
 
   useEffect(() => {
-    if (!job?.details?.id) {
-      if (id) {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        JobApi.getJobById(id).then((res) => {
-          if (res.data.status === 200) {
-            const data = res.data.data;
-            store.dispatch({ type: SAVE_JOB, payload: data });
-            setEventList(data?.jobSummaryList)
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          }
-        });
-      } else {
-        setEventList(job?.jobSummaryList);
-      }
+    if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      JobApi.getJobById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB, payload: data });
+          setEventList(data?.jobSummaryList)
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        }
+      });
     } else {
       setEventList(job?.jobSummaryList);
     }

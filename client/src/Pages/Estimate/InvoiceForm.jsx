@@ -34,22 +34,18 @@ const EstimateInvoiceForm = () => {
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (!jobEstimate?.details?.id) {
-      if (id) {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        EstimateApi.getJobEstimateById(id).then((res) => {
-          if (res.data.status === 200) {
-            const data = res.data.data;
-            store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
-            setInvoiceList(data?.invoiceList);
-          }
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-        });
-      } else {
-        setInvoiceList(jobEstimate?.invoiceList);
-      }
+    if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      EstimateApi.getJobEstimateById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
+          setInvoiceList(data?.invoiceList);
+        }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+      });
     } else {
-      setInvoiceList(jobEstimate?.invoiceList)
+      setInvoiceList(jobEstimate?.invoiceList);
     }
   }, [id]);
 

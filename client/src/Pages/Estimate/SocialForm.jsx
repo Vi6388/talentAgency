@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,6 +12,7 @@ import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
 
 const EstimateSocialForm = () => {
+  const { id } = useParams();
   const [socialForm, setSocialForm] = useState({
     jobTitle: "",
     conceptDueDate: "",
@@ -35,8 +36,19 @@ const EstimateSocialForm = () => {
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    setSocialList(jobEstimate?.jobSummaryList);
-  }, [jobEstimate]);
+    if (id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      EstimateApi.getJobEstimateById(id).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
+        }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+      });
+    } else {
+      setSocialList(jobEstimate?.jobSummaryList);
+    }
+  }, [id]);
 
   const addSocialJob = () => {
     const newErrors = jobFormValidateForm(socialForm);
