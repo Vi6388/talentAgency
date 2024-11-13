@@ -587,17 +587,17 @@ module.exports.createCalendarEvent = async (req, res, next) => {
     const calendar = google.calendar({ version: 'v3' });
 
     // Create events in parallel
-    await Promise.all(eventList.map(async (event) => {
-      try {
-        await calendar.events.insert({
-          calendarId: 'primary',
-          requestBody: event,
-        });
-      } catch (error) {
-        console.error("Error creating calendar event:", error);
-        // Handle individual event creation errors if needed
-      }
-    }));
+    // await Promise.all(eventList.map(async (event) => {
+    //   try {
+    //     await calendar.events.insert({
+    //       calendarId: 'primary',
+    //       requestBody: event,
+    //     });
+    //   } catch (error) {
+    //     console.error("Error creating calendar event:", error);
+    //     // Handle individual event creation errors if needed
+    //   }
+    // }));
     // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
   } catch (err) {
     console.error("Error in createCalendarEvent:", err);
