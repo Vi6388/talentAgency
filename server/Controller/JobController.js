@@ -532,7 +532,7 @@ module.exports.moveToCompletedFolder = async (req, res) => {
 
 module.exports.createCalendarEvent = async (req, res, next) => {
   try {
-    const existJob = JobModel.findById(req.params.id);
+    const detailData = req.body.details;
     const jobSummaryList = req.body.jobSummaryList;
     if (!jobSummaryList || jobSummaryList.length === 0) {
       return res.json({ status: 400, success: false, message: "No job summaries provided." });
@@ -555,8 +555,8 @@ module.exports.createCalendarEvent = async (req, res, next) => {
 
         const event = {
           summary: summary.jobTitle,
-          location: existJob?.companyDetails?.postalAddress || "atarimae platform",
-          description: existJob?.jobName,
+          location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
+          description: detailData?.jobName,
           colorId: 1,
           start: {
             dateTime: start,
