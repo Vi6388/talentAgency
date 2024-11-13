@@ -549,9 +549,11 @@ module.exports.createCalendarEvent = async (req, res, next) => {
           end = new Date(summary.contentDueDate)?.toISOString();
         }
         if (summary.type === "event") {
-          start = new Date(convertDateStr(summary.eventDate) + ' ' + summary.eventStartTime)?.toISOString();
-          end = new Date(convertDateStr(summary.eventDate) + ' ' + summary.eventEndTime)?.toISOString();
+          start = convertDateStr(summary.eventDate) + ' ' + summary.eventStartTime;
+          end = convertDateStr(summary.eventDate) + ' ' + summary.eventEndTime;
         }
+
+        console.log(start, end)
 
         const event = {
           summary: summary.jobTitle,
