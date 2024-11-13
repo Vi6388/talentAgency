@@ -9,14 +9,16 @@ const { sendEmail } = require("../util/SendMail");
 const dotenv = require("dotenv");
 const { google } = require('googleapis');
 const { format } = require("util");
-const path = require('path');
 const { Storage } = require("@google-cloud/storage");
 
 dotenv.config();
 
 const bucketName = "atarimaeagency";
 const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
-const credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+const path = require('path');
+const credentials = require(path.join(__dirname, "../public/verdant-oven-438907-b1-6b1cb6f3f747.json"));
+
+// const credentials = require("./public/verdant-oven-438907-b1-6b1cb6f3f747.json");
 
 const bucket = storage.bucket("atarimaeagency");
 
