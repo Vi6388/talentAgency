@@ -532,7 +532,7 @@ module.exports.moveToCompletedFolder = async (req, res) => {
 
 module.exports.createCalendarEvent = async (req, res, next) => {
   try {
-    const detailData = req.body.details;
+    const existJob = JobModel.findById(req.params.id);
     const jobSummaryList = req.body.jobSummaryList;
     if (!jobSummaryList || jobSummaryList.length === 0) {
       return res.json({ status: 400, success: false, message: "No job summaries provided." });
@@ -555,15 +555,17 @@ module.exports.createCalendarEvent = async (req, res, next) => {
 
         const event = {
           summary: summary.jobTitle,
-          location: 'https://atarimaewf.com',
-          description: summary.deleverables,
+          location: existJob?.companyDetails?.postalAddress || "atarimae platform",
+          description: existJob?.jobName,
+          colorId: 1,
           start: {
             dateTime: start,
+            timeZone: 'Australia/Sydney',
           },
           end: {
             dateTime: end,
+            timeZone: 'Australia/Sydney',
           },
-          colorId: 1,
         };
         eventList.push(event);
       }
