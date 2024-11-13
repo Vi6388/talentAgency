@@ -9,7 +9,7 @@ const jobEventSchema = new mongoose.Schema({
   jobTitle: {
     type: String
   },
-  conceptDueDate: {
+  eventDate: {
     type: Date,
     default: new Date(),
   },
