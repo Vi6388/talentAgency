@@ -166,6 +166,7 @@ const EstimateTravelForm = () => {
     if (jobEstimate?.details?._id) {
       updateEstimate();
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -177,20 +178,18 @@ const EstimateTravelForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }
 
   const updateEstimate = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => item.type !== "travel");
-    travelList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...jobEstimate,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: travelList
     }
     if (jobEstimate?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -202,6 +201,7 @@ const EstimateTravelForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -211,6 +211,7 @@ const EstimateTravelForm = () => {
   }
 
   const makeJobLive = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
       if (res.data.status === 200) {
         store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -222,6 +223,7 @@ const EstimateTravelForm = () => {
           position: "top-left",
         });
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
   }
 

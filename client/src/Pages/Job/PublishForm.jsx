@@ -36,16 +36,20 @@ const JobPublishForm = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (id) {
-      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      JobApi.getJobById(id).then((res) => {
-        if (res.data.status === 200) {
-          const data = res.data.data;
-          store.dispatch({ type: SAVE_JOB, payload: data });
-          setPublishList(data?.jobSummaryList)
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-        }
-      });
+    if (!job?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        JobApi.getJobById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB, payload: data });
+            setPublishList(data?.jobSummaryList)
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      } else {
+        setPublishList(job?.jobSummaryList);
+      }
     } else {
       setPublishList(job?.jobSummaryList);
     }
@@ -164,15 +168,12 @@ const JobPublishForm = () => {
   }
 
   const updateJob = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "publishing");
-    publishList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...job,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: publishList
     }
     if (job?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.updateJobById(job?.details?._id, data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -186,8 +187,10 @@ const JobPublishForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.add(data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -201,6 +204,7 @@ const JobPublishForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }

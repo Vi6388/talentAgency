@@ -36,16 +36,20 @@ const JobMediaForm = () => {
   })
 
   useEffect(() => {
-    if (id) {
-      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      JobApi.getJobById(id).then((res) => {
-        if (res.data.status === 200) {
-          const data = res.data.data;
-          store.dispatch({ type: SAVE_JOB, payload: data });
-          setMediaList(data?.jobSummaryList)
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-        }
-      });
+    if (!job?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        JobApi.getJobById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB, payload: data });
+            setMediaList(data?.jobSummaryList)
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      } else {
+        setMediaList(job?.jobSummaryList);
+      }
     } else {
       setMediaList(job?.jobSummaryList);
     }
@@ -157,15 +161,12 @@ const JobMediaForm = () => {
   }
 
   const updateJob = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => (item.type === "podcast" || item.type === "radio" || item.type === "webSeries" || item.type === "tv"));
-    mediaList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...job,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: mediaList
     }
     if (job?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.updateJobById(job?.details?._id, data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -179,8 +180,10 @@ const JobMediaForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.add(data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -194,6 +197,7 @@ const JobMediaForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }

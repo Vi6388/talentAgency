@@ -126,6 +126,7 @@ const EstimateInvoiceForm = () => {
     if (jobEstimate?.details?._id) {
       updateEstimate();
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -137,6 +138,7 @@ const EstimateInvoiceForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -147,6 +149,7 @@ const EstimateInvoiceForm = () => {
       invoiceList: invoiceList
     }
     if (jobEstimate?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -158,6 +161,7 @@ const EstimateInvoiceForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -167,6 +171,7 @@ const EstimateInvoiceForm = () => {
   }
 
   const makeJobLive = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
       if (res.data.status === 200) {
         store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -178,6 +183,7 @@ const EstimateInvoiceForm = () => {
           position: "top-left",
         });
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     })
   }
 

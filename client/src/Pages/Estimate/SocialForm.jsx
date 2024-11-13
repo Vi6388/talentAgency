@@ -155,15 +155,12 @@ const EstimateSocialForm = () => {
   }
 
   const updateEstimate = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => item.type !== "social");
-    socialList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...jobEstimate,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: socialList
     }
     if (jobEstimate?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -175,6 +172,7 @@ const EstimateSocialForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -184,6 +182,7 @@ const EstimateSocialForm = () => {
   }
 
   const makeJobLive = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
       if (res.data.status === 200) {
         store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -195,6 +194,7 @@ const EstimateSocialForm = () => {
           position: "top-left",
         });
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
   }
 

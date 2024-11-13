@@ -163,6 +163,7 @@ const EstimateMediaForm = () => {
     if (jobEstimate?.details?._id) {
       updateEstimate();
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -174,20 +175,18 @@ const EstimateMediaForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }
 
   const updateEstimate = () => {
-    let jobSummaryList = jobEstimate?.jobSummaryList?.filter(item => (item.type !== "podcast" || item.type !== "webSeries" || item.type !== "radio" || item.type !== "tv"));
-    mediaList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...jobEstimate,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: mediaList
     }
     if (jobEstimate?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.updateJobEstimateById(jobEstimate?.details?._id, data).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -199,6 +198,7 @@ const EstimateMediaForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
@@ -208,6 +208,7 @@ const EstimateMediaForm = () => {
   }
 
   const makeJobLive = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     EstimateApi.makeJobLiveById(jobEstimate?.details?._id).then((res) => {
       if (res.data.status === 200) {
         store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -219,6 +220,7 @@ const EstimateMediaForm = () => {
           position: "top-left",
         });
       }
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
   }
 

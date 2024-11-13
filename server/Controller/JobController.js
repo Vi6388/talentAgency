@@ -11,12 +11,12 @@ const { google } = require('googleapis');
 const { format } = require("util");
 const path = require('path');
 const { Storage } = require("@google-cloud/storage");
-const { JWT } = require('google-auth-library');
 
 dotenv.config();
 
 const bucketName = "atarimaeagency";
 const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
+const credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
 const bucket = storage.bucket("atarimaeagency");
 
@@ -283,36 +283,36 @@ module.exports.UpdateJob = async (req, res, next) => {
     if (existJob) {
       await existJob.updateOne({
         contactDetails: {
-          firstname: detailData?.firstname,
-          surname: detailData?.surname,
-          email: detailData?.email,
-          position: detailData?.position,
-          phoneNumber: detailData?.phoneNumber,
+          firstname: detailData?.firstname || existJob?.contactDetails?.firstname,
+          surname: detailData?.surname || existJob?.contactDetails?.surname,
+          email: detailData?.email || existJob?.contactDetails?.email,
+          position: detailData?.position || existJob?.contactDetails?.position,
+          phoneNumber: detailData?.phoneNumber || existJob?.contactDetails?.phoneNumber,
         },
         companyDetails: {
-          companyName: detailData?.companyName,
-          abn: detailData?.abn,
-          postalAddress: detailData?.postalAddress,
-          suburb: detailData?.suburb,
-          state: detailData?.state,
-          postcode: detailData?.postcode,
+          companyName: detailData?.companyName || existJob?.companyDetails?.companyName,
+          abn: detailData?.abn || existJob?.companyDetails?.abn,
+          postalAddress: detailData?.postalAddress || existJob?.companyDetails?.postalAddress,
+          suburb: detailData?.suburb || existJob?.companyDetails?.suburb,
+          state: detailData?.state || existJob?.companyDetails?.suburb,
+          postcode: detailData?.postcode || existJob?.companyDetails?.postcode,
         },
-        jobName: detailData?.jobName,
+        jobName: detailData?.jobName || existJob?.jobName,
         talent: {
-          talentName: detailData?.talentName,
-          email: detailData?.talentEmail,
-          manager: detailData?.manager,
+          talentName: detailData?.talentName || existJob?.talent?.talentName,
+          email: detailData?.talentEmail || existJob?.talent?.email,
+          manager: detailData?.manager || existJob?.talent?.manager,
         },
-        supplierRequired: detailData?.supplierRequired,
-        labelColor: detailData?.labelColor,
-        startDate: detailData?.startDate,
-        endDate: detailData?.endDate,
+        supplierRequired: detailData?.supplierRequired || existJob?.supplierRequired,
+        labelColor: detailData?.labelColor || existJob?.labelColor,
+        startDate: detailData?.startDate || existJob?.startDate,
+        endDate: detailData?.endDate || existJob?.endDate,
         uploadedFiles: {
           contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile,
           briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
           supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile,
         },
-        jobStatus: detailData?.jobStatus
+        jobStatus: detailData?.jobStatus || existJob?.jobStatus
       });
 
       await JobFinance.deleteMany({ jobId: req.params.id }); // Delete existing invoices
@@ -575,9 +575,9 @@ module.exports.createCalendarEvent = async (req, res, next) => {
       return res.json({ status: 400, success: false, message: "No valid events to create." });
     }
 
-    const auth = await authenticate();
-    if (!auth) {
-      console.error('Authentication failed, cannot proceed with event creation');
+    const authClient = await ensureAuthenticated();
+    if (!authClient) {
+      console.error('Authentication client is null or undefined');
       return;
     }
     const calendar = google.calendar({ version: 'v3' });
@@ -587,9 +587,7 @@ module.exports.createCalendarEvent = async (req, res, next) => {
       try {
         await calendar.events.insert({
           calendarId: 'primary',
-          auth: auth,
-          conferenceDataVersion: 1,
-          resource: event,
+          requestBody: event,
         });
       } catch (error) {
         console.error("Error creating calendar event:", error);
@@ -673,21 +671,37 @@ const convertDateStr = (date) => {
     const day = new Date(date).getDate();
     const month = new Date(date).getMonth() + 1;
     const year = new Date(date).getFullYear();
-    return day + "/" + month + "/" + year;
+    return year + "/" + month + "/" + day;
   }
 }
 
 async function authenticate() {
   try {
-    const auth = new JWT({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    const auth = new google.auth.GoogleAuth({
+      credentials,
       scopes: process.env.CALENDAR_SCOPES,
     });
 
-    await auth.authorize();
-    return auth;
+    const client = await auth.getClient();
+    google.options({ auth: client });
+
+    console.log('Authentication successful');
+    return client;
   } catch (error) {
     console.error('Error during authentication:', error);
-    return null; // return null if authentication fails
+    throw new Error('Authentication failed. Please check your credentials.');
+  }
+}
+
+async function ensureAuthenticated() {
+  try {
+    const client = await authenticate();
+    if (!client) {
+      throw new Error('Authentication failed: No valid auth client.');
+    }
+    return client;
+  } catch (error) {
+    console.error('Error ensuring authentication:', error.message);
+    throw new Error('Could not authenticate. Please try again later.');
   }
 }

@@ -44,16 +44,20 @@ const JobTravelForm = () => {
   });
 
   useEffect(() => {
-    if (id) {
-      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      JobApi.getJobById(id).then((res) => {
-        if (res.data.status === 200) {
-          const data = res.data.data;
-          store.dispatch({ type: SAVE_JOB, payload: data });
-          setTravelList(data?.jobSummaryList)
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-        }
-      });
+    if (!job?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        JobApi.getJobById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB, payload: data });
+            setTravelList(data?.jobSummaryList)
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          }
+        });
+      } else {
+        setTravelList(job?.jobSummaryList);
+      }
     } else {
       setTravelList(job?.jobSummaryList);
     }
@@ -153,15 +157,12 @@ const JobTravelForm = () => {
   }
 
   const updateJob = () => {
-    let jobSummaryList = job?.jobSummaryList?.filter(item => item.type !== "travel");
-    travelList?.forEach((item) => {
-      jobSummaryList.push(item);
-    });
     const data = {
       ...job,
-      jobSummaryList: jobSummaryList
+      jobSummaryList: travelList
     }
     if (job?.details?._id) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.updateJobById(job?.details?._id, data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -175,8 +176,10 @@ const JobTravelForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       JobApi.add(data).then((res) => {
         if (res.data.status === 401) {
           window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
@@ -190,6 +193,7 @@ const JobTravelForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       })
     }
   }
