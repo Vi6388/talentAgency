@@ -549,8 +549,8 @@ module.exports.createCalendarEvent = async (req, res, next) => {
           end = new Date(summary.contentDueDate)?.toISOString();
         }
         if (summary.type === "event") {
-          start = convertDateStr(summary.eventDate) + ' ' + summary.eventStartTime;
-          end = convertDateStr(summary.eventDate) + ' ' + summary.eventEndTime;
+          start = convertDateStr(summary.eventDate) + 'T' + summary.eventStartTime + ':00Z';
+          end = convertDateStr(summary.eventDate) + 'T' + summary.eventEndTime + ':00Z';
         }
 
         const event = {
