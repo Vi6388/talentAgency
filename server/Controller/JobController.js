@@ -564,9 +564,6 @@ module.exports.createCalendarEvent = async (req, res, next) => {
             dateTime: end,
           },
           colorId: 1,
-          attendees: [
-            { email: detailData?.talent?.email }, // Ensure newJob is defined or replace it with appropriate reference
-          ],
         };
         eventList.push(event);
       }
@@ -584,7 +581,6 @@ module.exports.createCalendarEvent = async (req, res, next) => {
     }
     const calendar = google.calendar({ version: 'v3' });
 
-    console.log(eventList);
     // Create events in parallel
     await Promise.all(eventList.map(async (event) => {
       try {
