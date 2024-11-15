@@ -68,10 +68,9 @@ export const jobFormValidateForm = (data) => {
   for (const [field, value] of Object.entries(data)) {
     if (typeof value === 'string' && !value?.trim() && validList.includes(field)) {
       errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-    } else {
-      if (validList.includes(field)) {
-        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-      }
+    }
+    if(typeof value !== 'string' && validList.includes(field)) {
+      errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
     }
   }
 
