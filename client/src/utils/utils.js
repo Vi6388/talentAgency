@@ -66,8 +66,12 @@ export const jobFormValidateForm = (data) => {
     'departureDate', 'departureTime', 'arrivalDate', 'arrivalTime', 'preferredCarrier', 'frequentFlyerNumber', 'carHireRequired'];
 
   for (const [field, value] of Object.entries(data)) {
-    if (validList.includes(field) && !value?.trim()) {
+    if (typeof value === 'string' && !value?.trim() && validList.includes(field)) {
       errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+    } else {
+      if (validList.includes(field)) {
+        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+      }
     }
   }
 
@@ -102,7 +106,7 @@ export const dueDateFormat = (date) => {
 }
 
 export const convertDueDate = (date) => {
-  if(date) {
+  if (date) {
     const dateStrs = date?.split("/");
     const newDateStr = dateStrs[2] + "/" + dateStrs[1] + "/" + dateStrs[0];
     return new Date(newDateStr)?.toISOString();
