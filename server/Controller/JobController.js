@@ -537,6 +537,14 @@ module.exports.createCalendarEvent = async (req, res, next) => {
     if (!jobSummaryList || jobSummaryList.length === 0) {
       return res.json({ status: 400, success: false, message: "No job summaries provided." });
     }
+
+    const authClient = await ensureAuthenticated();
+    if (!authClient) {
+      console.error('Authentication client is null or undefined');
+      return;
+    }
+    const calendar = google.calendar({ version: 'v3' });
+
     let eventList = [];
     // Create events based on job summaries
     for (const summary of jobSummaryList) {
@@ -567,34 +575,18 @@ module.exports.createCalendarEvent = async (req, res, next) => {
             timeZone: 'Australia/Sydney',
           },
         };
-        eventList.push(event);
+
+        try {
+          await calendar.events.insert({
+            calendarId: 'primary',
+            requestBody: event,
+          });
+        } catch (error) {
+          console.error("Error creating calendar event:", error);
+          console.error("Event data:", event);
+        }
       }
     }
-
-    // Check if there are events to create
-    if (eventList.length === 0) {
-      return res.json({ status: 400, success: false, message: "No valid events to create." });
-    }
-
-    const authClient = await ensureAuthenticated();
-    if (!authClient) {
-      console.error('Authentication client is null or undefined');
-      return;
-    }
-    const calendar = google.calendar({ version: 'v3' });
-
-    // Create events in parallel
-    await Promise.all(eventList.map(async (event) => {
-      try {
-        await calendar.events.insert({
-          calendarId: 'primary',
-          requestBody: event,
-        });
-      } catch (error) {
-        console.error("Error creating calendar event:", error);
-        console.error("Event data:", event);
-      }
-    }));
     // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
   } catch (err) {
     console.error("Error in createCalendarEvent:", err);
