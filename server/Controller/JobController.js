@@ -587,6 +587,7 @@ module.exports.createCalendarEvent = async (req, res, next) => {
     await Promise.all(eventList.map(async (event) => {
       try {
         await calendar.events.insert({
+          auth: authClient,
           calendarId: process.env.GOOGLE_CALENDAR_ID,
           resource: event,
         });
