@@ -598,10 +598,24 @@ module.exports.createCalendarEvent = async (req, res, next) => {
       },
     };
 
-    await calendar.events.insert({
-      calendarId: process.env.GOOGLE_CALENDAR_ID,
-      resource: event,
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: process.env.CALENDAR_SCOPES,
     });
+    auth.getClient().then(a=>{
+      calendar.events.insert({
+        auth:a,
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        resource: event,
+      }, function(err, event) {
+        if (err) {
+          console.log('There was an error contacting the Calendar service: ' + err);
+          return;
+        }
+        console.log('Event created: %s', event.data);
+        res.jsonp("Event successfully created!");
+      });
+    })
 
     // Create events in parallel
     // await Promise.all(eventList.map(async (event) => {
