@@ -124,6 +124,10 @@
             border-radius: 16px;
             font-family: 'Gotham-Book', Arial, Helvetica, sans-serif;
             letter-spacing: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
         }
 
         .updated-text {
@@ -276,8 +280,9 @@
                 </span>
             </div>
 
-            <div class="w-full text-center">
-                <a class="job-folder-button" target="_blank" href="https://storage.googleapis.com/atarimaeagency">Job Folder</a>
+            <div class="w-full text-center d-flex justify-center items-center">
+                <a class="job-folder-button" target="_blank" 
+                    href="https://console.cloud.google.com/storage/browser/atarimaeagency;tab=objects?forceOnBucketsSortingFiltering=true&project=verdant-oven-438907-b1&prefix=&forceOnObjectsSortingFiltering=false">Job Folder</a>
             </div>
         </div>
     </div>
