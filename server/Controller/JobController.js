@@ -530,70 +530,6 @@ module.exports.moveToCompletedFolder = async (req, res) => {
   }
 };
 
-module.exports.createCalendarEvent = async (req, res, next) => {
-  try {
-    const detailData = req.body.details;
-    const jobSummaryList = req.body.jobSummaryList;
-    if (!jobSummaryList || jobSummaryList.length === 0) {
-      return res.json({ status: 400, success: false, message: "No job summaries provided." });
-    }
-
-    const authClient = await ensureAuthenticated();
-    if (!authClient) {
-      console.error('Authentication client is null or undefined');
-      return;
-    }
-    const calendar = google.calendar({ version: 'v3' });
-
-    let eventList = [];
-    // Create events based on job summaries
-    for (const summary of jobSummaryList) {
-      if (summary.type === "social" || summary.type === "event") {
-        let start = "";
-        let end = "";
-
-        if (summary.type === "social") {
-          start = new Date(summary.conceptDueDate)?.toISOString();
-          end = new Date(summary.contentDueDate)?.toISOString();
-        }
-        if (summary.type === "event") {
-          start = convertDateStr(summary.eventDate) + 'T' + summary.eventStartTime + ':00Z';
-          end = convertDateStr(summary.eventDate) + 'T' + summary.eventEndTime + ':00Z';
-        }
-
-        const event = {
-          summary: summary.jobTitle,
-          location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
-          description: detailData?.jobName,
-          colorId: 1,
-          start: {
-            dateTime: start,
-            timeZone: 'Australia/Sydney',
-          },
-          end: {
-            dateTime: end,
-            timeZone: 'Australia/Sydney',
-          },
-        };
-
-        try {
-          calendar.events.insert({
-            calendarId: process.env.GOOGLE_CALENDAR_ID,
-            resource: event,
-          });
-        } catch (error) {
-          console.error("Error creating calendar event:", error);
-          console.error("Event data:", event);
-        }
-      }
-    }
-    // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
-  } catch (err) {
-    console.error("Error in createCalendarEvent:", err);
-    return res.json({ status: 500, success: false, message: "An error occurred while creating events." });
-  }
-};
-
 // module.exports.createCalendarEvent = async (req, res, next) => {
 //   try {
 //     const jobSummaryList = req.body.jobSummaryList;
@@ -659,14 +595,88 @@ module.exports.createCalendarEvent = async (req, res, next) => {
 //   }
 // }
 
-const convertDateStr = (date) => {
-  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
-    const day = new Date(date).getDate();
-    const month = new Date(date).getMonth() + 1;
-    const year = new Date(date).getFullYear();
-    return year + "/" + month + "/" + day;
+module.exports.createCalendarEvent = async (req, res, next) => {
+  try {
+    const detailData = req.body.details;
+    const jobSummaryList = req.body.jobSummaryList;
+
+    if (!jobSummaryList || jobSummaryList.length === 0) {
+      return res.json({ status: 400, success: false, message: "No job summaries provided." });
+    }
+
+    const authClient = await ensureAuthenticated();
+    if (!authClient) {
+      console.error('Authentication client is null or undefined');
+      return res.status(500).json({ status: 500, success: false, message: "Authentication failed." });
+    }
+
+    const calendar = google.calendar({ version: 'v3' });
+
+    // Create events based on job summaries
+    for (const summary of jobSummaryList) {
+      if (summary.type === "social" || summary.type === "event") {
+        let start = "";
+        let end = "";
+
+        if (summary.type === "social") {
+          const conceptDueDate = new Date(summary.conceptDueDate);
+          const contentDueDate = new Date(summary.contentDueDate);
+          if (isNaN(conceptDueDate) || isNaN(contentDueDate)) {
+            console.error("Invalid dates for social type event");
+            continue; // Skip this iteration
+          }
+          start = conceptDueDate.toISOString();
+          end = contentDueDate.toISOString();
+        }
+        
+        if (summary.type === "event") {
+          start = `${convertDateStr(summary.eventDate)}T${summary.eventStartTime}:00Z`;
+          end = `${convertDateStr(summary.eventDate)}T${summary.eventEndTime}:00Z`; 
+        }
+
+        const event = {
+          summary: summary.jobTitle,
+          location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
+          description: detailData?.jobName,
+          colorId: 1,
+          start: {
+            dateTime: start,
+            timeZone: 'Australia/Sydney',
+          },
+          end: {
+            dateTime: end,
+            timeZone: 'Australia/Sydney',
+          },
+        };
+
+        try {
+          await calendar.events.insert({
+            calendarId: process.env.GOOGLE_CALENDAR_ID,
+            resource: event, // Fixed to use 'event' instead of 'testEvent'
+          });
+        } catch (error) {
+          console.error("Error creating calendar event:", error);
+          return res.status(500).json({ status: 500, success: false, message: "Error creating calendar event." });
+        }
+      }
+    }
+    
+    return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
+  } catch (err) {
+    console.error("Error in createCalendarEvent:", err);
+    return res.status(500).json({ status: 500, success: false, message: "An error occurred while creating events." });
   }
-}
+};
+
+const convertDateStr = (date) => {
+  if (date && !isNaN(new Date(date))) {
+    const day = new Date(date).getDate().toString().padStart(2, '0');
+    const month = (new Date(date).getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date(date).getFullYear();
+    return `${year}-${month}-${day}`; // Changed to YYYY-MM-DD format
+  }
+  return null; // Return null for invalid date
+};
 
 async function authenticate() {
   try {
