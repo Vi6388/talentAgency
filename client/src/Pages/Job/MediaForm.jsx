@@ -163,6 +163,11 @@ const JobMediaForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
+      details: {
+        ...job.details,
+        startDate: convertDueDate(job.details?.startDate),
+        endDate: convertDueDate(job.details?.endDate),
+      },
       jobSummaryList: mediaList
     }
     if (job?.details?._id) {

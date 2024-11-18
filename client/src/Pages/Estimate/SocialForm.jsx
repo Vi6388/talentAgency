@@ -5,7 +5,7 @@ import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
-import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
@@ -157,6 +157,11 @@ const EstimateSocialForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
+      details: {
+        ...jobEstimate.details,
+        startDate: convertDueDate(jobEstimate.details?.startDate),
+        endDate: convertDueDate(jobEstimate.details?.endDate),
+      },
       jobSummaryList: socialList
     }
     if (jobEstimate?.details?._id) {

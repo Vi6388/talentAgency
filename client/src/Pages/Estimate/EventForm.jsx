@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -165,6 +165,11 @@ const EstimateEventForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
+      details: {
+        ...jobEstimate.details,
+        startDate: convertDueDate(jobEstimate.details?.startDate),
+        endDate: convertDueDate(jobEstimate.details?.endDate),
+      },
       jobSummaryList: eventList
     }
     if (jobEstimate?.details?._id) {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_INVOICE_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
@@ -128,6 +128,11 @@ const JobInvoiceForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
+      details: {
+        ...job.details,
+        startDate: convertDueDate(job.details?.startDate),
+        endDate: convertDueDate(job.details?.endDate),
+      },
       invoiceList: invoiceList
     }
     if (job?.details?._id) {

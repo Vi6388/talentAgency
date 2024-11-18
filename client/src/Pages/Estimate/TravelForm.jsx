@@ -7,7 +7,7 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
@@ -186,6 +186,11 @@ const EstimateTravelForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
+      details: {
+        ...jobEstimate.details,
+        startDate: convertDueDate(jobEstimate.details?.startDate),
+        endDate: convertDueDate(jobEstimate.details?.endDate),
+      },
       jobSummaryList: travelList
     }
     if (jobEstimate?.details?._id) {

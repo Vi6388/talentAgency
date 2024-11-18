@@ -170,6 +170,11 @@ const JobPublishForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
+      details: {
+        ...job.details,
+        startDate: convertDueDate(job.details?.startDate),
+        endDate: convertDueDate(job.details?.endDate),
+      },
       jobSummaryList: publishList
     }
     if (job?.details?._id) {

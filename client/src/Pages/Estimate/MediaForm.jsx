@@ -6,7 +6,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
-import { dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { store } from "../../redux/store";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -183,6 +183,11 @@ const EstimateMediaForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
+      details: {
+        ...jobEstimate.details,
+        startDate: convertDueDate(jobEstimate.details?.startDate),
+        endDate: convertDueDate(jobEstimate.details?.endDate),
+      },
       jobSummaryList: mediaList
     }
     if (jobEstimate?.details?._id) {

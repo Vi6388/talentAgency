@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -146,6 +146,11 @@ const EstimateInvoiceForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
+      details: {
+        ...jobEstimate.details,
+        startDate: convertDueDate(jobEstimate.details?.startDate),
+        endDate: convertDueDate(jobEstimate.details?.endDate),
+      },
       invoiceList: invoiceList
     }
     if (jobEstimate?.details?._id) {
