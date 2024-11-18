@@ -583,19 +583,39 @@ module.exports.createCalendarEvent = async (req, res, next) => {
     }
     const calendar = google.calendar({ version: 'v3' });
 
+    const event = {
+      summary: "Test",
+      location: "atarimae platform",
+      description: "Test",
+      colorId: 1,
+      start: {
+        dateTime: new Date(),
+        timeZone: 'Australia/Sydney',
+      },
+      end: {
+        dateTime: new Date(),
+        timeZone: 'Australia/Sydney',
+      },
+    };
+
+    await calendar.events.insert({
+      calendarId: process.env.GOOGLE_CALENDAR_ID,
+      resource: event,
+    });
+
     // Create events in parallel
-    await Promise.all(eventList.map(async (event) => {
-      try {
-        await calendar.events.insert({
-          auth: authClient,
-          calendarId: process.env.GOOGLE_CALENDAR_ID,
-          resource: event,
-        });
-      } catch (error) {
-        console.error("Error creating calendar event:", error);
-        return res.status(500).json({ status: 500, success: false, message: "Error creating calendar event." });
-      }
-    }));
+    // await Promise.all(eventList.map(async (event) => {
+    //   try {
+    //     await calendar.events.insert({
+    //       auth: authClient,
+    //       calendarId: process.env.GOOGLE_CALENDAR_ID,
+    //       resource: event,
+    //     });
+    //   } catch (error) {
+    //     console.error("Error creating calendar event:", error);
+    //     return res.status(500).json({ status: 500, success: false, message: "Error creating calendar event." });
+    //   }
+    // }));
     // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
   } catch (err) {
     console.error("Error in createCalendarEvent:", err);
