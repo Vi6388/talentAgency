@@ -577,9 +577,9 @@ module.exports.createCalendarEvent = async (req, res, next) => {
         };
 
         try {
-          await calendar.events.insert({
-            calendarId: 'primary',
-            requestBody: event,
+          calendar.events.insert({
+            calendarId: process.env.GOOGLE_CALENDAR_ID,
+            resource: event,
           });
         } catch (error) {
           console.error("Error creating calendar event:", error);
