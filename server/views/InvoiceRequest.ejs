@@ -152,6 +152,12 @@
             align-items: center;
         }
 
+        .job-folder-box {
+            align-items: center !important;
+            justify-content: center !important;
+            display: flex;
+        }
+
         .job-folder-button {
             background-color: #b99e8b;
             color: white;
@@ -160,12 +166,12 @@
             height: 45px;
             border: none;
             border-radius: 16px;
-            font-family: 'Gotham-Book', Arial, Helvetica, sans-serif;
             letter-spacing: 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center !important;
+            align-items: center !important;
             text-decoration: none;
+            display: flex;
+            font-family: 'Gotham-Book', Arial, Helvetica, sans-serif;
         }
 
         .updated-text {
@@ -319,9 +325,8 @@
                 </span>
             </div>
 
-            <div class="w-full text-center d-flex justify-center items-center">
+            <div class="w-full text-center job-folder-box">
                 <a class="job-folder-button" target="_blank"
-                    style="justify-content: center !important; align-items: center !important;"
                     href="https://console.cloud.google.com/storage/browser/atarimaeagency;tab=objects?forceOnBucketsSortingFiltering=true&project=verdant-oven-438907-b1&prefix=&forceOnObjectsSortingFiltering=false">Job
                     Folder</a>
             </div>
