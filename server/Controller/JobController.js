@@ -576,66 +576,47 @@ module.exports.createCalendarEvent = async (req, res, next) => {
       return res.json({ status: 400, success: false, message: "No valid events to create." });
     }
 
-    const authClient = await ensureAuthenticated();
-    if (!authClient) {
-      console.error('Authentication client is null or undefined');
-      return;
-    }
     const calendar = google.calendar({ version: 'v3' });
-
-    const event = {
-      summary: "Test",
-      location: "atarimae platform",
-      description: "Test",
-      colorId: 1,
-      start: {
-        dateTime: new Date(),
-        timeZone: 'Australia/Sydney',
-      },
-      end: {
-        dateTime: new Date(),
-        timeZone: 'Australia/Sydney',
-      },
-    };
 
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: process.env.CALENDAR_SCOPES,
     });
-    auth.getClient().then(a=>{
-      calendar.events.insert({
-        auth:a,
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: event,
-      }, function(err, event) {
-        if (err) {
-          console.log('There was an error contacting the Calendar service: ' + err);
-          return;
+    auth.getClient().then(async a => {
+      await Promise.all(eventList.map(async (event) => {
+        try {
+          calendar.events.insert({
+            auth: a,
+            calendarId: process.env.GOOGLE_CALENDAR_ID,
+            resource: event,
+          }, function (err, event) {
+            if (err) {
+              console.log('There was an error contacting the Calendar service: ' + err);
+              return;
+            }
+            console.log('Event created: %s', event.data);
+          });
+        } catch (error) {
+          console.error("Error creating calendar event:", error);
         }
-        console.log('Event created: %s', event.data);
-        res.jsonp("Event successfully created!");
-      });
+      }));
     })
 
     // Create events in parallel
-    // await Promise.all(eventList.map(async (event) => {
-    //   try {
-    //     await calendar.events.insert({
-    //       auth: authClient,
-    //       calendarId: process.env.GOOGLE_CALENDAR_ID,
-    //       resource: event,
-    //     });
-    //   } catch (error) {
-    //     console.error("Error creating calendar event:", error);
-    //     return res.status(500).json({ status: 500, success: false, message: "Error creating calendar event." });
-    //   }
-    // }));
-    // return res.json({ status: 200, success: true, message: "Calendar events created successfully." });
   } catch (err) {
     console.error("Error in createCalendarEvent:", err);
     return res.json({ status: 500, success: false, message: "An error occurred while creating events." });
   }
 };
+
+const convertDateStr = (date) => {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
+    const day = new Date(date).getDate();
+    const month = new Date(date).getMonth() + 1;
+    const year = new Date(date).getFullYear();
+    return year + "/" + month + "/" + day;
+  }
+}
 
 // module.exports.createCalendarEvent = async (req, res, next) => {
 //   try {
@@ -701,43 +682,3 @@ module.exports.createCalendarEvent = async (req, res, next) => {
 //     return res.json({ success: false, status: 401, redirectUrl: '/auth' });
 //   }
 // }
-
-const convertDateStr = (date) => {
-  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
-    const day = new Date(date).getDate();
-    const month = new Date(date).getMonth() + 1;
-    const year = new Date(date).getFullYear();
-    return year + "/" + month + "/" + day;
-  }
-}
-
-async function authenticate() {
-  try {
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: process.env.CALENDAR_SCOPES,
-    });
-
-    const client = await auth.getClient();
-    google.options({ auth: client });
-
-    console.log('Authentication successful');
-    return client;
-  } catch (error) {
-    console.error('Error during authentication:', error);
-    throw new Error('Authentication failed. Please check your credentials.');
-  }
-}
-
-async function ensureAuthenticated() {
-  try {
-    const client = await authenticate();
-    if (!client) {
-      throw new Error('Authentication failed: No valid auth client.');
-    }
-    return client;
-  } catch (error) {
-    console.error('Error ensuring authentication:', error.message);
-    throw new Error('Could not authenticate. Please try again later.');
-  }
-}
