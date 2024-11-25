@@ -226,9 +226,9 @@ module.exports.AddJob = async (req, res, next) => {
 
     const emailData = {
       jobTitle: newJob?.jobName,
-      startDate: new Date(newJob?.startDate).toLocaleDateString("en-US"),
-      endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
-      jobDesc: ""
+      startDate: newJob?.startDate,
+      endDate: newJob?.endDate,
+      jobDesc: "New Job"
     };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
     await sendEmail({
@@ -389,9 +389,9 @@ module.exports.UpdateJob = async (req, res, next) => {
 
       const emailData = {
         jobTitle: existJob?.jobName,
-        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
-        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
-        jobDesc: ""
+        startDate: existJob?.startDate,
+        endDate: existJob?.endDate,
+        jobDesc: "Update Job"
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
       await sendEmail({
@@ -420,9 +420,9 @@ module.exports.updateJobStatus = async (req, res, next) => {
       const toEmail = existJob?.talent?.email;
       const emailData = {
         jobTitle: existJob?.jobName,
-        startDate: new Date(existJob?.startDate).toLocaleDateString("en-US"),
-        endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
-        jobDesc: ""
+        startDate: existJob?.startDate,
+        endDate: existJob?.endDate,
+        jobDesc: "Update Job Status"
       }
 
       switch (req.body.jobStatus) {
