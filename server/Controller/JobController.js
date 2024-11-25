@@ -544,75 +544,72 @@ module.exports.createCalendarEvent = async (req, res, next) => {
   try {
     const detailData = req.body.details;
     const jobSummaryList = req.body.jobSummaryList;
-    if (!jobSummaryList || jobSummaryList.length === 0) {
-      return res.json({ status: 400, success: false, message: "No job summaries provided." });
-    }
-    let eventList = [];
-    // Create events based on job summaries
-    for (const summary of jobSummaryList) {
-      if (summary.type === "social" || summary.type === "event") {
-        let start = "";
-        let end = "";
+    if (jobSummaryList || jobSummaryList.length > 0) {
+      let eventList = [];
+      // Create events based on job summaries
+      for (const summary of jobSummaryList) {
+        if (summary.type === "social" || summary.type === "event") {
+          let start = "";
+          let end = "";
 
-        if (summary.type === "social") {
-          start = new Date(summary.conceptDueDate)?.toISOString();
-          end = new Date(summary.contentDueDate)?.toISOString();
-        }
-        if (summary.type === "event") {
-          start = convertDateStr(summary.eventDate) + 'T' + summary.eventStartTime + ':00Z';
-          end = convertDateStr(summary.eventDate) + 'T' + summary.eventEndTime + ':00Z';
-        }
+          if (summary.type === "social") {
+            start = new Date(summary.conceptDueDate)?.toISOString();
+            end = new Date(summary.contentDueDate)?.toISOString();
+          }
+          if (summary.type === "event") {
+            start = convertDateStr(summary.eventDate) + 'T' + summary.eventStartTime + ':00Z';
+            end = convertDateStr(summary.eventDate) + 'T' + summary.eventEndTime + ':00Z';
+          }
 
-        const event = {
-          summary: summary.jobTitle || "",
-          location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
-          description: detailData?.jobName || "",
-          colorId: 1,
-          start: {
-            dateTime: start || new Date().toISOString(),
-            timeZone: 'Australia/Sydney',
-          },
-          end: {
-            dateTime: end || new Date().toISOString(),
-            timeZone: 'Australia/Sydney',
-          },
-        };
-        eventList.push(event);
+          const event = {
+            summary: summary.jobTitle || "",
+            location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
+            description: detailData?.jobName || "",
+            colorId: 1,
+            start: {
+              dateTime: start || new Date().toISOString(),
+              timeZone: 'Australia/Sydney',
+            },
+            end: {
+              dateTime: end || new Date().toISOString(),
+              timeZone: 'Australia/Sydney',
+            },
+          };
+          eventList.push(event);
+        }
       }
+
+      // Check if there are events to create
+      if (eventList.length === 0) {
+        return res.json({ status: 400, success: false, message: "No valid events to create." });
+      }
+
+      const calendar = google.calendar({ version: 'v3' });
+
+      const auth = new google.auth.GoogleAuth({
+        credentials,
+        scopes: process.env.CALENDAR_SCOPES,
+      });
+      auth.getClient().then(async a => {
+        await Promise.all(eventList.map(async (event) => {
+          try {
+            calendar.events.insert({
+              auth: a,
+              calendarId: process.env.GOOGLE_CALENDAR_ID,
+              resource: event,
+            }, function (err, event) {
+              if (err) {
+                console.log('There was an error contacting the Calendar service: ' + err);
+                return;
+              }
+              console.log('Event created: %s', event.data);
+            });
+          } catch (error) {
+            console.error("Error creating calendar event:", error);
+          }
+        }));
+      })
     }
-
-    // Check if there are events to create
-    if (eventList.length === 0) {
-      return res.json({ status: 400, success: false, message: "No valid events to create." });
-    }
-
-    const calendar = google.calendar({ version: 'v3' });
-
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: process.env.CALENDAR_SCOPES,
-    });
-    auth.getClient().then(async a => {
-      await Promise.all(eventList.map(async (event) => {
-        try {
-          calendar.events.insert({
-            auth: a,
-            calendarId: process.env.GOOGLE_CALENDAR_ID,
-            resource: event,
-          }, function (err, event) {
-            if (err) {
-              console.log('There was an error contacting the Calendar service: ' + err);
-              return;
-            }
-            console.log('Event created: %s', event.data);
-          });
-        } catch (error) {
-          console.error("Error creating calendar event:", error);
-        }
-      }));
-    })
-
-    // Create events in parallel
   } catch (err) {
     console.error("Error in createCalendarEvent:", err);
     return res.json({ status: 500, success: false, message: "An error occurred while creating events." });
