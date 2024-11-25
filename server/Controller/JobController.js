@@ -496,7 +496,7 @@ module.exports.moveToCompletedFolder = async (req, res) => {
     if (existJob) {
       const talentName = existJob?.talent?.talentName; // Get talent name from request body
       const sourceFolder = `${talentName}/NewJobs/NewJob/`;
-      const destinationFolder = `${talentName}/CompletedJobs/CompletedJob`;
+      const destinationFolder = `${talentName}/CompletedJobs/CompletedJob/`;
       const [files] = await bucket.getFiles({ prefix: sourceFolder }); // List files in the source folder
       if (files.length === 0) {
         return res.json({
