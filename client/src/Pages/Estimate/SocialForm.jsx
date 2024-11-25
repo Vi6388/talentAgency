@@ -138,6 +138,7 @@ const EstimateSocialForm = () => {
     if (jobEstimate?.details?._id) {
       updateEstimate();
     } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       EstimateApi.add(jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
@@ -149,6 +150,7 @@ const EstimateSocialForm = () => {
             position: "top-left",
           });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     }
   }
