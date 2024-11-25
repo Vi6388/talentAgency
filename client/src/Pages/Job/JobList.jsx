@@ -6,6 +6,7 @@ import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
 import DownArrow from "../../svg/down-arrow.png";
+import { TalentApi } from "../../apis/TalentApi";
 
 const thData = [
   'talent',
@@ -25,14 +26,29 @@ const JobList = () => {
   const [sort, setSort] = useState('createdAt');
   const [order, setOrder] = useState("desc");
   useEffect(() => {
-    getJobList();
+    TalentApi.getTalentList().then((res) => {
+      if (res.data.status === 200) {
+        getJobList(res.data.data);
+      } else {
+        getJobList([]);
+      }
+    });    
   }, []);
 
-  const getJobList = () => {
+  const getJobList = (talentList) => {
     store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     JobApi.list(sort, order).then((res) => {
       if (res.data.status === 200) {
-        setList(res.data.data);
+        let list = [];
+        res?.data?.data?.map((item) => {
+          const hightlightColor = talentList.filter(talent => talent.email === item.talent?.email)[0]?.highlightColor;
+          const data = {
+            ...item,
+            hightlightColor: hightlightColor
+          };
+          list.push(data);
+        });
+        setList(list);
       }
       store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
     })
@@ -101,7 +117,7 @@ const JobList = () => {
                 <tr className="border-table border-b last:border-b-0" key={index}>
                   <td className="p-2">
                     <div className="flex justify-start items-center gap-2">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item?.talent?.hightlightColor ? `${item?.talent?.hightlightColor}` : "" }}></div>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item?.hightlightColor }}></div>
                       <span className="text-input text-sm font-gotham-regular">{item.talent?.talentName}</span>
                     </div>
                   </td>
