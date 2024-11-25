@@ -281,8 +281,6 @@ const JobDetailsForm = () => {
         }
       })
     }
-
-
   }
 
   const nextFunc = () => {
@@ -384,17 +382,17 @@ const JobDetailsForm = () => {
     if (jobDetailsForm.id) {
       const formData = new FormData();
       if (jobDetailsForm?.uploadedFiles) {
-        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+        const { contract, brief, supporting } = jobDetailsForm.uploadedFiles;
 
         // Check if files are valid before appending
-        if (contractFile instanceof File) {
-          formData.append('contractFile', contractFile);
+        if (contract instanceof File) {
+          formData.append('contractFile', contract);
         }
-        if (briefFile instanceof File) {
-          formData.append('briefFile', briefFile);
+        if (brief instanceof File) {
+          formData.append('briefFile', brief);
         }
-        if (supportingFile instanceof File) {
-          formData.append('supportingFile', supportingFile);
+        if (supporting instanceof File) {
+          formData.append('supportingFile', supporting);
         }
       }
       formData.append('talentName', jobDetailsForm?.talentName);
