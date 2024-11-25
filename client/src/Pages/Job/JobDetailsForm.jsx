@@ -698,8 +698,7 @@ const JobDetailsForm = () => {
               {uploadedList?.length > 0 ?
                 uploadedList?.map((item, index) => {
                   return (
-                    <div className={`flex justify-between items-center border-b divider-line-color py-2 overflow-hidden
-                      ${item.type === "supporting" ? "border-none" : ""}`}
+                    <div className="flex justify-between items-center border-b divider-line-color py-2 overflow-hidden"
                       key={index}>
                       <div className="flex items-center gap-1 overflow-hidden w-1/2">
                         <img src={DescriptionIcon} alt="file" className="w-4 h-4" />

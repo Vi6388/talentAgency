@@ -518,9 +518,9 @@ module.exports.moveToCompletedFolder = async (req, res) => {
 
       const uploadFiles = existJob?.uploadedFiles;
       const completedUploadFiles = {
-        contractFile: uploadFiles?.contractFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || "",
-        briefFile: uploadFiles?.briefFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || "",
-        supportingFile: uploadFiles?.supportingFile?.replace("NewJobs/NewJob", "CompletedJobs/CompletedJob") || ""
+        contractFile: uploadFiles?.contractFile?.replace("NewJobs/NewJob/", "CompletedJobs/CompletedJob/") || "",
+        briefFile: uploadFiles?.briefFile?.replace("NewJobs/NewJob/", "CompletedJobs/CompletedJob/") || "",
+        supportingFile: uploadFiles?.supportingFile?.replace("NewJobs/NewJob/", "CompletedJobs/CompletedJob/") || ""
       }
       await existJob.updateOne({
         uploadedFiles: completedUploadFiles
