@@ -544,7 +544,7 @@ module.exports.createCalendarEvent = async (req, res, next) => {
   try {
     const detailData = req.body.details;
     const jobSummaryList = req.body.jobSummaryList;
-    if (jobSummaryList || jobSummaryList.length > 0) {
+    if (jobSummaryList.length > 0) {
       let eventList = [];
       // Create events based on job summaries
       for (const summary of jobSummaryList) {
