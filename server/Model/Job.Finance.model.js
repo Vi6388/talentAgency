@@ -7,40 +7,52 @@ const jobFinanceSchema = new mongoose.Schema({
     required: true
   },
   poNumber: {
-    type: String
+    type: String,
+    default: ""
   },
   fee: {
-    type: String
+    type: String,
+    default: ""
   },
   gst: {
-    type: Boolean
+    type: Boolean,
+    default: false
   },
   usage: {
-    type: String
+    type: String,
+    default: "0"
   },
   asf: {
-    type: String
+    type: String,
+    default: "0"
   },
   royalities: {
-    type: String
+    type: String,
+    default: "0"
   },
   commission: {
-    type: String
+    type: String,
+    default: "0"
   },
   paymentTerms: {
-    type: String
+    type: String,
+    default: "0"
   },
   expenses: {
-    type: String
+    type: String,
+    default: "0"
   },
   expensesDesc: {
-    type: String
+    type: String,
+    default: ""
   },
   miscellaneous: {
-    type: String
+    type: String,
+    default: "0"
   },
   miscellaneousDesc: {
-    type: String
+    type: String,
+    default: ""
   },
   createdAt: {
     type: Date,

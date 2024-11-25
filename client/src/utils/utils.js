@@ -55,32 +55,6 @@ export const isFormValid = (form, requiredFields) => {
   return true;
 };
 
-export const jobFormValidateForm = (data) => {
-  const errors = {};
-  const validList = ['firstname', 'surname', 'email', 'companyName', 'position', 'phoneNumber', 'postalAddress', 'abn', 'suburb', 'state', 'postcode', 'jobName', 'talentName', 'manager', 'labelColor',
-    'poNumber', 'fee', 'usage', 'asf', 'royalities', 'commission', 'paymentTerms', 'expenses', 'miscellaneous',
-    'jobTitle', 'conceptDueDate', 'contentDueDate', 'liveDate',
-    'eventDate', 'eventStartTime', 'eventEndTime',
-    'startDate', 'endDate', 'numberOfEpisodes',
-    'firstDraftDate', 'secondDraftDate', 'finalDate', 'publisher',
-    'departureDate', 'departureTime', 'arrivalDate', 'arrivalTime', 'preferredCarrier', 'frequentFlyerNumber', 'carHireRequired'];
-
-  for (const [field, value] of Object.entries(data)) {
-    if (typeof value === 'string' && !value?.trim() && validList.includes(field)) {
-      errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-    }
-    if(typeof value !== 'string' && validList.includes(field)) {
-      errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-    }
-  }
-
-  if (data?.email && !/\S+@\S+\.\S+/.test(data.email)) {
-    errors.email = 'Email is invalid';
-  }
-
-  return errors;
-};
-
 export const dateTimeFormat = (date) => {
   const day = new Date(date).toISOString().split('T')[0];
   const timeStr = new Date(date).toISOString().split('T')[1];

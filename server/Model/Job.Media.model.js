@@ -18,16 +18,20 @@ const jobMediaSchema = new mongoose.Schema({
     default: new Date(),
   },
   type: {
-    type: String // podcast, radio, web series, tv
+    type: String, // podcast, radio, web series, tv
+    default: "podcast"
   },
   numberOfEpisodes: {
-    type: String
+    type: String,
+    default: "0"
   },
   keyMessage: {
-    type: String
+    type: String,
+    default: ""
   },
   deleverables: {
-    type: String
+    type: String,
+    default: ""
   },
   createdAt: {
     type: Date,

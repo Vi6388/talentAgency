@@ -8,7 +8,17 @@ const JobTravelModel = require("../Model/Job.Travel.model");
 
 module.exports.getJobEstimateList = async (req, res, next) => {
   try {
-    const jobList = await JobModel.find({ estimateStatus: true, isLive: false });
+    const { sort, order } = req.params;
+    let sortField = sort;
+    if (sort === 'talent') {
+      sortField = 'talent.talentName';
+    }
+    if (sort === 'client') {
+      sortField = 'contactDetails.firstname';
+    }
+    const sortOrder = order === 'asc' ? 1 : -1;
+
+    const jobList = await JobModel.find({ estimateStatus: true, isLive: false }).sort({ [sortField]: sortOrder });
     return res.json({ status: 200, message: "Get Job list", success: true, data: jobList });
   } catch (error) {
     console.error(error);
@@ -21,29 +31,29 @@ module.exports.AddJobEstimate = async (req, res, next) => {
     // Create Job Model
     const newJob = await JobModel.create({
       contactDetails: {
-        firstname: detailData?.firstname,
-        surname: detailData?.surname,
-        email: detailData?.email,
-        position: detailData?.position,
-        phoneNumber: detailData?.phoneNumber,
+        firstname: detailData?.firstname || "",
+        surname: detailData?.surname || "",
+        email: detailData?.email || "",
+        position: detailData?.position || "",
+        phoneNumber: detailData?.phoneNumber || "",
       },
       companyDetails: {
-        companyName: detailData?.companyName,
-        abn: detailData?.abn,
-        postalAddress: detailData?.postalAddress,
-        suburb: detailData?.suburb,
-        state: detailData?.state,
-        postcode: detailData?.postcode,
+        companyName: detailData?.companyName || "",
+        abn: detailData?.abn || "",
+        postalAddress: detailData?.postalAddress || "",
+        suburb: detailData?.suburb || "",
+        state: detailData?.state || "",
+        postcode: detailData?.postcode || "",
       },
-      jobName: detailData?.jobName,
+      jobName: detailData?.jobName || "",
       talent: {
-        talentName: detailData?.talentName,
-        email: detailData?.talentEmail,
-        manager: detailData?.manager,
+        talentName: detailData?.talentName || "",
+        email: detailData?.talentEmail || "",
+        manager: detailData?.manager || "",
       },
-      labelColor: detailData?.labelColor,
-      startDate: detailData?.startDate,
-      endDate: detailData?.endDate,
+      labelColor: detailData?.labelColor || "",
+      startDate: detailData?.startDate || new Date().toISOString(),
+      endDate: detailData?.endDate || new Date().toISOString(),
       estimateStatus: true,
       isLive: false,
       jobStatus: 1
@@ -169,29 +179,29 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
     if (existJob) {
       await existJob.updateOne({
         contactDetails: {
-          firstname: detailData?.firstname,
-          surname: detailData?.surname,
-          email: detailData?.email,
-          position: detailData?.position,
-          phoneNumber: detailData?.phoneNumber,
+          firstname: detailData?.firstname || existJob?.contactDetails?.firstname || "",
+          surname: detailData?.surname || existJob?.contactDetails?.surname || "",
+          email: detailData?.email || existJob?.contactDetails?.email || "",
+          position: detailData?.position || existJob?.contactDetails?.position || "",
+          phoneNumber: detailData?.phoneNumber || existJob?.contactDetails?.phoneNumber || "",
         },
         companyDetails: {
-          companyName: detailData?.companyName,
-          abn: detailData?.abn,
-          postalAddress: detailData?.postalAddress,
-          suburb: detailData?.suburb,
-          state: detailData?.state,
-          postcode: detailData?.postcode,
+          companyName: detailData?.companyName || existJob?.companyDetails?.companyName || "",
+          abn: detailData?.abn || existJob?.companyDetails?.abn || "",
+          postalAddress: detailData?.postalAddress || existJob?.companyDetails?.postalAddress || "",
+          suburb: detailData?.suburb || existJob?.companyDetails?.suburb || "",
+          state: detailData?.state || existJob?.companyDetails?.state || "",
+          postcode: detailData?.postcode || existJob?.companyDetails?.postcode || "",
         },
-        jobName: detailData?.jobName,
+        jobName: detailData?.jobName || existJob?.jobName || "",
         talent: {
-          talentName: detailData?.talentName,
-          email: detailData?.talentEmail,
-          manager: detailData?.manager,
+          talentName: detailData?.talentName || existJob?.talent?.talentName || "",
+          email: detailData?.talentEmail || existJob?.talent?.email || "",
+          manager: detailData?.manager || existJob?.talent?.manager || "",
         },
-        labelColor: detailData?.labelColor,
-        startDate: detailData?.startDate,
-        endDate: detailData?.endDate,
+        labelColor: detailData?.labelColor || existJob?.labelColor || "",
+        startDate: detailData?.startDate || existJob?.startDate || new Date().toISOString(),
+        endDate: detailData?.endDate || existJob?.endDate || new Date().toISOString(),
       });
 
       // Dalete Exist Invoice List By jobEstimate id and Create new Invoice List

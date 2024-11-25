@@ -37,7 +37,7 @@ const fileFilter = (req, file, cb) => {
 
 let upload = multer({ storage, fileFilter });
 
-router.get("/list", getJobEstimateList);
+router.get("/list/:sort/:order", getJobEstimateList);
 
 router.route('/add').post(upload.single('uploadFile'), AddJobEstimate);
 router.route('/update/:id').post(upload.single('uploadFile'), UpdateJobEstimate);

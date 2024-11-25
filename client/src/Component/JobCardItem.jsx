@@ -1,6 +1,5 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { dueDateFormat } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 
 function JobCardItem({ item, index, talent }) {
@@ -27,7 +26,7 @@ function JobCardItem({ item, index, talent }) {
             </div>
             <div className="w-full pb-2">
               <div className="text-success text-[11px] font-semibold flex items-center">
-                <span className="mr-2">Due Date: {dueDateFormat(item.endDate)}</span>
+                <span className="mr-2">Due Date: {item.endDate}</span>
                 <div>
                   <div className="w-2 h-2 bg-success rounded-full"></div>
                 </div>

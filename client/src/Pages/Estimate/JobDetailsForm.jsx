@@ -5,7 +5,7 @@ import CalendarIcon from "../../svg/calendar_month.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM } from "../../redux/actionTypes";
 import { toast, ToastContainer } from "react-toastify";
-import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { EstimateApi } from "../../apis/EstimateApi";
@@ -38,7 +38,6 @@ const EstimateJobDetailsForm = () => {
   });
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +48,10 @@ const EstimateJobDetailsForm = () => {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
           initialJobEstimateFormData(data);
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
         }
         store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
@@ -86,8 +89,8 @@ const EstimateJobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
-      startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
-      endDate: dueDateFormat(data?.details?.endDate) || (dueDateFormat(data?.details?.endDate) || ""),
+      startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : dueDateFormat(new Date())),
+      endDate: id ? data?.details?.endDate : (data?.details?.endDate ? dueDateFormat(convertDueDate(data?.details?.endDate)) : dueDateFormat(new Date())),
     })
   }
 
@@ -132,14 +135,14 @@ const EstimateJobDetailsForm = () => {
   const handleStartDateChange = (selectedDate) => {
     setJobDetailsForm({
       ...jobDetailsForm,
-      startDate: new Date(selectedDate).toLocaleDateString("en-US")
+      startDate: dueDateFormat(new Date(selectedDate))
     })
   }
 
   const handleEndDateChange = (selectedDate) => {
     setJobDetailsForm({
       ...jobDetailsForm,
-      endDate: new Date(selectedDate).toLocaleDateString("en-US")
+      endDate: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -178,19 +181,11 @@ const EstimateJobDetailsForm = () => {
   }
 
   const nextFunc = () => {
-    const newErrors = jobFormValidateForm(jobDetailsForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: jobDetailsForm });
-      if (jobDetailsForm?.id) {
-        navigate("/estimate/edit/" + jobDetailsForm?.id + "/invoice");
-      } else {
-        navigate("/estimate/add/invoice");
-      }
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: jobDetailsForm });
+    if (jobDetailsForm?.id) {
+      navigate("/estimate/edit/" + jobDetailsForm?.id + "/invoice");
     } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
+      navigate("/estimate/add/invoice");
     }
   }
 
@@ -198,16 +193,8 @@ const EstimateJobDetailsForm = () => {
     if (jobDetailsForm.id) {
       updateEstimate();
     } else {
-      const data = {
-        ...jobEstimate,
-        details: {
-          ...jobDetailsForm,
-          startDate: convertDueDate(jobDetailsForm?.startDate),
-          endDate: convertDueDate(jobDetailsForm?.endDate)
-        },
-      }
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      EstimateApi.add(data).then((res) => {
+      EstimateApi.add(jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
           initialJobEstimateFormData({ details: res.data.data });
@@ -227,15 +214,7 @@ const EstimateJobDetailsForm = () => {
   const updateEstimate = () => {
     if (jobDetailsForm.id) {
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      const data = {
-        ...jobEstimate,
-        details: {
-          ...jobDetailsForm,
-          startDate: convertDueDate(jobDetailsForm?.startDate),
-          endDate: convertDueDate(jobDetailsForm?.endDate)
-        },
-      }
-      EstimateApi.updateJobEstimateById(jobDetailsForm.id, data).then((res) => {
+      EstimateApi.updateJobEstimateById(jobDetailsForm.id, jobEstimate).then((res) => {
         if (res.data.status === 200) {
           store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
           initialJobEstimateFormData({ details: res.data.data })
@@ -295,32 +274,27 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.firstname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="First Name"
                   type="text" value={jobDetailsForm.firstname} name="firstname"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.surname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="surname"
                   type="text" value={jobDetailsForm.surname} name="surname"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.email ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Email Address"
                   type="text" value={jobDetailsForm.email} name="email"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="position"
                   type="text" value={jobDetailsForm.position} name="position"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="phone Number"
                   type="text" value={jobDetailsForm.phoneNumber} name="phoneNumber"
                   onChange={(e) => handleChange(e)} />
@@ -335,38 +309,35 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.companyName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Company Name"
                   type="text" value={jobDetailsForm.companyName} name="companyName"
                   onChange={(e) => handleChange(e)} />
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.abn ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="abn"
                   type="text" value={jobDetailsForm.abn} name="abn"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.postalAddress ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Postal Address"
                   type="text" value={jobDetailsForm.postalAddress} name="postalAddress"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.suburb ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="suburb"
                   type="text" value={jobDetailsForm.suburb} name="suburb"
                   onChange={(e) => handleChange(e)} />
                 <div className="flex items-center justify-between gap-3 w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]                         ${errors.state ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     placeholder="State"
                     type="text" value={jobDetailsForm.state} name="state"
                     onChange={(e) => handleChange(e)} />
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.postcode ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                     placeholder="postcode"
                     type="text" value={jobDetailsForm.postcode} name="postcode"
                     onChange={(e) => handleChange(e)} />
@@ -382,8 +353,7 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.jobName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="job name"
                   type="text" value={jobDetailsForm.jobName} name="jobName"
                   onChange={(e) => handleChange(e)} />
@@ -396,8 +366,7 @@ const EstimateJobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2 relative">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
                   onChange={(e) => handleChange(e)} onFocus={focusTalent} />
@@ -414,7 +383,7 @@ const EstimateJobDetailsForm = () => {
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="mananger"
                   type="text" value={jobDetailsForm.manager} name="manager"
                   onChange={(e) => handleChange(e)} />
@@ -428,7 +397,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -440,7 +409,7 @@ const EstimateJobDetailsForm = () => {
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="End Date" value={jobDetailsForm.endDate} onFocus={() => setShowEnd(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />

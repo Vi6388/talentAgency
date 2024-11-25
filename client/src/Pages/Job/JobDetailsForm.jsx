@@ -4,7 +4,7 @@ import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import DescriptionIcon from "../../svg/description.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
@@ -45,7 +45,6 @@ const JobDetailsForm = () => {
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
   const [uploadedList, setUploadedList] = useState([]);
-  const [errors, setErrors] = useState({});
   const [fileInfo, setFileInfo] = useState({
     contractFile: {
       filename: "",
@@ -76,8 +75,12 @@ const JobDetailsForm = () => {
           const data = res.data.data;
           store.dispatch({ type: SAVE_JOB, payload: data });
           initialJobDetailsFormData(data);
-          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        } else {
+          toast.error(res.data.message, {
+            position: "top-left",
+          });
         }
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
       });
     } else {
       initialJobDetailsFormData(job);
@@ -115,8 +118,8 @@ const JobDetailsForm = () => {
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
       labelColor: data?.details?.labelColor || (data?.details?.labelColor || "#000000"),
-      startDate: dueDateFormat(data?.details?.startDate) || (dueDateFormat(data?.details?.startDate) || ""),
-      endDate: dueDateFormat(data?.details?.endDate) || (dueDateFormat(data?.details?.endDate) || ""),
+      startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : dueDateFormat(new Date())),
+      endDate: id ? data?.details?.endDate : (data?.details?.endDate ? dueDateFormat(convertDueDate(data?.details?.endDate)) : dueDateFormat(new Date())),
       supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || false),
     });
 
@@ -283,19 +286,11 @@ const JobDetailsForm = () => {
   }
 
   const nextFunc = () => {
-    const newErrors = jobFormValidateForm(jobDetailsForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: jobDetailsForm });
-      if (jobDetailsForm?.id) {
-        navigate("/job/edit/" + jobDetailsForm?.id + "/invoice");
-      } else {
-        navigate("/job/add/invoice");
-      }
+    store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: jobDetailsForm });
+    if (jobDetailsForm?.id) {
+      navigate("/job/edit/" + jobDetailsForm?.id + "/invoice");
     } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
+      navigate("/job/add/invoice");
     }
   }
 
@@ -315,9 +310,91 @@ const JobDetailsForm = () => {
         formData.append('supportingFile', supportingFile);
       }
     }
-    const newErrors = jobFormValidateForm(jobDetailsForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    formData.append('talentName', jobDetailsForm?.talentName);
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+    await JobApi.uploadFiles(formData).then((res) => {
+      if (res.data.status === 200) {
+        const data = res.data.data;
+        const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+        const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+        const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+        setJobDetailsForm({
+          ...jobDetailsForm,
+          uploadedFiles: {
+            contractFile: contractFile?.url || "",
+            briefFile: briefFile?.url || "",
+            supportingFile: supportingFile?.url || "",
+          }
+        });
+
+        const updateData = {
+          ...job,
+          details: {
+            ...jobDetailsForm,
+            uploadedFiles: {
+              contractFile: contractFile?.url || "",
+              briefFile: briefFile?.url || "",
+              supportingFile: supportingFile?.url || "",
+            }
+          },
+        }
+        if (jobDetailsForm?.details?._id) {
+          JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
+            if (res.data.status === 401) {
+              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+            } else if (res.data.status === 200) {
+              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+              toast.success(res.data.message, {
+                position: "top-left",
+              });
+            } else {
+              toast.error(res.data.message, {
+                position: "top-left",
+              });
+            }
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          })
+        } else {
+          JobApi.add(updateData).then((res) => {
+            if (res.data.status === 401) {
+              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+            } else if (res.data.status === 200) {
+              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+              initialJobDetailsFormData({ details: res.data.data });
+              toast.success(res.data.message, {
+                position: "top-left",
+              });
+            } else {
+              toast.error(res.data.message, {
+                position: "top-left",
+              });
+            }
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          })
+        }
+      } else {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+      }
+    });
+  }
+
+  const updateJob = async () => {
+    if (jobDetailsForm.id) {
+      const formData = new FormData();
+      if (jobDetailsForm?.uploadedFiles) {
+        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
+
+        // Check if files are valid before appending
+        if (contractFile instanceof File) {
+          formData.append('contractFile', contractFile);
+        }
+        if (briefFile instanceof File) {
+          formData.append('briefFile', briefFile);
+        }
+        if (supportingFile instanceof File) {
+          formData.append('supportingFile', supportingFile);
+        }
+      }
       formData.append('talentName', jobDetailsForm?.talentName);
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       await JobApi.uploadFiles(formData).then((res) => {
@@ -339,8 +416,6 @@ const JobDetailsForm = () => {
             ...job,
             details: {
               ...jobDetailsForm,
-              startDate: convertDueDate(jobDetailsForm?.startDate),
-              endDate: convertDueDate(jobDetailsForm?.endDate),
               uploadedFiles: {
                 contractFile: contractFile?.url || "",
                 briefFile: briefFile?.url || "",
@@ -348,27 +423,12 @@ const JobDetailsForm = () => {
               }
             },
           }
-          if (jobDetailsForm?.details?._id) {
-            JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
-              if (res.data.status === 401) {
-                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-              } else if (res.data.status === 200) {
-                store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-                toast.success(res.data.message, {
-                  position: "top-left",
-                });
-              } else {
-                toast.error(res.data.message, {
-                  position: "top-left",
-                });
-              }
-              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-            })
-          } else {
-            JobApi.add(updateData).then((res) => {
-              if (res.data.status === 401) {
-                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-              } else if (res.data.status === 200) {
+          JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
+            if (res.data.status === 401) {
+              const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              openAuthPopup(authUrl, () => retryCreateCalendarEvent(updateData));
+            } else {
+              if (res.data.status === 200) {
                 store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
                 initialJobDetailsFormData({ details: res.data.data });
                 toast.success(res.data.message, {
@@ -379,90 +439,13 @@ const JobDetailsForm = () => {
                   position: "top-left",
                 });
               }
-              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-            })
-          }
+            }
+            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+          });
         } else {
           store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         }
       });
-    }
-  }
-
-  const updateJob = async () => {
-    if (jobDetailsForm.id) {
-      const formData = new FormData();
-      if (jobDetailsForm?.uploadedFiles) {
-        const { contractFile, briefFile, supportingFile } = jobDetailsForm.uploadedFiles;
-
-        // Check if files are valid before appending
-        if (contractFile instanceof File) {
-          formData.append('contractFile', contractFile);
-        }
-        if (briefFile instanceof File) {
-          formData.append('briefFile', briefFile);
-        }
-        if (supportingFile instanceof File) {
-          formData.append('supportingFile', supportingFile);
-        }
-      }
-      const newErrors = jobFormValidateForm(jobDetailsForm);
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length === 0) {
-        formData.append('talentName', jobDetailsForm?.talentName);
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        await JobApi.uploadFiles(formData).then((res) => {
-          if (res.data.status === 200) {
-            const data = res.data.data;
-            const contractFile = data?.filter((item) => item.key === "contractFile")[0];
-            const briefFile = data?.filter((item) => item.key === "briefFile")[0];
-            const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-            setJobDetailsForm({
-              ...jobDetailsForm,
-              uploadedFiles: {
-                contractFile: contractFile?.url || "",
-                briefFile: briefFile?.url || "",
-                supportingFile: supportingFile?.url || "",
-              }
-            });
-
-            const updateData = {
-              ...job,
-              details: {
-                ...jobDetailsForm,
-                startDate: convertDueDate(jobDetailsForm?.startDate),
-                endDate: convertDueDate(jobDetailsForm?.endDate),
-                uploadedFiles: {
-                  contractFile: contractFile?.url || "",
-                  briefFile: briefFile?.url || "",
-                  supportingFile: supportingFile?.url || "",
-                }
-              },
-            }
-            JobApi.updateJobById(jobDetailsForm.id, updateData).then((res) => {
-              if (res.data.status === 401) {
-                const authUrl = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-                openAuthPopup(authUrl, () => retryCreateCalendarEvent(updateData));
-              } else {
-                if (res.data.status === 200) {
-                  store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-                  initialJobDetailsFormData({ details: res.data.data });
-                  toast.success(res.data.message, {
-                    position: "top-left",
-                  });
-                } else {
-                  toast.error(res.data.message, {
-                    position: "top-left",
-                  });
-                }
-              }
-              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-            });
-          } else {
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          }
-        });
-      }
     }
   }
 
@@ -528,34 +511,29 @@ const JobDetailsForm = () => {
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
                 <div className="w-full">
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.firstname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                     placeholder="First Name" type="text" value={jobDetailsForm.firstname} name="firstname"
                     onChange={(e) => handleChange(e)} />
                 </div>
                 <div className="w-full">
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.surname ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                     placeholder="surname"
                     type="text" value={jobDetailsForm.surname} name="surname"
                     onChange={(e) => handleChange(e)} />
                 </div>
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.email ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Email Address"
                   type="text" value={jobDetailsForm.email} name="email"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.position ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="position"
                   type="text" value={jobDetailsForm.position} name="position"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.phoneNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="phone Number"
                   type="text" value={jobDetailsForm.phoneNumber} name="phoneNumber"
                   onChange={(e) => handleChange(e)} />
@@ -570,38 +548,32 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.companyName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Company Name"
                   type="text" value={jobDetailsForm.companyName} name="companyName"
                   onChange={(e) => handleChange(e)} />
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.abn ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="abn"
                   type="text" value={jobDetailsForm.abn} name="abn"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-center items-center py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.postalAddress ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="Postal Address"
                   type="text" value={jobDetailsForm.postalAddress} name="postalAddress"
                   onChange={(e) => handleChange(e)} />
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.suburb ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="suburb"
                   type="text" value={jobDetailsForm.suburb} name="suburb"
                   onChange={(e) => handleChange(e)} />
                 <div className="flex items-center justify-between gap-3 w-full">
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.state ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                     placeholder="State"
                     type="text" value={jobDetailsForm.state} name="state"
                     onChange={(e) => handleChange(e)} />
-                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                    ${errors.postcode ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                  <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                     placeholder="postcode"
                     type="text" value={jobDetailsForm.postcode} name="postcode"
                     onChange={(e) => handleChange(e)} />
@@ -617,8 +589,7 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.jobName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="job name"
                   type="text" value={jobDetailsForm.jobName} name="jobName"
                   onChange={(e) => handleChange(e)} />
@@ -631,8 +602,7 @@ const JobDetailsForm = () => {
             </div>
             <div>
               <div className="flex justify-between items-center gap-3 py-2 relative">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.talentName ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="talent name"
                   type="text" value={jobDetailsForm.talentName} name="talentName"
                   onChange={(e) => handleChange(e)} onFocus={focusTalent} />
@@ -648,8 +618,7 @@ const JobDetailsForm = () => {
                 </div>
               </div>
               <div className="flex justify-between items-center gap-3 py-2">
-                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm 
-                                  ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'} focus:border-[#d4d5d6]`}
+                <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm border-none focus:border-[#d4d5d6]`}
                   placeholder="mananger"
                   type="text" value={jobDetailsForm.manager} name="manager"
                   onChange={(e) => handleChange(e)} />
@@ -665,8 +634,7 @@ const JobDetailsForm = () => {
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase
-                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase border-none`}
                       placeholder="Start Date" value={jobDetailsForm.startDate} onFocus={() => setShowStart(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -678,8 +646,7 @@ const JobDetailsForm = () => {
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase
-                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase border-none`}
                       placeholder="End Date" value={jobDetailsForm.endDate} onFocus={() => setShowEnd(true)} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -691,8 +658,7 @@ const JobDetailsForm = () => {
             <div className="w-full pt-2">
               <div className="w-full relative">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase
-                        ${errors.manager ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] placeholder:text-[#d4d5d6] font-gotham-regular placeholder:font-gotham-bold placeholder:uppercase border-none`}
                   placeholder="Label Color"
                   type="text" value={jobDetailsForm.labelColor} readOnly />
                 <input type="color" id="color-picker" value={jobDetailsForm.labelColor} className="absolute left-2 top-2 w-10 md:w-20"

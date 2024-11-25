@@ -4,7 +4,7 @@ const SERVER_URL = process.env.REACT_APP_API_BACKEND_URL + "/api";
 
 const add = (data) => axios.post(`${SERVER_URL}/job/add`, data);
 
-const list = () => axios.get(`${SERVER_URL}/job/list`);
+const list = (sort, order) => axios.get(`${SERVER_URL}/job/list/${sort}/${order}`);
 
 const deleteJobById = (id) => axios.delete(`${SERVER_URL}/job/delete/` + id);
 

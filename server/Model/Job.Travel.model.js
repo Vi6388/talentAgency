@@ -14,29 +14,36 @@ const jobTravelSchema = new mongoose.Schema({
     default: new Date(),
   },
   departureTime: {
-    type: String
+    type: String,
+    default: "00:00",
   },
   arrivalDate: {
     type: Date,
     default: new Date(),
   },
   arrivalTime: {
-    type: String
+    type: String,
+    default: "00:00",
   },
   preferredCarrier: {
-    type: String
+    type: String,
+    default: "",
   },
   requentFlyerNumber: {
-    type: String
+    type: String,
+    default: "",
   },
   clientPaying: {
-    type: Boolean
+    type: Boolean,
+    default: false
   },
   carHireRequired: {
-    type: String
+    type: String,
+    default: "",
   },
   travelDetails: {
-    type: String
+    type: String,
+    default: "",
   },
   createdAt: {
     type: Date,

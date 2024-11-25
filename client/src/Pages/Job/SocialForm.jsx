@@ -9,7 +9,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
-import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 
 const JobSocialForm = () => {
   const { id } = useParams();
@@ -46,7 +46,6 @@ const JobSocialForm = () => {
   }, [id]);
 
   const [socialList, setSocialList] = useState([]);
-  const [errors, setErrors] = useState({});
 
   const [show, setShow] = useState({
     conceptDueDate: false,
@@ -55,9 +54,7 @@ const JobSocialForm = () => {
   })
 
   const addSocialJob = () => {
-    const newErrors = jobFormValidateForm(socialForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (socialForm?.jobTitle !== "" || socialForm?.jobTitle.trim() !== "") {
       let list = socialList;
       const data = {
         ...socialForm,
@@ -77,23 +74,21 @@ const JobSocialForm = () => {
         deleverables: "",
         createdAt: new Date().toLocaleDateString("en-US"),
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelSocialJob = (index) => {
     const social = socialList[index];
+    let list = [];
     if (social) {
       if (socialList?.length > 0) {
-        const list = socialList.filter((item, i) => i !== index);
+        list = socialList.filter((item, i) => i !== index);
         setSocialList(list);
       } else {
         setSocialList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: list });
   }
 
   const handleChange = (e) => {
@@ -142,11 +137,6 @@ const JobSocialForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       jobSummaryList: socialList
     }
     if (job?.details?._id) {
@@ -208,8 +198,7 @@ const JobSocialForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title"
                   type="text" value={socialForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
@@ -220,8 +209,7 @@ const JobSocialForm = () => {
                   setShow={(state) => handleState("conceptDueDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.conceptDueDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Concept Due Date" value={socialForm.conceptDueDate} onFocus={() => setShow({ ...show, conceptDueDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -233,8 +221,7 @@ const JobSocialForm = () => {
                   setShow={(state) => handleState("contentDueDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.contentDueDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Content Due Date" value={socialForm.contentDueDate} onFocus={() => setShow({ ...show, contentDueDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -246,8 +233,7 @@ const JobSocialForm = () => {
                   setShow={(state) => handleState("liveDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.liveDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Live Date" value={socialForm.liveDate} onFocus={() => setShow({ ...show, liveDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -258,8 +244,7 @@ const JobSocialForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={socialForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
@@ -267,8 +252,7 @@ const JobSocialForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Deleverables"
                   type="text" value={socialForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />

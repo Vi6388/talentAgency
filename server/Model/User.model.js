@@ -7,15 +7,12 @@ const userSchema = new mongoose.Schema({
   },
   firstname: {
     type: String,
-    required: [true, 'Firstname is required'],
   },
   surname: {
     type: String,
-    required: [true, 'Surname is required'],
   },
   email: {
     type: String,
-    required: [true, "Your email address is required"],
     unique: true,
   },
   phoneNumber: {
@@ -23,11 +20,9 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: [true, "Your username is required"],
   },
   password: {
     type: String,
-    required: [true, "Your password is required"],
   },
   createdAt: {
     type: Date,

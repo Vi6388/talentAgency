@@ -36,8 +36,6 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
                 subject: subject,
                 html: html,
             });
-
-            console.log('Email sent:', info.messageId);
         }
     } catch (error) {
         console.error('Error sending email:', error);

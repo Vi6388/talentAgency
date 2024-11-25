@@ -3,39 +3,50 @@ const mongoose = require("mongoose");
 const jobSchema = new mongoose.Schema({
   contactDetails: {
     firstname: {
-      type: String
+      type: String,
+      default: "",
     },
     surname: {
-      type: String
+      type: String,
+      default: "",
     },
     email: {
-      type: String
+      type: String,
+      default: "",
     },
     position: {
-      type: String
+      type: String,
+      default: "",
     },
     phoneNumber: {
-      type: String
+      type: String,
+      default: "",
     },
   },
   companyDetails: {
     companyName: {
-      type: String
+      type: String,
+      default: "",
     },
     abn: {
-      type: String
+      type: String,
+      default: "",
     },
     postalAddress: {
-      type: String
+      type: String,
+      default: "",
     },
     suburb: {
-      type: String
+      type: String,
+      default: "",
     },
     state: {
-      type: String
+      type: String,
+      default: "",
     },
     postcode: {
-      type: String
+      type: String,
+      default: "",
     }
   },
   jobName: {
@@ -44,13 +55,16 @@ const jobSchema = new mongoose.Schema({
   },
   talent: {
     talentName: {
-      type: String
+      type: String,
+      default: "",
     },
     email: {
-      type: String
+      type: String,
+      default: "",
     },
     manager: {
-      type: String
+      type: String,
+      default: "",
     }
   },
   labelColor: {
@@ -59,23 +73,29 @@ const jobSchema = new mongoose.Schema({
   },
   startDate: {
     type: String,
+    default: new Date(),
   },
   endDate: {
     type: String,
+    default: new Date()
   },
   uploadedFiles: {
     contractFile: {
-      type: String
+      type: String,
+      default: "",
     },
     briefFile: {
-      type: String
+      type: String,
+      default: "",
     },
     supportingFile: {
-      type: String
+      type: String,
+      default: "",
     },
   },
   supplierRequired: {
     type: Boolean,
+    default: false
   },
   estimateStatus: {
     type: Boolean,

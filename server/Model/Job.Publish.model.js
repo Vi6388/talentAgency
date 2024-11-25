@@ -22,16 +22,20 @@ const jobPublishSchema = new mongoose.Schema({
     default: new Date(),
   },
   publisher: {
-    type: String
+    type: String,
+    default: "",
   },
   numberOfEpisodes: {
-    type: String
+    type: String,
+    default: "",
   },
   keyMessage: {
-    type: String
+    type: String,
+    default: "",
   },
   deleverables: {
-    type: String
+    type: String,
+    default: "",
   },
   createdAt: {
     type: Date,

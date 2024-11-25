@@ -9,7 +9,7 @@ import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
-import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 
 const JobPublishForm = () => {
   const { id } = useParams();
@@ -33,7 +33,6 @@ const JobPublishForm = () => {
     secondDraftDate: false,
     finalDate: false,
   });
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!job?.details?.id) {
@@ -116,9 +115,7 @@ const JobPublishForm = () => {
   }
 
   const addJobPublish = () => {
-    const newErrors = jobFormValidateForm(publishForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (publishForm?.jobTitle !== "" || publishForm?.jobTitle.trim() !== "") {
       let list = publishList;
       const data = {
         ...publishForm,
@@ -139,23 +136,21 @@ const JobPublishForm = () => {
         deleverables: "",
         createdAt: new Date().toLocaleDateString("en-US"),
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelJobPublish = (index) => {
     const publish = publishList[index];
+    let list = [];
     if (publish) {
       if (publishList?.length > 0) {
-        const list = publishList.filter((item, i) => i !== index);
+        list = publishList.filter((item, i) => i !== index);
         setPublishList(list);
       } else {
         setPublishList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: list });
   }
 
   const nextFunc = () => {
@@ -170,11 +165,6 @@ const JobPublishForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       jobSummaryList: publishList
     }
     if (job?.details?._id) {
@@ -236,8 +226,7 @@ const JobPublishForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title"
                   type="text" value={publishForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
@@ -248,8 +237,7 @@ const JobPublishForm = () => {
                   setShow={(state) => handleState("firstDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.firstDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -261,8 +249,7 @@ const JobPublishForm = () => {
                   setShow={(state) => handleState("secondDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.secondDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -274,8 +261,7 @@ const JobPublishForm = () => {
                   setShow={(state) => handleState("finalDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.finalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -286,24 +272,21 @@ const JobPublishForm = () => {
 
               <div className="w-full gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.publisher ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="publisher"
                   type="text" value={publishForm.publisher} name="publisher"
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
-                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={publishForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
-                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="Deleverables"
                   style={{ whiteSpace: 'pre-line' }}
                   type="text" value={publishForm.deleverables} name="deleverables" rows={5}

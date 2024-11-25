@@ -7,7 +7,8 @@ const jobEventSchema = new mongoose.Schema({
     required: true
   },
   jobTitle: {
-    type: String
+    type: String,
+    default: ""
   },
   eventDate: {
     type: Date,
@@ -15,15 +16,19 @@ const jobEventSchema = new mongoose.Schema({
   },
   eventStartTime: {
     type: String,
+    default: "00:00"
   },
   eventEndTime: {
-    type: String
+    type: String,
+    default: "00:00"
   },
   keyMessage: {
-    type: String
+    type: String,
+    default: ""
   },
   deleverables: {
-    type: String
+    type: String,
+    default: ""
   },
   createdAt: {
     type: Date,

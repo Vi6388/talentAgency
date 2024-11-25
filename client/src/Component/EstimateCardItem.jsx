@@ -1,6 +1,5 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { dueDateFormat } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
 
 function EstimateCardItem({ item, index, talent }) {
@@ -27,10 +26,10 @@ function EstimateCardItem({ item, index, talent }) {
             </div>
             <div className="flex flex-col lg:flex-row w-full pb-2">
               <div className="text-estimateDate text-[11px] font-semibold mr-4">
-                Estimate Date: {dueDateFormat(item.startDate)}
+                Estimate Date: {item.startDate}
               </div>
               <div className="text-success text-[11px] font-semibold flex items-center">
-                <span className="mr-2">Estimate Delieverable Due Date: {dueDateFormat(item.endDate)}</span>
+                <span className="mr-2">Estimate Delieverable Due Date: {item.endDate}</span>
                 <div>
                   <div className="w-2 h-2 bg-success rounded-full"></div>
                 </div>

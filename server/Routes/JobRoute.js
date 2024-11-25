@@ -7,7 +7,7 @@ const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 }, // Limit to 100MB
 });
 
-router.get("/list", getJobList);
+router.get("/list/:sort/:order", getJobList);
 
 router.post('/uploadFile', upload.fields([{ name: 'contractFile' }, { name: 'briefFile' }, { name: 'supportingFile' }]), uploadFile);
 

@@ -132,7 +132,17 @@ module.exports.getFiles = async (req, res, next) => {
 
 module.exports.getJobList = async (req, res, next) => {
   try {
-    const jobList = await JobModel.find({ estimateStatus: false, isLive: true });
+    const { sort, order } = req.params;
+    let sortField = sort;
+    if (sort === 'talent') {
+      sortField = 'talent.talentName';
+    }
+    if (sort === 'client') {
+      sortField = 'contactDetails.firstname';
+    }
+    const sortOrder = order === 'asc' ? 1 : -1;
+
+    const jobList = await JobModel.find({ estimateStatus: false, isLive: true }).sort({ [sortField]: sortOrder });
     return res.json({ status: 200, message: "Get Job list", success: true, data: jobList });
   } catch (error) {
     console.error(error);
@@ -146,30 +156,30 @@ module.exports.AddJob = async (req, res, next) => {
     // Create Job Model
     const newJob = await JobModel.create({
       contactDetails: {
-        firstname: detailData?.firstname,
-        surname: detailData?.surname,
-        email: detailData?.email,
-        position: detailData?.position,
-        phoneNumber: detailData?.phoneNumber,
+        firstname: detailData?.firstname || "",
+        surname: detailData?.surname || "",
+        email: detailData?.email || "",
+        position: detailData?.position || "",
+        phoneNumber: detailData?.phoneNumber || "",
       },
       companyDetails: {
-        companyName: detailData?.companyName,
-        abn: detailData?.abn,
-        postalAddress: detailData?.postalAddress,
-        suburb: detailData?.suburb,
-        state: detailData?.state,
-        postcode: detailData?.postcode,
+        companyName: detailData?.companyName || "",
+        abn: detailData?.abn || "",
+        postalAddress: detailData?.postalAddress || "",
+        suburb: detailData?.suburb || "",
+        state: detailData?.state || "",
+        postcode: detailData?.postcode || "",
       },
-      jobName: detailData?.jobName,
+      jobName: detailData?.jobName || "",
       talent: {
-        talentName: detailData?.talentName,
-        email: detailData?.talentEmail,
-        manager: detailData?.manager,
+        talentName: detailData?.talentName || "",
+        email: detailData?.talentEmail || "",
+        manager: detailData?.manager || "",
       },
-      supplierRequired: detailData?.supplierRequired,
-      labelColor: detailData?.labelColor,
-      startDate: detailData?.startDate,
-      endDate: detailData?.endDate,
+      supplierRequired: detailData?.supplierRequired || false,
+      labelColor: detailData?.labelColor || "",
+      startDate: detailData?.startDate || new Date().toISOString(),
+      endDate: detailData?.endDate || new Date().toISOString(),
       estimateStatus: false,
       isLive: true,
       jobStatus: 1,
@@ -220,7 +230,7 @@ module.exports.AddJob = async (req, res, next) => {
       endDate: new Date(newJob?.endDate).toLocaleDateString("en-US"),
       jobDesc: ""
     };
-    const toEmail = newJob?.talent?.email || newJob?.contactDetails?.email;
+    const toEmail = newJob?.talent?.email || detailData?.talentEmail;
     await sendEmail({
       filename: 'NewJob.ejs',
       data: emailData,
@@ -285,36 +295,36 @@ module.exports.UpdateJob = async (req, res, next) => {
     if (existJob) {
       await existJob.updateOne({
         contactDetails: {
-          firstname: detailData?.firstname || existJob?.contactDetails?.firstname,
-          surname: detailData?.surname || existJob?.contactDetails?.surname,
-          email: detailData?.email || existJob?.contactDetails?.email,
-          position: detailData?.position || existJob?.contactDetails?.position,
-          phoneNumber: detailData?.phoneNumber || existJob?.contactDetails?.phoneNumber,
+          firstname: detailData?.firstname || existJob?.contactDetails?.firstname || "",
+          surname: detailData?.surname || existJob?.contactDetails?.surname || "",
+          email: detailData?.email || existJob?.contactDetails?.email || "",
+          position: detailData?.position || existJob?.contactDetails?.position || "",
+          phoneNumber: detailData?.phoneNumber || existJob?.contactDetails?.phoneNumber || "",
         },
         companyDetails: {
-          companyName: detailData?.companyName || existJob?.companyDetails?.companyName,
-          abn: detailData?.abn || existJob?.companyDetails?.abn,
-          postalAddress: detailData?.postalAddress || existJob?.companyDetails?.postalAddress,
-          suburb: detailData?.suburb || existJob?.companyDetails?.suburb,
-          state: detailData?.state || existJob?.companyDetails?.suburb,
-          postcode: detailData?.postcode || existJob?.companyDetails?.postcode,
+          companyName: detailData?.companyName || existJob?.companyDetails?.companyName || "",
+          abn: detailData?.abn || existJob?.companyDetails?.abn || "",
+          postalAddress: detailData?.postalAddress || existJob?.companyDetails?.postalAddress || "",
+          suburb: detailData?.suburb || existJob?.companyDetails?.suburb || "",
+          state: detailData?.state || existJob?.companyDetails?.suburb || "",
+          postcode: detailData?.postcode || existJob?.companyDetails?.postcode || "",
         },
-        jobName: detailData?.jobName || existJob?.jobName,
+        jobName: detailData?.jobName || existJob?.jobName || "",
         talent: {
           talentName: detailData?.talentName || existJob?.talent?.talentName,
           email: detailData?.talentEmail || existJob?.talent?.email,
           manager: detailData?.manager || existJob?.talent?.manager,
         },
-        supplierRequired: detailData?.supplierRequired || existJob?.supplierRequired,
-        labelColor: detailData?.labelColor || existJob?.labelColor,
-        startDate: detailData?.startDate || existJob?.startDate,
-        endDate: detailData?.endDate || existJob?.endDate,
+        supplierRequired: detailData?.supplierRequired || existJob?.supplierRequired || false,
+        labelColor: detailData?.labelColor || existJob?.labelColor || "",
+        startDate: detailData?.startDate || existJob?.startDate || new Date().toISOString(),
+        endDate: detailData?.endDate || existJob?.endDate || new Date().toISOString(),
         uploadedFiles: {
-          contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile,
-          briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile,
-          supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile,
+          contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile || "",
+          briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile || "",
+          supportingFile: detailData?.uploadedFiles?.supportingFile || existJob?.uploadedFiles?.supportingFile || "",
         },
-        jobStatus: detailData?.jobStatus || existJob?.jobStatus
+        jobStatus: detailData?.jobStatus || existJob?.jobStatus || 0
       });
 
       await JobFinance.deleteMany({ jobId: req.params.id }); // Delete existing invoices
@@ -383,7 +393,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         endDate: new Date(existJob?.endDate).toLocaleDateString("en-US"),
         jobDesc: ""
       };
-      const toEmail = existJob?.talent?.email;
+      const toEmail = existJob?.talent?.email || detailData?.talentEmail;
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
@@ -554,16 +564,16 @@ module.exports.createCalendarEvent = async (req, res, next) => {
         }
 
         const event = {
-          summary: summary.jobTitle,
+          summary: summary.jobTitle || "",
           location: detailData?.companyDetails?.postalAddress || detailData?.postalAddress || "atarimae platform",
-          description: detailData?.jobName,
+          description: detailData?.jobName || "",
           colorId: 1,
           start: {
-            dateTime: start,
+            dateTime: start || new Date().toISOString(),
             timeZone: 'Australia/Sydney',
           },
           end: {
-            dateTime: end,
+            dateTime: end || new Date().toISOString(),
             timeZone: 'Australia/Sydney',
           },
         };

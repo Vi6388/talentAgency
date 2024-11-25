@@ -9,7 +9,7 @@ import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
-import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 
 const JobMediaForm = () => {
   const { id } = useParams();
@@ -27,7 +27,6 @@ const JobMediaForm = () => {
   });
 
   const [mediaList, setMediaList] = useState([]);
-  const [errors, setErrors] = useState({});
 
   const [show, setShow] = useState({
     startDate: false,
@@ -111,9 +110,7 @@ const JobMediaForm = () => {
   }
 
   const addJobMedia = () => {
-    const newErrors = jobFormValidateForm(mediaForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (mediaForm?.jobTitle !== "" || mediaForm?.jobTitle.trim() !== "") {
       let list = mediaList;
       const data = {
         ...mediaForm,
@@ -132,23 +129,21 @@ const JobMediaForm = () => {
         deleverables: "",
         createdAt: new Date().toLocaleDateString("en-US"),
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelJobMedia = (index) => {
     const media = mediaList[index];
+    let list = [];
     if (media) {
       if (mediaList?.length > 0) {
-        const list = mediaList.filter((item, i) => i !== index);
+        list = mediaList.filter((item, i) => i !== index);
         setMediaList(list);
       } else {
         setMediaList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: list });
   }
 
   const nextFunc = () => {
@@ -163,11 +158,6 @@ const JobMediaForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       jobSummaryList: mediaList
     }
     if (job?.details?._id) {
@@ -229,8 +219,7 @@ const JobMediaForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title"
                   type="text" value={mediaForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
@@ -241,8 +230,7 @@ const JobMediaForm = () => {
                   setShow={(state) => handleState("startDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.startDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="START Date" value={mediaForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -254,8 +242,7 @@ const JobMediaForm = () => {
                   setShow={(state) => handleState("endDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.endDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="END Date" value={mediaForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -361,8 +348,7 @@ const JobMediaForm = () => {
                 </div>
                 <div className="w-full col-span-1">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.numberOfEpisodes ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                     placeholder="number Of Episodes"
                     type="text" value={mediaForm.numberOfEpisodes} name="numberOfEpisodes"
                     onChange={(e) => handleChange(e)} />
@@ -371,8 +357,7 @@ const JobMediaForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={mediaForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
@@ -380,8 +365,7 @@ const JobMediaForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Deleverables"
                   type="text" value={mediaForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />

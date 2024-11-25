@@ -7,11 +7,11 @@ import ScheduleIcon from "../../svg/schedule.svg";
 import FlightIcon from "../../svg/flight.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM } from "../../redux/actionTypes";
+import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
 
 const JobTravelForm = () => {
   const { id } = useParams();
@@ -28,10 +28,10 @@ const JobTravelForm = () => {
     clientPaying: false,
     carHireRequired: "",
     travelDetails: "",
+    createdAt: new Date().toLocaleDateString("en-US"),
   });
 
   const [travelList, setTravelList] = useState([]);
-  const [errors, setErrors] = useState({});
 
   const [show, setShow] = useState({
     departureDate: false,
@@ -111,9 +111,7 @@ const JobTravelForm = () => {
   }
 
   const addJobTravel = () => {
-    const newErrors = jobFormValidateForm(travelForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (travelForm?.jobTitle !== "" || travelForm?.jobTitle.trim() !== "") {
       let list = travelList;
       const data = {
         ...travelForm,
@@ -136,10 +134,7 @@ const JobTravelForm = () => {
         clientPaying: false,
         carHireRequired: "",
         travelDetails: "",
-      });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
+        createdAt: new Date().toLocaleDateString("en-US"),
       });
     }
   }
@@ -154,24 +149,21 @@ const JobTravelForm = () => {
 
   const cancelJobTravel = (index) => {
     const travel = travelList[index];
+    let list = [];
     if (travel) {
       if (travelList?.length > 0) {
-        const list = travelList.filter((item, i) => i !== index);
+        list = travelList.filter((item, i) => i !== index);
         setTravelList(list);
       } else {
         setTravelList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: list });
   }
 
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       jobSummaryList: travelList
     }
     if (job?.details?._id) {
@@ -233,8 +225,7 @@ const JobTravelForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title"
                   type="text" value={travelForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
@@ -246,8 +237,7 @@ const JobTravelForm = () => {
                     setShow={(state) => handleState("departureDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
                       <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.departureDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                         placeholder="departure Date" value={travelForm.departureDate} onFocus={() => setShow({ ...show, departureDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
                         <img src={CalendarIcon} alt="calendar" />
@@ -258,8 +248,7 @@ const JobTravelForm = () => {
                   <div className="relative w-full col-span-1">
                     <input type={inputType.departureTime} name="departureTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.departureTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       min="09:00" max="18:00" value={travelForm.departureTime} placeholder="DEPARTURE TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, departureTime: 'time' })}
@@ -275,8 +264,7 @@ const JobTravelForm = () => {
                     setShow={(state) => handleState("arrivalDate", state)} classNames="col-span-2 lg:col-span-1">
                     <div className="relative">
                       <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.arrivalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                         placeholder="arrival Date" value={travelForm.arrivalDate} onFocus={() => setShow({ ...show, arrivalDate: true })} readOnly />
                       <div className="absolute top-1.5 right-2">
                         <img src={CalendarIcon} alt="calendar" />
@@ -287,8 +275,7 @@ const JobTravelForm = () => {
                   <div className="relative w-full col-span-1">
                     <input type={inputType.arrivalTime} name="arrivalTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.arrivalTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       min="09:00" max="18:00" value={travelForm.arrivalTime} placeholder="ARRIVAL TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, arrivalTime: 'time' })}
@@ -303,8 +290,7 @@ const JobTravelForm = () => {
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 py-2">
                 <div className="relative w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.preferredCarrier ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={travelForm.preferredCarrier} name="preferredCarrier" placeholder="PREFERRED CARRIER"
                     onChange={(e) => handleChange(e)} />
                   <div className="absolute top-1.5 right-2">
@@ -313,8 +299,7 @@ const JobTravelForm = () => {
                 </div>
                 <div className="relative w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.frequentFlyerNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={travelForm.frequentFlyerNumber} name="frequentFlyerNumber" placeholder="FREQUENT FLYER NUMBER"
                     onChange={(e) => handleChange(e)} />
                   <div className="absolute top-1.5 right-2">
@@ -375,8 +360,7 @@ const JobTravelForm = () => {
                 </div>
                 <div className="w-full">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-sm placeholder:text-center
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.carHireRequired ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={travelForm.carHireRequired} name="carHireRequired" placeholder="Car Hire Required"
                     onChange={(e) => handleChange(e)} />
                 </div>
@@ -384,8 +368,7 @@ const JobTravelForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.travelDetails ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Transfer and any other travel details"
                   type="text" value={travelForm.travelDetails} name="travelDetails" rows={10}
                   onChange={(e) => handleChange(e)} />

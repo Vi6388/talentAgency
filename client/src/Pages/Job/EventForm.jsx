@@ -10,7 +10,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { convertDueDate, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 
 const JobEventForm = () => {
   const { id } = useParams();
@@ -27,7 +27,6 @@ const JobEventForm = () => {
   });
 
   const [eventList, setEventList] = useState([]);
-  const [errors, setErrors] = useState({});
 
   const [inputType, setInputType] = useState({
     startTime: 'text',
@@ -95,9 +94,7 @@ const JobEventForm = () => {
   }
 
   const addJobEvent = () => {
-    const newErrors = jobFormValidateForm(eventForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (eventForm?.jobTitle !== "" || eventForm?.jobTitle.trim() !== "") {
       let list = eventList;
       const data = {
         ...eventForm,
@@ -117,23 +114,19 @@ const JobEventForm = () => {
         deleverables: "",
         createdAt: new Date().toLocaleDateString("en-US"),
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelJobEvent = (index) => {
     const event = eventList[index];
+    let list = [];
     if (event) {
       if (eventList?.length > 0) {
-        const list = eventList.filter((item, i) => i !== index);
-        setEventList(list);
-      } else {
-        setEventList([]);
+        list = eventList.filter((item, i) => i !== index);
       }
     }
+    setEventList(list);
+    store.dispatch({ type: SAVE_JOB_JOB_SUMMARY_LIST, payload: list });
   }
 
   const nextFunc = () => {
@@ -148,11 +141,6 @@ const JobEventForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       jobSummaryList: eventList
     }
     if (job?.details?._id) {
@@ -214,8 +202,7 @@ const JobEventForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title"
                   type="text" value={eventForm.jobTitle} name="jobTitle"
                   onChange={(e) => handleChange(e)} />
@@ -226,8 +213,7 @@ const JobEventForm = () => {
                   setShow={(state) => handleState("eventDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.eventDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Event Date" value={eventForm.eventDate} onFocus={() => setShow({ ...show, eventDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -238,8 +224,7 @@ const JobEventForm = () => {
                   <div className="relative w-full">
                     <input type={inputType.startTime} name="eventStartTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.eventStartTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       min="09:00" max="18:00" value={eventForm.eventStartTime} placeholder="EVENT START TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, startTime: 'time' })}
@@ -252,8 +237,7 @@ const JobEventForm = () => {
                   <div className="relative w-full">
                     <input type={inputType.endTime} name="eventEndTime"
                       className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm py-0 pl-0 
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.eventEndTime ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       min="09:00" max="18:00" value={eventForm.eventEndTime} placeholder="EVENT END TIME"
                       onChange={handleChange}
                       onFocus={() => setInputType({ ...inputType, endTime: 'time' })}
@@ -267,8 +251,7 @@ const JobEventForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Brief Copy&#10;Tags&#10;Key Messages"
                   type="text" value={eventForm.keyMessages} name="keyMessages" rows={5}
                   onChange={(e) => handleChange(e)} />
@@ -276,8 +259,7 @@ const JobEventForm = () => {
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Deleverables"
                   type="text" value={eventForm.deleverables} name="deleverables" rows={5}
                   onChange={(e) => handleChange(e)} />

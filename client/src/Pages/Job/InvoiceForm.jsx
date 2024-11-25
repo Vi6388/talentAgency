@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { convertDueDate, dueDateFormat, jobFormValidateForm, numberFormat } from "../../utils/utils";
+import { convertDueDate, dueDateFormat, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_INVOICE_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
@@ -30,7 +30,6 @@ const JobInvoiceForm = () => {
 
   const navigate = useNavigate();
   const [invoiceList, setInvoiceList] = useState([]);
-  const [errors, setErrors] = useState({});
   const { job } = useSelector(state => state.job);
 
   useEffect(() => {
@@ -75,9 +74,7 @@ const JobInvoiceForm = () => {
   }
 
   const addInvoice = () => {
-    const newErrors = jobFormValidateForm(invoiceForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (invoiceForm?.poNumber !== "" || invoiceForm?.poNumber.trim() !== "") {
       let list = invoiceList || [];
       list.push(invoiceForm);
       setInvoiceList(list);
@@ -97,23 +94,21 @@ const JobInvoiceForm = () => {
         createdAt: new Date().toLocaleDateString("en-US"),
         dueDate: new Date().toLocaleDateString("en-US")
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelInvoice = (index) => {
     const invoice = invoiceList[index];
+    let list = [];
     if (invoice) {
       if (invoiceList?.length > 1) {
-        const list = invoiceList.filter((item, i) => i !== index);
+        list = invoiceList.filter((item, i) => i !== index);
         setInvoiceList(list);
       } else {
         setInvoiceList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_INVOICE_LIST, payload: list });
   }
 
   const nextFunc = () => {
@@ -128,11 +123,6 @@ const JobInvoiceForm = () => {
   const updateJob = () => {
     const data = {
       ...job,
-      details: {
-        ...job.details,
-        startDate: convertDueDate(job.details?.startDate),
-        endDate: convertDueDate(job.details?.endDate),
-      },
       invoiceList: invoiceList
     }
     if (job?.details?._id) {
@@ -195,14 +185,12 @@ const JobInvoiceForm = () => {
               <div className="flex justify-between items-center gap-3 py-2">
                 <span className="w-[15%] text-label text-sm">Po Number: </span>
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-[35%] tracking-wider text-sm text-right pr-4
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.poNumber ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="Po Number" type="text" value={invoiceForm.poNumber} name="poNumber" onChange={(e) => handleChange(e)} />
                 <span className="w-[15%] text-label text-sm">Fee: $ </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full text-right text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.fee ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.fee} name="fee" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
               </div>
@@ -258,8 +246,7 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Usage: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.usage ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.usage} name="usage" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
               </div>
@@ -268,15 +255,13 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Asf: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.asf ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.asf} name="asf" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Royalities: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.royalities ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.royalities} name="royalities" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                 </div>
               </div>
@@ -285,15 +270,13 @@ const JobInvoiceForm = () => {
                 <span className="w-[15%] text-label text-sm">Commission: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.commission ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.commission} name="commission" placeholder="%" onChange={(e) => handleNumberChange(e)} />
                 </div>
                 <span className="w-[15%] text-label text-sm">Payment Terms: </span>
                 <div className="relative w-[35%]">
                   <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.paymentTerms ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                     type="text" value={invoiceForm.paymentTerms} name="paymentTerms" placeholder="Days" onChange={(e) => handleNumberChange(e)} />
                 </div>
               </div>
@@ -303,14 +286,12 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.expenses ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       type="text" value={invoiceForm.expenses} name="expenses" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
                     <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.expensesDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="expenses"
                       type="text" value={invoiceForm.expensesDesc} name="expensesDesc" rows={4} onChange={(e) => handleChange(e)} />
                   </div>
@@ -322,14 +303,12 @@ const JobInvoiceForm = () => {
                 <div className="w-[85%] flex flex-col justify-start items-center gap-2">
                   <div className="w-full relative">
                     <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-right
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.miscellaneous ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       type="text" value={invoiceForm.miscellaneous} name="miscellaneous" placeholder="$" onChange={(e) => handleNumberChange(e)} />
                   </div>
                   <div className="w-full">
                     <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm placeholder:text-center resize-none
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.miscellaneousDesc ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="miscellaneous"
                       type="text" value={invoiceForm.miscellaneousDesc} name="miscellaneousDesc" rows={4} onChange={(e) => handleChange(e)} />
                   </div>

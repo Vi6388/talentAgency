@@ -22,28 +22,12 @@ const jobFinanceSchema = new mongoose.Schema({
     default: new Date(),
   },
   keyMessage: {
-    type: String
+    type: String,
+    default: ""
   },
   deleverables: {
-    type: String
-  },
-  commission: {
-    type: Number
-  },
-  paymentTerms: {
-    type: Number
-  },
-  expenses: {
-    type: String
-  },
-  expensesDesc: {
-    type: String
-  },
-  miscellaneous: {
-    type: String
-  },
-  miscellaneousDesc: {
-    type: String
+    type: String,
+    default: ""
   },
   createdAt: {
     type: Date,

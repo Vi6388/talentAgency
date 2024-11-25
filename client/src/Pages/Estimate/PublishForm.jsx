@@ -5,7 +5,7 @@ import DatePicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
 import CancelIcon from "../../svg/cancel.svg";
 import { useSelector } from "react-redux";
-import { convertDueDate, dateTimeFormat, dueDateFormat, jobFormValidateForm } from "../../utils/utils";
+import { convertDueDate, dueDateFormat } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB_ESTIMATE, SAVE_JOB_ESTIMATE, SAVE_JOB_ESTIMATE_DETAILS_FORM, SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST } from "../../redux/actionTypes";
@@ -33,19 +33,22 @@ const EstimatePublishForm = () => {
   })
 
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (id) {
-      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      EstimateApi.getJobEstimateById(id).then((res) => {
-        if (res.data.status === 200) {
-          const data = res.data.data;
-          store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
-        }
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-      });
+    if (!jobEstimate?.details?.id) {
+      if (id) {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        EstimateApi.getJobEstimateById(id).then((res) => {
+          if (res.data.status === 200) {
+            const data = res.data.data;
+            store.dispatch({ type: SAVE_JOB_ESTIMATE, payload: data });
+          }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        });
+      } else {
+        setPublishList(jobEstimate?.jobSummaryList || []);
+      }
     } else {
       setPublishList(jobEstimate?.jobSummaryList || []);
     }
@@ -61,7 +64,7 @@ const EstimatePublishForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setPublishForm({
       ...publishForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
@@ -112,15 +115,13 @@ const EstimatePublishForm = () => {
   }
 
   const addJobPublish = () => {
-    const newErrors = jobFormValidateForm(publishForm);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (publishForm?.jobTitle !== "" || publishForm?.jobTitle.trim() !== "") {
       let list = publishList;
       const data = {
         ...publishForm,
-        firstDraftDate: dateTimeFormat(publishForm.firstDraftDate),
-        secondDraftDate: dateTimeFormat(publishForm.secondDraftDate),
-        finalDate: dateTimeFormat(publishForm.finalDate),
+        firstDraftDate: convertDueDate(publishForm.firstDraftDate),
+        secondDraftDate: convertDueDate(publishForm.secondDraftDate),
+        finalDate: convertDueDate(publishForm.finalDate),
         type: "publishing"
       }
       list.push(data);
@@ -135,23 +136,21 @@ const EstimatePublishForm = () => {
         deleverables: "",
         createdAt: new Date().toLocaleDateString("en-US"),
       });
-    } else {
-      toast.error("Form submission failed due to validation errors.", {
-        position: "top-left",
-      });
     }
   }
 
   const cancelJobPublish = (index) => {
     const publish = publishList[index];
+    let list = [];
     if (publish) {
       if (publishList?.length > 0) {
-        const list = publishList.filter((item, i) => i !== index);
+        list = publishList.filter((item, i) => i !== index);
         setPublishList(list);
       } else {
         setPublishList([]);
       }
     }
+    store.dispatch({ type: SAVE_JOB_ESTIMATE_JOB_SUMMARY_LIST, payload: list });
   }
 
   const nextFunc = () => {
@@ -187,11 +186,6 @@ const EstimatePublishForm = () => {
   const updateEstimate = () => {
     const data = {
       ...jobEstimate,
-      details: {
-        ...jobEstimate.details,
-        startDate: convertDueDate(jobEstimate.details?.startDate),
-        endDate: convertDueDate(jobEstimate.details?.endDate),
-      },
       jobSummaryList: publishList
     }
     if (jobEstimate?.details?._id) {
@@ -255,8 +249,7 @@ const EstimatePublishForm = () => {
             <div>
               <div className="w-full py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.jobTitle ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="job title" type="text" value={publishForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
 
@@ -265,8 +258,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("firstDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.firstDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -278,8 +270,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("secondDraftDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.secondDraftDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -291,8 +282,7 @@ const EstimatePublishForm = () => {
                   setShow={(state) => handleState("finalDate", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
-                        outline-none focus:border-[#d4d5d6]
-                        ${errors.finalDate ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                        outline-none focus:border-[#d4d5d6] border-none`}
                       placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
                     <div className="absolute top-1.5 right-2">
                       <img src={CalendarIcon} alt="calendar" />
@@ -303,22 +293,19 @@ const EstimatePublishForm = () => {
 
               <div className="w-full gap-3 py-2">
                 <input className={`rounded-[16px] text-input shadow-md shadow-500 h-10 w-full tracking-wider text-sm text-center
-                      outline-none focus:border-[#d4d5d6]
-                      ${errors.publisher ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                      outline-none focus:border-[#d4d5d6] border-none`}
                   placeholder="publisher" type="text" value={publishForm.publisher} name="publisher" onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.keyMessages ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Brief Copy&#10;Tags&#10;Key Messages" type="text" value={publishForm.keyMessages} name="keyMessages" rows={5} onChange={(e) => handleChange(e)} />
               </div>
 
               <div className="w-full py-2">
                 <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
-                       placeholder:text-center
-                        ${errors.deleverables ? 'border-[#ff0000] focus:ring-none' : 'border-none'}`}
+                       placeholder:text-center border-none`}
                   placeholder="Deleverables" type="text" value={publishForm.deleverables} name="deleverables" rows={5} onChange={(e) => handleChange(e)} />
               </div>
             </div>
