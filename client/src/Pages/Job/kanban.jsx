@@ -93,7 +93,7 @@ const JobKanban = () => {
   return (
     <div className="p-5 flex flex-col h-full bg-main">
       <ToastContainer />
-      <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-3 sm:grid-cols-6 gap-3">
+      <div className="filter-box mb-5 w-full md:w-fit mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3">
         <button className="col-span-1 bg-white w-full px-2 h-10 text-center rounded-[12px] text-input font-gotham-bold tracking-wider
                             block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out 
                             hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">Show urgent jobs
@@ -112,9 +112,6 @@ const JobKanban = () => {
           Sort jobs by client
           <img src={DownArrow} alt="down" className="w-4 h-3 ml-2" />
         </button>
-        <input className="col-span-2 rounded-[16px] text-sm text-input shadow-md shadow-500 h-10 w-full tracking-wider text-center px-4 py-2
-                          outline-none focus:border-[#d4d5d6] border-none placeholder:text-input"
-          placeholder="Search" type="text" />
         <button className="col-span-1 bg-white w-full px-2 h-10 text-center rounded-[12px] text-input font-gotham-bold tracking-wider
                             block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out 
                             hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm"
