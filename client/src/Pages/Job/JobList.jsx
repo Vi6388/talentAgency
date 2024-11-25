@@ -76,9 +76,9 @@ const JobList = () => {
                   <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.companyDetails?.companyName}</span></td>
                   <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.contactDetails?.firstname} {item.contactDetails?.surname}</span></td>
                   <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.jobName}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.startDate)}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.startDate)}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{dueDateFormat(item.endDate)}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.startDate}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.startDate}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.endDate}</span></td>
                   <td className="p-2">
                     <img src={item.jobStatus === 6 ? CheckIcon : CloseIcon} alt="check" className="w-3 h-3" />
                   </td>
