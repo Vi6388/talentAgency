@@ -25,10 +25,11 @@ const JobList = () => {
   const [sort, setSort] = useState('createdAt');
   const [order, setOrder] = useState("desc");
   useEffect(() => {
-    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+    getJobList();
   }, []);
 
   const getJobList = () => {
+    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
     JobApi.list(sort, order).then((res) => {
       if (res.data.status === 200) {
         setList(res.data.data);
