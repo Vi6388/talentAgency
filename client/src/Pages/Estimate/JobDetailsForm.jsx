@@ -193,21 +193,23 @@ const EstimateJobDetailsForm = () => {
     if (jobDetailsForm.id) {
       updateEstimate();
     } else {
-      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-      EstimateApi.add(jobEstimate).then((res) => {
-        if (res.data.status === 200) {
-          store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
-          initialJobEstimateFormData({ details: res.data.data });
-          toast.success(res.data.message, {
-            position: "top-left",
-          });
-        } else {
-          toast.error(res.data.message, {
-            position: "top-left",
-          });
-        }
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-      })
+      if (jobDetailsForm?.jobName !== "" || jobDetailsForm?.jobName?.trim() !== "") {
+        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+        EstimateApi.add(jobEstimate).then((res) => {
+          if (res.data.status === 200) {
+            store.dispatch({ type: SAVE_JOB_ESTIMATE_DETAILS_FORM, payload: res.data.data });
+            initialJobEstimateFormData({ details: res.data.data });
+            toast.success(res.data.message, {
+              position: "top-left",
+            });
+          } else {
+            toast.error(res.data.message, {
+              position: "top-left",
+            });
+          }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        })
+      }
     }
   }
 

@@ -311,71 +311,73 @@ const JobDetailsForm = () => {
       }
     }
     formData.append('talentName', jobDetailsForm?.talentName);
-    store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-    await JobApi.uploadFiles(formData).then((res) => {
-      if (res.data.status === 200) {
-        const data = res.data.data;
-        const contractFile = data?.filter((item) => item.key === "contractFile")[0];
-        const briefFile = data?.filter((item) => item.key === "briefFile")[0];
-        const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
-        setJobDetailsForm({
-          ...jobDetailsForm,
-          uploadedFiles: {
-            contractFile: contractFile?.url || "",
-            briefFile: briefFile?.url || "",
-            supportingFile: supportingFile?.url || "",
-          }
-        });
-
-        const updateData = {
-          ...job,
-          details: {
+    if (jobDetailsForm?.jobName !== "" || jobDetailsForm?.jobName?.trim() !== "") {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      await JobApi.uploadFiles(formData).then((res) => {
+        if (res.data.status === 200) {
+          const data = res.data.data;
+          const contractFile = data?.filter((item) => item.key === "contractFile")[0];
+          const briefFile = data?.filter((item) => item.key === "briefFile")[0];
+          const supportingFile = data?.filter((item) => item.key === "supportingFile")[0];
+          setJobDetailsForm({
             ...jobDetailsForm,
             uploadedFiles: {
               contractFile: contractFile?.url || "",
               briefFile: briefFile?.url || "",
               supportingFile: supportingFile?.url || "",
             }
-          },
-        }
-        if (jobDetailsForm?.details?._id) {
-          JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
-            if (res.data.status === 401) {
-              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-            } else if (res.data.status === 200) {
-              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-              toast.success(res.data.message, {
-                position: "top-left",
-              });
-            } else {
-              toast.error(res.data.message, {
-                position: "top-left",
-              });
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          })
+          });
+
+          const updateData = {
+            ...job,
+            details: {
+              ...jobDetailsForm,
+              uploadedFiles: {
+                contractFile: contractFile?.url || "",
+                briefFile: briefFile?.url || "",
+                supportingFile: supportingFile?.url || "",
+              }
+            },
+          }
+          if (jobDetailsForm?.details?._id) {
+            JobApi.updateJobById(jobDetailsForm?.details?._id, updateData).then((res) => {
+              if (res.data.status === 401) {
+                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              } else if (res.data.status === 200) {
+                store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+                toast.success(res.data.message, {
+                  position: "top-left",
+                });
+              } else {
+                toast.error(res.data.message, {
+                  position: "top-left",
+                });
+              }
+              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+            })
+          } else {
+            JobApi.add(updateData).then((res) => {
+              if (res.data.status === 401) {
+                window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
+              } else if (res.data.status === 200) {
+                store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
+                initialJobDetailsFormData({ details: res.data.data });
+                toast.success(res.data.message, {
+                  position: "top-left",
+                });
+              } else {
+                toast.error(res.data.message, {
+                  position: "top-left",
+                });
+              }
+              store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+            })
+          }
         } else {
-          JobApi.add(updateData).then((res) => {
-            if (res.data.status === 401) {
-              window.location.href = process.env.REACT_APP_API_BACKEND_URL + res.data.redirectUrl;
-            } else if (res.data.status === 200) {
-              store.dispatch({ type: SAVE_JOB_DETAILS_FORM, payload: res.data.data });
-              initialJobDetailsFormData({ details: res.data.data });
-              toast.success(res.data.message, {
-                position: "top-left",
-              });
-            } else {
-              toast.error(res.data.message, {
-                position: "top-left",
-              });
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          })
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
         }
-      } else {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-      }
-    });
+      });
+    }
   }
 
   const updateJob = async () => {
