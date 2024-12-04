@@ -62,7 +62,8 @@ input {
   font-family: "Gotham-Book";
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   font-family: "Gotham-Bold" !important;
   color: #d4d5d6;
   text-transform: uppercase;
@@ -306,4 +307,137 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.toolTip {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toolTip .toolTipText {
+  visibility: hidden;
+  width: max-content;
+  background-color: #fff;
+  color: #242c36;
+  font-size: 12px;
+  font-weight: 400 !important;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: -35px;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.toolTip:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+  top: 23px;
+  visibility: hidden;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.settings-toolTip:hover .toolTipText,
+.settings-toolTip:hover.toolTip:after {
+  visibility: visible;
+}
+
+.jobArchive-toolTip:hover .toolTipText,
+.jobArchive-toolTip:hover.toolTip:after {
+  visibility: visible;
+}
+
+.estimates-toolTip:hover .toolTipText,
+.estimates-toolTip:hover.toolTip:after {
+  visibility: visible;
+}
+
+.jobBoard-toolTip:hover .toolTipText,
+.jobBoard-toolTip:hover.toolTip:after {
+  visibility: visible;
+}
+
+.jobList-toolTip:hover .toolTipText,
+.jobList-toolTip:hover.toolTip:after {
+  visibility: visible;
+}
+
+.rbc-month-view {
+  background-color: white;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border-radius: 1rem;
+}
+
+.rbc-off-range-bg {
+  background-color: #d8c9bd !important;
+}
+
+.rbc-off-range,
+.rbc-button-link {
+  color: #5b483a !important;
+}
+
+.rbc-month-header {
+  background-color: #e9e8e8;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.rbc-header {
+  color: #5b483a !important;
+  border-bottom: 1px solid #cdc2bc !important;
+}
+
+.rbc-header + .rbc-header, .rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid #cdc2bc !important;
+}
+
+.rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #cdc2bc !important;
+}
+
+.rbc-date-cell {
+  padding-left: 15px !important;
+  text-align: left !important;
+  padding-top: 15px !important;
+}
+
+.rbc-toolbar {
+  margin-bottom: 20px !important;
+}
+
+.rbc-toolbar button {
+  color: #242c32 !important;
+  font-family: "Gotham-Bold" !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1.5;
+  font-size: 0.75rem !important;
+  border-radius: 1rem !important;
+  background-color: white !important;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  margin-right: 10px !important;
+  border: none !important;
+  height: 2rem;
+}
+
+.rbc-toolbar button:last-child {
+  margin: 0 !important;
+}
+
+.rbc-toolbar button:hover {
+  background-color: rgb(229 229 229) !important;
+}
+
+@media (max-width: 767px) {
+  .rbc-toolbar {
+    gap: 12px;
+  }
 }

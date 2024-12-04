@@ -28,6 +28,7 @@ import UserForm from "../Pages/Settings/UserForm";
 import TalentForm from "../Pages/Settings/TalentForm";
 import ClientForm from "../Pages/Client/ClientForm";
 import AuthRedirectPage from "../Component/AuthRedirectPage";
+import CalendarView from "../Pages/Calendar/CalendarView";
 
 const routes = createBrowserRouter([
   {
@@ -184,6 +185,12 @@ const routes = createBrowserRouter([
   {
     path: "/client/edit/:id",
     element: <RootLayout children={<ClientForm />} />
+  },
+
+  // Calendar Route
+  {
+    path: "/calendar",
+    element: <RootLayout children={<CalendarView />} />
   },
 
   // Settings Route

@@ -85,3 +85,10 @@ export const convertDueDate = (date) => {
     return new Date(newDateStr)?.toISOString();
   }
 }
+
+export const combineDateAndTime = (date, time) => {
+  const [hours, minutes] = time.split(':').map(Number); // Split and convert to numbers
+  const newDate = new Date(date); // Create a new Date object based on the original date
+  newDate.setUTCHours(hours, minutes, 0, 0); // Set the hours and minutes (UTC)
+  return newDate;
+};

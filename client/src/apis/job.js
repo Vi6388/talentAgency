@@ -10,7 +10,9 @@ const deleteJobById = (id) => axios.delete(`${SERVER_URL}/job/delete/` + id);
 
 const updateJobById = (id, data) => axios.post(`${SERVER_URL}/job/update/` + id, data);
 
-const getJobById = (id) => axios.get(`${SERVER_URL}/job/` + id);
+const getJobById = (id) => axios.get(`${SERVER_URL}/job/getById/` + id);
+
+const getCalendarEventList = () => axios.get(`${SERVER_URL}/job/getCalendarEventList`);
 
 const uploadFiles = (formData) => axios.post(`${SERVER_URL}/job/uploadFile`, formData, {
   headers: {
@@ -27,5 +29,6 @@ export const JobApi = {
   deleteJobById,
   updateJobById,
   uploadFiles,
-  updateJobStatusById
+  updateJobStatusById,
+  getCalendarEventList
 };

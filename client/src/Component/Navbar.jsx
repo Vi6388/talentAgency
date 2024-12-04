@@ -10,6 +10,8 @@ import RequestQuote from "../svg/header/request_quote.svg";
 import RequestQuoteActive from "../svg/header/request_quote_active.svg";
 import ViewKanban from "../svg/header/view_kanban.svg";
 import ViewKanbanActive from "../svg/header/view_kanban_active.svg";
+import CalendarIcon from "../svg/header/calendar.svg";
+import CalendarIconActive from "../svg/header/calendar_active.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from "../svg/cancel.svg";
 
@@ -91,27 +93,38 @@ const Navbar = () => {
                 </button>
               </li>
               <li className="navbar-list-margin">
-                <Link to={"/settings"} onClick={handleToggle}>
+                <Link to={"/settings"} onClick={handleToggle} className="toolTip settings-toolTip">
+                  <div className="toolTipText">Settings</div>
                   <img src={location.pathname.includes("/settings") ? BuildCircleActive : BuildCircle} alt="Build Circle" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">
-                <Link to={"/client/list"} onClick={handleToggle}>
+                <Link to={"/calendar"} onClick={handleToggle} className="toolTip settings-toolTip">
+                  <div className="toolTipText">Calendar</div>
+                  <img src={location.pathname.includes("/calendar") ? CalendarIconActive : CalendarIcon} alt="Build Circle" className="w-8 h-8" />
+                </Link>
+              </li>
+              <li className="navbar-list-margin">
+                <Link to={"/client/list"} onClick={handleToggle} className="toolTip jobArchive-toolTip">
+                  <div className="toolTipText">Job Archive</div>
                   <img src={location.pathname !== "/client/list" ? ListAlt : ListAltActive} alt="Client List" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">
-                <Link to={"/estimate/kanban"} onClick={handleToggle}>
+                <Link to={"/estimate/kanban"} onClick={handleToggle} className="toolTip estimates-toolTip">
+                  <div className="toolTipText">Estimates</div>
                   <img src={location.pathname !== "/estimate/kanban" ? RequestQuote : RequestQuoteActive} alt="Estimate Kanban" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">
-                <Link to={"/job/kanban"} onClick={handleToggle}>
+                <Link to={"/job/kanban"} onClick={handleToggle} className="toolTip jobBoard-toolTip">
+                  <div className="toolTipText">Job Board</div>
                   <img src={location.pathname !== "/job/kanban" ? ViewKanban : ViewKanbanActive} alt="Job Kanban" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">
-                <Link to={"/job/list"} onClick={handleToggle}>
+                <Link to={"/job/list"} onClick={handleToggle} className="toolTip jobList-toolTip">
+                  <div className="toolTipText">Job List</div>
                   <img src={location.pathname !== "/job/list" ? Article : ArticleActive} alt="Job List" className="w-8 h-8" />
                 </Link>
               </li>
