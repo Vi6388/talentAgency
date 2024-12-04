@@ -209,6 +209,19 @@ const JobPublishForm = () => {
     navigate("/job/kanban");
   }
 
+  const edit = (item, index) => {
+    if (item?.type === "publishing") {
+      setPublishForm({
+        ...item,
+        firstDraftDate: dueDateFormat(item?.firstDraftDate),
+        secondDraftDate: dueDateFormat(item?.secondDraftDate),
+        finalDate: dueDateFormat(item?.finalDate),
+      });
+      const list = publishList?.filter((item, i) => i !== index);
+      setPublishList(list);
+    }
+  }
+
   return (
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
@@ -312,12 +325,13 @@ const JobPublishForm = () => {
                   return (
                     <div className="flex justify-between items-center border-b divider-line-color py-3"
                       key={index}>
-                      <div className="flex items-center">
+                      <div className="flex items-center overflow-hidden">
                         <span className="text-label italic text-[12px] md:text-[15px] font-semibold uppercase mr-2">{item.type} - </span>
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">{item.jobTitle}</span>
                       </div>
                       <div className="flex items-center gap-5">
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
+                        <button className="text-white bg-black rounded-xl px-4" onClick={() => edit(item, index)}>Edit</button>
                         <button onClick={() => cancelJobPublish(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>

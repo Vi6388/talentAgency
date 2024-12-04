@@ -191,6 +191,12 @@ const EstimateInvoiceForm = () => {
     navigate("/estimate/kanban");
   }
 
+  const edit = (item, index) => {
+    setInvoiceForm(item);
+    const list = invoiceList?.filter((item, i) => i !== index);
+    setInvoiceList(list);
+  }
+
   return (
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
@@ -356,11 +362,12 @@ const EstimateInvoiceForm = () => {
                   return (
                     <div className="flex justify-between items-center border-b divider-line-color py-1 md:py-3"
                       key={index}>
-                      <div className="flex items-center text-summary-item text-[12px] md:text-[15px] font-semibold">
+                      <div className="flex items-center text-summary-item text-[12px] md:text-[15px] font-semibold overflow-hidden">
                         Invoice - {item.poNumber}
                       </div>
                       <div className="flex items-center gap-1 md:gap-5">
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
+                        <button className="text-white bg-black rounded-xl px-4" onClick={() => edit(item, index)}>Edit</button>
                         <button onClick={() => cancelInvoice(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>

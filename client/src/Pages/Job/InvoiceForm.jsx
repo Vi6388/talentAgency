@@ -167,6 +167,12 @@ const JobInvoiceForm = () => {
     navigate("/job/kanban");
   }
 
+  const edit = (item, index) => {
+    setInvoiceForm(item);
+    const list = invoiceList?.filter((item, i) => i !== index);
+    setInvoiceList(list);
+  }
+
   return (
     <div className="mt-7 w-full bg-main pt-12">
       <ToastContainer />
@@ -339,6 +345,7 @@ const JobInvoiceForm = () => {
                       </div>
                       <div className="flex items-center gap-5">
                         <span className="text-summary-item text-[12px] md:text-[15px] font-semibold">DUE: {dueDateFormat(item.createdAt)}</span>
+                        <button className="text-white bg-black rounded-xl px-4" onClick={() => edit(item, index)}>Edit</button>
                         <button onClick={() => cancelInvoice(index)}>
                           <img src={CancelIcon} alt="cancel icon" className="h-5 w-5" />
                         </button>
