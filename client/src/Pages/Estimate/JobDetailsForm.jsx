@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
@@ -60,6 +60,25 @@ const EstimateJobDetailsForm = () => {
     }
     getTalentList();
   }, [id]);
+
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (startDatePickerRef.current && !startDatePickerRef.current.contains(event.target)) {
+        setShowStart(false); // Hide the start date picker
+      }
+      if (endDatePickerRef.current && !endDatePickerRef.current.contains(event.target)) {
+        setShowEnd(false); // Hide the end date picker
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getTalentList = () => {
     TalentApi.getTalentList().then((res) => {
@@ -148,9 +167,9 @@ const EstimateJobDetailsForm = () => {
 
   const startDateOptions = {
     autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
     language: "en",
+    todayBtn: false,
+    clearBtn: false,
     inputPlaceholderProp: "START DATE",
     inputDateFormatProp: {
       day: "numeric",
@@ -161,9 +180,9 @@ const EstimateJobDetailsForm = () => {
 
   const endDateOptions = {
     autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
     language: "en",
+    todayBtn: false,
+    clearBtn: false,
     inputPlaceholderProp: "END DATE",
     inputDateFormatProp: {
       day: "numeric",
@@ -395,8 +414,8 @@ const EstimateJobDetailsForm = () => {
 
           <div className="mb-3 w-full">
             <div className="grid grid-cols-2 w-full gap-3 py-2">
-              <div className="col-span-1 w-full flex justify-between items-center relative">
-                <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
+              <div className="col-span-1 w-full flex justify-between items-center relative" ref={startDatePickerRef}>
+                <Datepicker options={startDateOptions} onChange={handleStartDateChange} autoHide={true} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
@@ -407,8 +426,8 @@ const EstimateJobDetailsForm = () => {
                   </div>
                 </Datepicker>
               </div>
-              <div className="col-span-1 w-full justify-between items-center relative">
-                <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
+              <div className="col-span-1 w-full justify-between items-center relative" ref={endDatePickerRef}>
+                <Datepicker options={endDateOptions} onChange={handleEndDateChange} autoHide={true} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../svg/search.svg";
 import Datepicker from "tailwind-datepicker-react";
 import CalendarIcon from "../../svg/calendar_month.svg";
@@ -67,6 +67,9 @@ const JobDetailsForm = () => {
   const [talentSearchList, setTalentSearchList] = useState([]);
   const [showTalentList, setShowTalentList] = useState(false);
 
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
+
   useEffect(() => {
     if (id) {
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
@@ -88,6 +91,22 @@ const JobDetailsForm = () => {
 
     getTalentList();
   }, [id]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (startDatePickerRef.current && !startDatePickerRef.current.contains(event.target)) {
+        setShowStart(false); // Hide the start date picker
+      }
+      if (endDatePickerRef.current && !endDatePickerRef.current.contains(event.target)) {
+        setShowEnd(false); // Hide the end date picker
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getTalentList = () => {
     TalentApi.getTalentList().then((res) => {
@@ -205,8 +224,8 @@ const JobDetailsForm = () => {
 
   const startDateOptions = {
     autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
+    todayBtn: false,
+    clearBtn: false,
     language: "en",
     inputPlaceholderProp: "START DATE",
     inputDateFormatProp: {
@@ -218,8 +237,8 @@ const JobDetailsForm = () => {
 
   const endDateOptions = {
     autoHide: true,
-    datepickerClassNames: "",
-    defaultDate: "",
+    todayBtn: false,
+    clearBtn: false,
     language: "en",
     inputPlaceholderProp: "END DATE",
     inputDateFormatProp: {
@@ -630,7 +649,7 @@ const JobDetailsForm = () => {
               <span className="text-sm text-title-2 font-gotham-medium">Ambassadorship</span>
             </div>
             <div className="grid grid-cols-2 w-full gap-3 py-2">
-              <div className="col-span-1 w-full flex justify-between items-center relative">
+              <div className="col-span-1 w-full flex justify-between items-center relative" ref={startDatePickerRef}>
                 <Datepicker options={startDateOptions} onChange={handleStartDateChange} show={showStart} setShow={(state) => handleState("setShowStart", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
@@ -642,7 +661,7 @@ const JobDetailsForm = () => {
                   </div>
                 </Datepicker>
               </div>
-              <div className="col-span-1 w-full justify-between items-center relative">
+              <div className="col-span-1 w-full justify-between items-center relative" ref={endDatePickerRef}>
                 <Datepicker options={endDateOptions} onChange={handleEndDateChange} show={showEnd} setShow={(state) => handleState("setShowEnd", state)}>
                   <div className="relative">
                     <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm

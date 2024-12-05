@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -30,7 +30,7 @@ const EstimatePublishForm = () => {
     firstDraftDate: false,
     secondDraftDate: false,
     finalDate: false,
-  })
+  });
 
   const navigate = useNavigate();
   const { jobEstimate } = useSelector(state => state.job);
@@ -54,6 +54,29 @@ const EstimatePublishForm = () => {
     }
   }, [id]);
 
+  const firstDateRef = useRef(null);
+  const secondDateRef = useRef(null);
+  const finalDateRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (firstDateRef.current && !firstDateRef.current.contains(event.target)) {
+        handleState("firstDraftDate", false);
+      }
+      if (secondDateRef.current && !secondDateRef.current.contains(event.target)) {
+        handleState("secondDraftDate", false);
+      }
+      if (finalDateRef.current && !finalDateRef.current.contains(event.target)) {
+        handleState("finalDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleChange = (e) => {
     setPublishForm({
       ...publishForm,
@@ -68,12 +91,9 @@ const EstimatePublishForm = () => {
     })
   }
 
-  const handleState = (action, state) => {
-    setShow({
-      ...show,
-      [action]: state,
-    })
-  }
+  const handleState = (field, state) => {
+    setShow((prev) => ({ ...prev, [field]: state }));
+  };
 
   const firstDraftDateOption = {
     autoHide: true,
@@ -233,7 +253,7 @@ const EstimatePublishForm = () => {
   }
 
   const edit = (item, index) => {
-    if(item?.type === "publishing") {
+    if (item?.type === "publishing") {
       setPublishForm({
         ...item,
         firstDraftDate: dueDateFormat(item?.firstDraftDate),
@@ -267,41 +287,47 @@ const EstimatePublishForm = () => {
               </div>
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-3 relative gap-3 py-2">
-                <DatePicker options={firstDraftDateOption} onChange={(selectedDate) => handleDateChange("firstDraftDate", selectedDate)} show={show.firstDraftDate}
-                  setShow={(state) => handleState("firstDraftDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={firstDateRef}>
+                  <DatePicker options={firstDraftDateOption} onChange={(selectedDate) => handleDateChange("firstDraftDate", selectedDate)} show={show.firstDraftDate}
+                    setShow={(state) => handleState("firstDraftDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="1st Draft Due Date" value={publishForm.firstDraftDate} onFocus={() => setShow({ ...show, firstDraftDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
 
-                <DatePicker options={secondDraftDateOptions} onChange={(selectedDate) => handleDateChange("secondDraftDate", selectedDate)} show={show.secondDraftDate}
-                  setShow={(state) => handleState("secondDraftDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={secondDateRef}>
+                  <DatePicker options={secondDraftDateOptions} onChange={(selectedDate) => handleDateChange("secondDraftDate", selectedDate)} show={show.secondDraftDate}
+                    setShow={(state) => handleState("secondDraftDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="2nd Draft Due Date" value={publishForm.secondDraftDate} onFocus={() => setShow({ ...show, secondDraftDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
 
-                <DatePicker options={finalDateOptions} onChange={(selectedDate) => handleDateChange("finalDate", selectedDate)} show={show.finalDate}
-                  setShow={(state) => handleState("finalDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={finalDateRef}>
+                  <DatePicker options={finalDateOptions} onChange={(selectedDate) => handleDateChange("finalDate", selectedDate)} show={show.finalDate}
+                    setShow={(state) => handleState("finalDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="Final Due Date" value={publishForm.finalDate} onFocus={() => setShow({ ...show, finalDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
               </div>
 
               <div className="w-full gap-3 py-2">

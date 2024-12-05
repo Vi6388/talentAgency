@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -35,6 +35,9 @@ const EstimateMediaForm = () => {
   const navigate = useNavigate();
   const { jobEstimate } = useSelector(state => state.job);
 
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
+
   useEffect(() => {
     if (!jobEstimate?.details?.id) {
       if (id) {
@@ -54,6 +57,22 @@ const EstimateMediaForm = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (startDatePickerRef.current && !startDatePickerRef.current.contains(event.target)) {
+        handleState("startDate", false);
+      }
+      if (endDatePickerRef.current && !endDatePickerRef.current.contains(event.target)) {
+        handleState("endDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleChange = (e) => {
     setMediaForm({
       ...mediaForm,
@@ -68,12 +87,9 @@ const EstimateMediaForm = () => {
     })
   }
 
-  const handleState = (action, state) => {
-    setShow({
-      ...show,
-      [action]: state,
-    })
-  }
+  const handleState = (field, state) => {
+    setShow((prev) => ({ ...prev, [field]: state }));
+  };
 
   const handleCheckboxChange = (e) => {
     let type = e.target.checked ? e.target.name : "";
@@ -229,7 +245,7 @@ const EstimateMediaForm = () => {
   }
 
   const edit = (item, index) => {
-    if(item?.type === "webSeries" || item?.type === "podcast" || item?.type === "radio" || item?.type === "tv") {
+    if (item?.type === "webSeries" || item?.type === "podcast" || item?.type === "radio" || item?.type === "tv") {
       setMediaForm({
         ...item,
         startDate: dueDateFormat(item?.startDate),
@@ -262,29 +278,33 @@ const EstimateMediaForm = () => {
               </div>
 
               <div className="w-full grid grid-cols-1 md:grid-cols-2 relative gap-3 py-2">
-                <DatePicker options={startDateOptions} onChange={(selectedDate) => handleDateChange("startDate", selectedDate)} show={show.startDate}
-                  setShow={(state) => handleState("startDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={startDatePickerRef}>
+                  <DatePicker options={startDateOptions} onChange={(selectedDate) => handleDateChange("startDate", selectedDate)} show={show.startDate}
+                    setShow={(state) => handleState("startDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="START Date" value={mediaForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="START Date" value={mediaForm.startDate} onFocus={() => setShow({ ...show, startDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
 
-                <DatePicker options={endDateOptions} onChange={(selectedDate) => handleDateChange("endDate", selectedDate)} show={show.endDate}
-                  setShow={(state) => handleState("endDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={endDatePickerRef}>
+                  <DatePicker options={endDateOptions} onChange={(selectedDate) => handleDateChange("endDate", selectedDate)} show={show.endDate}
+                    setShow={(state) => handleState("endDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="END Date" value={mediaForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="END Date" value={mediaForm.endDate} onFocus={() => setShow({ ...show, endDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
               </div>
 
               <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-3 py-2">

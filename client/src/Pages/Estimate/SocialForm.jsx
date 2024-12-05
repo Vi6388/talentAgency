@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -53,6 +53,29 @@ const EstimateSocialForm = () => {
     }
   }, [id]);
 
+  const conceptDateRef = useRef(null);
+  const contentDateRef = useRef(null);
+  const liveDateRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (conceptDateRef.current && !conceptDateRef.current.contains(event.target)) {
+        handleState("conceptDueDate", false);
+      }
+      if (contentDateRef.current && !contentDateRef.current.contains(event.target)) {
+        handleState("contentDueDate", false);
+      }
+      if (liveDateRef.current && !liveDateRef.current.contains(event.target)) {
+        handleState("liveDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const addSocialJob = () => {
     if (socialForm?.jobTitle !== "" || socialForm?.jobTitle.trim() !== "") {
       let list = socialList;
@@ -105,12 +128,9 @@ const EstimateSocialForm = () => {
     })
   }
 
-  const handleState = (action, state) => {
-    setShow({
-      ...show,
-      [action]: state,
-    })
-  }
+  const handleState = (field, state) => {
+    setShow((prev) => ({ ...prev, [field]: state }));
+  };
 
   const conceptDateOptions = {
     autoHide: true,
@@ -239,41 +259,47 @@ const EstimateSocialForm = () => {
               </div>
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-3 relative gap-3 py-2">
-                <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("conceptDueDate", selectedDate)} show={show.conceptDueDate}
-                  setShow={(state) => handleState("conceptDueDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={conceptDateRef}>
+                  <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("conceptDueDate", selectedDate)} show={show.conceptDueDate}
+                    setShow={(state) => handleState("conceptDueDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="Concept Due Date" value={socialForm.conceptDueDate} onFocus={() => setShow({ ...show, conceptDueDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="Concept Due Date" value={socialForm.conceptDueDate} onFocus={() => setShow({ ...show, conceptDueDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
 
-                <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("contentDueDate", selectedDate)} show={show.contentDueDate}
-                  setShow={(state) => handleState("contentDueDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={contentDateRef}>
+                  <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("contentDueDate", selectedDate)} show={show.contentDueDate}
+                    setShow={(state) => handleState("contentDueDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="Content Due Date" value={socialForm.contentDueDate} onFocus={() => setShow({ ...show, contentDueDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="Content Due Date" value={socialForm.contentDueDate} onFocus={() => setShow({ ...show, contentDueDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
 
-                <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("liveDate", selectedDate)} show={show.liveDate}
-                  setShow={(state) => handleState("liveDate", state)}>
-                  <div className="relative">
-                    <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                <div ref={liveDateRef}>
+                  <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("liveDate", selectedDate)} show={show.liveDate}
+                    setShow={(state) => handleState("liveDate", state)}>
+                    <div className="relative">
+                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                      placeholder="Live Date" value={socialForm.liveDate} onFocus={() => setShow({ ...show, liveDate: true })} readOnly />
-                    <div className="absolute top-1.5 right-2">
-                      <img src={CalendarIcon} alt="calendar" />
+                        placeholder="Live Date" value={socialForm.liveDate} onFocus={() => setShow({ ...show, liveDate: true })} readOnly />
+                      <div className="absolute top-1.5 right-2">
+                        <img src={CalendarIcon} alt="calendar" />
+                      </div>
                     </div>
-                  </div>
-                </DatePicker>
+                  </DatePicker>
+                </div>
               </div>
 
               <div className="w-full py-2">

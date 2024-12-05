@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -35,7 +35,9 @@ const EstimateEventForm = () => {
     eventDate: false,
     eventStartTime: false,
     eventEndTime: false
-  })
+  });
+
+  const dateRef = useRef(null);
 
   const navigate = useNavigate();
   const { jobEstimate } = useSelector(state => state.job);
@@ -59,6 +61,19 @@ const EstimateEventForm = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        handleState("eventDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleChange = (e) => {
     setEventForm({
       ...eventForm,
@@ -69,16 +84,13 @@ const EstimateEventForm = () => {
   const handleDateChange = (action, selectedDate) => {
     setEventForm({
       ...eventForm,
-      [action]: selectedDate.toLocaleDateString("en-US")
+      [action]: dueDateFormat(new Date(selectedDate))
     })
   }
 
-  const handleState = (action, state) => {
-    setShow({
-      ...show,
-      [action]: state,
-    })
-  }
+  const handleState = (field, state) => {
+    setShow((prev) => ({ ...prev, [field]: state }));
+  };
 
   const conceptDateOptions = {
     autoHide: true,
@@ -239,7 +251,7 @@ const EstimateEventForm = () => {
                   placeholder="job title" type="text" value={eventForm.jobTitle} name="jobTitle" onChange={(e) => handleChange(e)} />
               </div>
 
-              <div className="w-full grid grid-cols-1 lg:grid-cols-3 relative gap-3 py-2">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-3 relative gap-3 py-2" ref={dateRef}>
                 <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("eventDate", selectedDate)} show={show.eventDate}
                   setShow={(state) => handleState("eventDate", state)}>
                   <div className="relative">

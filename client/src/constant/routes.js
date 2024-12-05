@@ -33,7 +33,7 @@ import CalendarView from "../Pages/Calendar/CalendarView";
 const routes = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout children={<Navigate to="/estimate/kanban" />} />,
+    element: <RootLayout children={<Navigate to="/calendar" />} />,
   },
   {
     path: "/login",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -39,6 +39,8 @@ const JobEventForm = () => {
     eventEndTime: false
   })
 
+  const dateRef = useRef(null);
+
   useEffect(() => {
     if (!job?.details?.id) {
       if (id) {
@@ -58,6 +60,19 @@ const JobEventForm = () => {
       setEventList(job?.jobSummaryList);
     }
   }, [id]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        handleState("eventDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleChange = (e) => {
     setEventForm({
@@ -219,7 +234,7 @@ const JobEventForm = () => {
                   onChange={(e) => handleChange(e)} />
               </div>
 
-              <div className="w-full grid grid-cols-1 lg:grid-cols-2 relative gap-3 py-2">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-2 relative gap-3 py-2" ref={dateRef}>
                 <DatePicker options={conceptDateOptions} onChange={(selectedDate) => handleDateChange("eventDate", selectedDate)} show={show.eventDate}
                   setShow={(state) => handleState("eventDate", state)}>
                   <div className="relative">

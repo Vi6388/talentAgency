@@ -21,8 +21,8 @@ function JobCardItem({ item, index, talent }) {
             <div className="client-name">
               <span className="text-[8px] text-kanban font-gotham-bold">Client: {item.contactDetails?.firstname} {item.contactDetails?.surname}</span>
             </div>
-            <div className="title py-2">
-              <span className="text-[12px] md:text-[14px] text-kanban font-semibold kanban-title-leading tracking-wide">{item.title}</span>
+            <div className="job-title py-1.5">
+              <span className="text-[12px] md:text-[14px] text-kanban font-semibold kanban-title-leading tracking-wide" title={item.jobName}>{item.jobName}</span>
             </div>
             <div className="w-full pb-2">
               <div className="text-success text-[11px] font-semibold flex items-center">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg"
 import DatePicker from "tailwind-datepicker-react";
@@ -63,6 +63,25 @@ const JobTravelForm = () => {
     }
   }, [id]);
 
+  const departureDateRef = useRef(null);
+  const arrivalDateRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (departureDateRef.current && !departureDateRef.current.contains(event.target)) {
+        handleState("departureDate", false);
+      }
+      if (arrivalDateRef.current && !arrivalDateRef.current.contains(event.target)) {
+        handleState("arrivalDate", false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleChange = (e) => {
     setTravelForm({
       ...travelForm,
@@ -77,12 +96,9 @@ const JobTravelForm = () => {
     })
   }
 
-  const handleState = (action, state) => {
-    setShow({
-      ...show,
-      [action]: state,
-    })
-  }
+  const handleState = (field, state) => {
+    setShow((prev) => ({ ...prev, [field]: state }));
+  };
 
   const departureDateOption = {
     autoHide: true,
@@ -245,17 +261,19 @@ const JobTravelForm = () => {
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-2 relative gap-3 py-2">
                 <div className="w-full grid grid-cols-3 lg:grid-cols-2 gap-2">
-                  <DatePicker options={departureDateOption} onChange={(selectedDate) => handleDateChange("departureDate", selectedDate)} show={show.departureDate}
-                    setShow={(state) => handleState("departureDate", state)} classNames="col-span-2 lg:col-span-1">
-                    <div className="relative">
-                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                  <div ref={departureDateRef}>
+                    <DatePicker options={departureDateOption} onChange={(selectedDate) => handleDateChange("departureDate", selectedDate)} show={show.departureDate}
+                      setShow={(state) => handleState("departureDate", state)} classNames="col-span-2 lg:col-span-1">
+                      <div className="relative">
+                        <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                        placeholder="departure Date" value={travelForm.departureDate} onFocus={() => setShow({ ...show, departureDate: true })} readOnly />
-                      <div className="absolute top-1.5 right-2">
-                        <img src={CalendarIcon} alt="calendar" />
+                          placeholder="departure Date" value={travelForm.departureDate} onFocus={() => setShow({ ...show, departureDate: true })} readOnly />
+                        <div className="absolute top-1.5 right-2">
+                          <img src={CalendarIcon} alt="calendar" />
+                        </div>
                       </div>
-                    </div>
-                  </DatePicker>
+                    </DatePicker>
+                  </div>
 
                   <div className="relative w-full col-span-1">
                     <input type={inputType.departureTime} name="departureTime"
@@ -272,17 +290,19 @@ const JobTravelForm = () => {
                 </div>
 
                 <div className="w-full grid grid-cols-3 lg:grid-cols-2 gap-2">
-                  <DatePicker options={arrivalDateOptions} onChange={(selectedDate) => handleDateChange("arrivalDate", selectedDate)} show={show.arrivalDate}
-                    setShow={(state) => handleState("arrivalDate", state)} classNames="col-span-2 lg:col-span-1">
-                    <div className="relative">
-                      <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
+                  <div ref={arrivalDateRef}>
+                    <DatePicker options={arrivalDateOptions} onChange={(selectedDate) => handleDateChange("arrivalDate", selectedDate)} show={show.arrivalDate}
+                      setShow={(state) => handleState("arrivalDate", state)} classNames="col-span-2 lg:col-span-1">
+                      <div className="relative">
+                        <input type="text" className={`rounded-[16px] text-input shadow-md shadow-500 text-center h-10 w-full tracking-wider text-sm
                         outline-none focus:border-[#d4d5d6] border-none`}
-                        placeholder="arrival Date" value={travelForm.arrivalDate} onFocus={() => setShow({ ...show, arrivalDate: true })} readOnly />
-                      <div className="absolute top-1.5 right-2">
-                        <img src={CalendarIcon} alt="calendar" />
+                          placeholder="arrival Date" value={travelForm.arrivalDate} onFocus={() => setShow({ ...show, arrivalDate: true })} readOnly />
+                        <div className="absolute top-1.5 right-2">
+                          <img src={CalendarIcon} alt="calendar" />
+                        </div>
                       </div>
-                    </div>
-                  </DatePicker>
+                    </DatePicker>
+                  </div>
 
                   <div className="relative w-full col-span-1">
                     <input type={inputType.arrivalTime} name="arrivalTime"
