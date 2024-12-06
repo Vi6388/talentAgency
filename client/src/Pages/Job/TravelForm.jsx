@@ -25,7 +25,7 @@ const JobTravelForm = () => {
     arrivalTime: "",
     preferredCarrier: "",
     frequentFlyerNumber: "",
-    clientPaying: false,
+    clientPaying: null,
     carHireRequired: "",
     travelDetails: "",
     createdAt: new Date().toLocaleDateString("en-US"),
@@ -44,7 +44,7 @@ const JobTravelForm = () => {
   });
 
   useEffect(() => {
-    if (!job?.details?.id) {
+    if (!job?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         JobApi.getJobById(id).then((res) => {
@@ -147,7 +147,7 @@ const JobTravelForm = () => {
         arrivalTime: "",
         preferredCarrier: "",
         frequentFlyerNumber: "",
-        clientPaying: false,
+        clientPaying: null,
         carHireRequired: "",
         travelDetails: "",
         createdAt: new Date().toLocaleDateString("en-US"),
@@ -155,10 +155,10 @@ const JobTravelForm = () => {
     }
   }
 
-  const handleChangeClientPaying = () => {
+  const handleChangeClientPaying = (checked) => {
     setTravelForm({
       ...travelForm,
-      clientPaying: !travelForm?.clientPaying
+      clientPaying: checked
     })
   }
 
@@ -354,7 +354,7 @@ const JobTravelForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group4" checked={travelForm.clientPaying} onChange={(e) => handleChangeClientPaying()} />
+                              id="check-vertical-list-group4" checked={travelForm.clientPaying} onChange={(e) => handleChangeClientPaying(true)} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -375,7 +375,7 @@ const JobTravelForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider text-sm text-right
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group5" checked={!travelForm.clientPaying} onChange={(e) => handleChangeClientPaying()} />
+                              id="check-vertical-list-group5" checked={travelForm.clientPaying === false} onChange={(e) => handleChangeClientPaying(false)} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor"
                                 stroke="currentColor" strokeWidth="1">

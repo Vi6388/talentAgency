@@ -11,7 +11,6 @@ const jobTravelSchema = new mongoose.Schema({
   },
   departureDate: {
     type: Date,
-    default: new Date(),
   },
   departureTime: {
     type: String,
@@ -19,7 +18,6 @@ const jobTravelSchema = new mongoose.Schema({
   },
   arrivalDate: {
     type: Date,
-    default: new Date(),
   },
   arrivalTime: {
     type: String,

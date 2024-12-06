@@ -35,7 +35,7 @@ const JobPublishForm = () => {
   });
 
   useEffect(() => {
-    if (!job?.details?.id) {
+    if (!job?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         JobApi.getJobById(id).then((res) => {

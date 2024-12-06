@@ -19,7 +19,7 @@ const JobMediaForm = () => {
     jobTitle: "",
     startDate: "",
     endDate: "",
-    type: "podcast",
+    type: "",
     numberOfEpisodes: "",
     keyMessages: "",
     deleverables: "",
@@ -38,7 +38,7 @@ const JobMediaForm = () => {
   const endDatePickerRef = useRef(null);
 
   useEffect(() => {
-    if (!job?.details?.id) {
+    if (!job?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         JobApi.getJobById(id).then((res) => {
@@ -131,7 +131,8 @@ const JobMediaForm = () => {
       const data = {
         ...mediaForm,
         startDate: convertDueDate(mediaForm.startDate),
-        endDate: convertDueDate(mediaForm.endDate)
+        endDate: convertDueDate(mediaForm.endDate),
+        type: mediaForm?.type === "" ? "Media" : mediaForm?.type,
       }
       list.push(data);
       setMediaList(list);
@@ -139,7 +140,7 @@ const JobMediaForm = () => {
         jobTitle: "",
         startDate: "",
         endDate: "",
-        type: "podcast",
+        type: "",
         numberOfEpisodes: "",
         keyMessages: "",
         deleverables: "",
@@ -219,7 +220,7 @@ const JobMediaForm = () => {
   }
 
   const edit = (item, index) => {
-    if (item?.type === "radio" || item?.type === "podcast" || item?.type === "webSeries" || item?.type === "tv") {
+    if (item?.type === "radio" || item?.type === "podcast" || item?.type === "webSeries" || item?.type === "tv" || item?.type === "Media") {
       setMediaForm({
         ...item,
         startDate: dueDateFormat(item?.startDate),

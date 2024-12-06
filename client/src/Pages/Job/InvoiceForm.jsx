@@ -14,7 +14,7 @@ const JobInvoiceForm = () => {
   const [invoiceForm, setInvoiceForm] = useState({
     poNumber: "",
     fee: "",
-    gst: false,
+    gst: null,
     usage: "",
     asf: "",
     royalities: "",
@@ -33,7 +33,7 @@ const JobInvoiceForm = () => {
   const { job } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (!job?.details?.id) {
+    if (!job?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         JobApi.getJobById(id).then((res) => {
@@ -66,10 +66,10 @@ const JobInvoiceForm = () => {
     });
   }
 
-  const handleGst = () => {
+  const handleGst = (checked) => {
     setInvoiceForm({
       ...invoiceForm,
-      gst: !invoiceForm.gst
+      gst: checked
     })
   }
 
@@ -81,7 +81,7 @@ const JobInvoiceForm = () => {
       setInvoiceForm({
         poNumber: "",
         fee: "",
-        gst: false,
+        gst: null,
         usage: "",
         asf: "",
         royalities: "",
@@ -213,7 +213,7 @@ const JobInvoiceForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group4" checked={invoiceForm.gst} onChange={handleGst} />
+                              id="check-vertical-list-group4" checked={invoiceForm.gst} onChange={() => handleGst(true)} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20"
                                 stroke="currentColor" strokeWidth="1">
@@ -234,7 +234,7 @@ const JobInvoiceForm = () => {
                             <input type="checkbox"
                               className="peer rounded-[16px] text-input shadow-md shadow-500 h-10 w-10 tracking-wider text-sm text-right
                                           outline-none focus:border-[#d4d5d6] border-none bg-white cursor-pointer transition-all appearance-none checked:bg-white checked:border-[#d4d5d6]"
-                              id="check-vertical-list-group5" checked={!invoiceForm.gst} onChange={handleGst} />
+                              id="check-vertical-list-group5" checked={invoiceForm.gst === false} onChange={() => handleGst(false)} />
                             <span className="absolute text-black opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor"
                                 stroke="currentColor" strokeWidth="1">

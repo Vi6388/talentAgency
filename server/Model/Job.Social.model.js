@@ -11,15 +11,12 @@ const jobFinanceSchema = new mongoose.Schema({
   },
   conceptDueDate: {
     type: Date,
-    default: new Date(),
   },
   contentDueDate: {
     type: Date,
-    default: new Date(),
   },
   liveDate: {
     type: Date,
-    default: new Date(),
   },
   keyMessage: {
     type: String,

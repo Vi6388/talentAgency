@@ -56,21 +56,23 @@ export const isFormValid = (form, requiredFields) => {
 };
 
 export const dateTimeFormat = (date) => {
-  const day = new Date(date).toISOString().split('T')[0];
-  const timeStr = new Date(date).toISOString().split('T')[1];
-  const time = timeStr.split('.')[0];
-  return day + " " + time;
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+    const day = new Date(date).toISOString().split('T')[0];
+    const timeStr = new Date(date).toISOString().split('T')[1];
+    const time = timeStr.split('.')[0];
+    return day + " " + time;
+  }
 }
 
 export const dateFormat = (date) => {
-  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date") {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
     const day = new Date(date).toISOString().split('T')[0];
     return day;
   }
 }
 
 export const dueDateFormat = (date) => {
-  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "") {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
     const day = new Date(date).getDate();
     const month = new Date(date).getMonth() + 1;
     const year = new Date(date).getFullYear();
@@ -79,7 +81,7 @@ export const dueDateFormat = (date) => {
 }
 
 export const convertDueDate = (date) => {
-  if (date) {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
     const dateStrs = date?.split("/");
     const newDateStr = dateStrs[2] + "/" + dateStrs[1] + "/" + dateStrs[0];
     return new Date(newDateStr)?.toISOString();
@@ -87,8 +89,10 @@ export const convertDueDate = (date) => {
 }
 
 export const combineDateAndTime = (date, time) => {
-  const [hours, minutes] = time.split(':').map(Number); // Split and convert to numbers
-  const newDate = new Date(date); // Create a new Date object based on the original date
-  newDate.setUTCHours(hours, minutes, 0, 0); // Set the hours and minutes (UTC)
-  return newDate;
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+    const [hours, minutes] = time.split(':').map(Number); // Split and convert to numbers
+    const newDate = new Date(date); // Create a new Date object based on the original date
+    newDate.setUTCHours(hours, minutes, 0, 0); // Set the hours and minutes (UTC)
+    return newDate;
+  }
 };

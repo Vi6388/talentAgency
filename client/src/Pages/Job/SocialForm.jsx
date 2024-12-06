@@ -26,7 +26,7 @@ const JobSocialForm = () => {
   const { job } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (!job?.details?.id) {
+    if (!job?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         JobApi.getJobById(id).then((res) => {
@@ -205,9 +205,9 @@ const JobSocialForm = () => {
     if (item?.type === "social") {
       setSocialForm({
         ...item,
-        conceptDueDate: dueDateFormat(item.conceptDueDate),
-        contentDueDate: dueDateFormat(item.contentDueDate),
-        liveDate: dueDateFormat(item.liveDate),
+        conceptDueDate: dueDateFormat(item.conceptDueDate) || "",
+        contentDueDate: dueDateFormat(item.contentDueDate) || "",
+        liveDate: dueDateFormat(item.liveDate) || "",
       });
       const list = socialList?.filter((item, i) => i !== index);
       setSocialList(list);

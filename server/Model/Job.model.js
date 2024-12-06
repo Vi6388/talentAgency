@@ -73,11 +73,9 @@ const jobSchema = new mongoose.Schema({
   },
   startDate: {
     type: String,
-    default: new Date(),
   },
   endDate: {
     type: String,
-    default: new Date()
   },
   uploadedFiles: {
     contractFile: {

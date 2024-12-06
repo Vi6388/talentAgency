@@ -52,8 +52,8 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         manager: detailData?.manager || "",
       },
       labelColor: detailData?.labelColor || "",
-      startDate: detailData?.startDate || new Date().toISOString(),
-      endDate: detailData?.endDate || new Date().toISOString(),
+      startDate: detailData?.startDate || "",
+      endDate: detailData?.endDate || "",
       estimateStatus: true,
       isLive: false,
       jobStatus: 1
@@ -65,7 +65,8 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       jobInvoiceList?.forEach(async (invoice) => {
         return await JobFinance.create({
           ...invoice,
-          jobId: newJob?._id
+          jobId: newJob?._id,
+          gst: invoice?.gst || null
         });
       });
     }
@@ -95,10 +96,11 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         if (summary.type === 'travel') {
           return await JobTravelModel.create({
             ...summary,
-            jobId: newJob?._id
+            jobId: newJob?._id,
+            clientPaying: summary?.clientPaying || null
           });
         }
-        if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv') {
+        if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv' || summary.type === "Media") {
           return await JobMediaModel.create({
             ...summary,
             jobId: newJob?._id
@@ -200,8 +202,8 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           manager: detailData?.manager || existJob?.talent?.manager || "",
         },
         labelColor: detailData?.labelColor || existJob?.labelColor || "",
-        startDate: detailData?.startDate || existJob?.startDate || new Date().toISOString(),
-        endDate: detailData?.endDate || existJob?.endDate || new Date().toISOString(),
+        startDate: detailData?.startDate || existJob?.startDate || "",
+        endDate: detailData?.endDate || existJob?.endDate || "",
       });
 
       // Dalete Exist Invoice List By jobEstimate id and Create new Invoice List
@@ -214,7 +216,8 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         jobInvoiceList?.forEach(async (invoice) => {
           return await JobFinance.create({
             ...invoice,
-            jobId: existJob?._id
+            jobId: existJob?._id,
+            gst: invoice?.gst || null
           });
         });
       }
@@ -250,10 +253,11 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
           if (summary.type === 'travel') {
             return await JobTravelModel.create({
               ...summary,
-              jobId: existJob?._id
+              jobId: existJob?._id,
+              clientPaying: summary?.clientPaying || null
             });
           }
-          if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv') {
+          if (summary.type === 'podcast' || summary.type === 'radio' || summary.type === 'webSeries' || summary.type === 'tv' || summary.type === "Media") {
             return await JobMediaModel.create({
               ...summary,
               jobId: existJob?._id

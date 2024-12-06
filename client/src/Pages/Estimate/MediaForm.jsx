@@ -17,7 +17,7 @@ const EstimateMediaForm = () => {
     jobTitle: "",
     startDate: "",
     endDate: "",
-    type: "podcast",
+    type: "",
     numberOfEpisodes: "",
     keyMessages: "",
     deleverables: "",
@@ -39,7 +39,7 @@ const EstimateMediaForm = () => {
   const endDatePickerRef = useRef(null);
 
   useEffect(() => {
-    if (!jobEstimate?.details?.id) {
+    if (!jobEstimate?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         EstimateApi.getJobEstimateById(id).then((res) => {
@@ -131,7 +131,8 @@ const EstimateMediaForm = () => {
       const data = {
         ...mediaForm,
         startDate: convertDueDate(mediaForm.startDate),
-        endDate: convertDueDate(mediaForm.endDate)
+        endDate: convertDueDate(mediaForm.endDate),
+        type: mediaForm?.type === "" ? "Media" : mediaForm?.type
       }
       list.push(data);
       setMediaList(list);
@@ -245,7 +246,7 @@ const EstimateMediaForm = () => {
   }
 
   const edit = (item, index) => {
-    if (item?.type === "webSeries" || item?.type === "podcast" || item?.type === "radio" || item?.type === "tv") {
+    if (item?.type === "webSeries" || item?.type === "podcast" || item?.type === "radio" || item?.type === "tv" || item?.type === "Media") {
       setMediaForm({
         ...item,
         startDate: dueDateFormat(item?.startDate),

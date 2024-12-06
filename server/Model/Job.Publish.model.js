@@ -11,15 +11,12 @@ const jobPublishSchema = new mongoose.Schema({
   },
   firstDraftDueDate: {
     type: Date,
-    default: new Date(),
   },
   secondDraftDueDate: {
     type: Date,
-    default: new Date(),
   },
   finalDueDate: {
     type: Date,
-    default: new Date(),
   },
   publisher: {
     type: String,

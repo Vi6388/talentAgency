@@ -11,15 +11,12 @@ const jobMediaSchema = new mongoose.Schema({
   },
   startDate: {
     type: Date,
-    default: new Date(),
   },
   endDate: {
     type: Date,
-    default: new Date(),
   },
   type: {
     type: String, // podcast, radio, web series, tv
-    default: "podcast"
   },
   numberOfEpisodes: {
     type: String,

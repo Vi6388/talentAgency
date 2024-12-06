@@ -43,7 +43,7 @@ const EstimateEventForm = () => {
   const { jobEstimate } = useSelector(state => state.job);
 
   useEffect(() => {
-    if (!jobEstimate?.details?.id) {
+    if (!jobEstimate?.details?._id) {
       if (id) {
         store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
         EstimateApi.getJobEstimateById(id).then((res) => {

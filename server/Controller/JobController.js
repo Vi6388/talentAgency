@@ -178,8 +178,8 @@ module.exports.AddJob = async (req, res, next) => {
       },
       supplierRequired: detailData?.supplierRequired || false,
       labelColor: detailData?.labelColor || "",
-      startDate: detailData?.startDate || new Date().toISOString(),
-      endDate: detailData?.endDate || new Date().toISOString(),
+      startDate: detailData?.startDate || "",
+      endDate: detailData?.endDate || "",
       estimateStatus: false,
       isLive: true,
       jobStatus: 1,
@@ -195,6 +195,7 @@ module.exports.AddJob = async (req, res, next) => {
       await Promise.all(jobInvoiceList.map(invoice => {
         return JobFinance.create({
           ...invoice,
+          gst: invoice.gst || null,
           jobId: newJob?._id
         });
       }));
@@ -211,18 +212,18 @@ module.exports.AddJob = async (req, res, next) => {
           case 'publishing':
             return JobPublishModel.create({ ...summary, jobId: newJob?._id });
           case 'travel':
-            return JobTravelModel.create({ ...summary, jobId: newJob?._id });
+            return JobTravelModel.create({ ...summary, jobId: newJob?._id, clientPaying: summary?.clientPaying || null });
           case 'podcast':
           case 'radio':
           case 'webSeries':
           case 'tv':
+          case 'Media':
             return JobMediaModel.create({ ...summary, jobId: newJob?._id });
           default:
             return null;
         }
       }));
     }
-    // await this.createCalendarEvent(req, res, next);
 
     const emailData = {
       jobTitle: newJob?.jobName,
@@ -317,8 +318,8 @@ module.exports.UpdateJob = async (req, res, next) => {
         },
         supplierRequired: detailData?.supplierRequired || existJob?.supplierRequired || false,
         labelColor: detailData?.labelColor || existJob?.labelColor || "",
-        startDate: detailData?.startDate || existJob?.startDate || new Date().toISOString(),
-        endDate: detailData?.endDate || existJob?.endDate || new Date().toISOString(),
+        startDate: detailData?.startDate || existJob?.startDate || "",
+        endDate: detailData?.endDate || existJob?.endDate || "",
         uploadedFiles: {
           contractFile: detailData?.uploadedFiles?.contractFile || existJob?.uploadedFiles?.contractFile || "",
           briefFile: detailData?.uploadedFiles?.briefFile || existJob?.uploadedFiles?.briefFile || "",
@@ -333,6 +334,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         await Promise.all(jobInvoiceList.map(invoice => {
           return JobFinance.create({
             ...invoice,
+            gst: invoice.gst || null,
             jobId: existJob?._id
           });
         }));
@@ -374,18 +376,18 @@ module.exports.UpdateJob = async (req, res, next) => {
             case 'publishing':
               return await JobPublishModel.create({ ...summary, jobId: existJob?._id });
             case 'travel':
-              return await JobTravelModel.create({ ...summary, jobId: existJob?._id });
+              return await JobTravelModel.create({ ...summary, jobId: existJob?._id, clientPaying: summary?.clientPaying || null });
             case 'podcast':
             case 'radio':
             case 'webSeries':
             case 'tv':
+            case 'Media':
               return await JobMediaModel.create({ ...summary, jobId: existJob?._id });
             default:
               return null;
           }
         }));
       }
-      const calendarEventCreated = await this.createCalendarEvent(req, res, next);
 
       const emailData = {
         jobTitle: existJob?.jobName,
@@ -547,18 +549,18 @@ module.exports.getCalendarList = async (req, res) => {
 
     for (const job of jobList) {
       let eventList = [];
-      
+
       const jobEventList = await JobEventModel.find({ jobId: job._id });
       jobEventList.forEach((item) => eventList.push(item));
-      
+
       const jobSocialList = await JobSocialModel.find({ jobId: job._id });
       jobSocialList.forEach((item) => eventList.push(item));
-      
+
       const data = {
         talent: job.talent,
         eventList: eventList
       };
-      
+
       list.push(data);
     }
 
