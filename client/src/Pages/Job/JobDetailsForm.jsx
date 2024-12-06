@@ -34,7 +34,7 @@ const JobDetailsForm = () => {
     manager: "",
     startDate: "",
     endDate: "",
-    labelColor: "#000000",
+    labelColor: "",
     supplierRequired: false,
     uploadedFiles: {
       contractFile: "",
@@ -136,9 +136,9 @@ const JobDetailsForm = () => {
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
-      labelColor: data?.details?.labelColor || (data?.details?.labelColor || "#000000"),
-      startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : dueDateFormat(new Date())),
-      endDate: id ? data?.details?.endDate : (data?.details?.endDate ? dueDateFormat(convertDueDate(data?.details?.endDate)) : dueDateFormat(new Date())),
+      labelColor: data?.details?.labelColor || (data?.details?.labelColor || ""),
+      startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : ""),
+      endDate: id ? data?.details?.endDate : (data?.details?.endDate ? dueDateFormat(convertDueDate(data?.details?.endDate)) : ""),
       supplierRequired: data?.details?.supplierRequired || (data?.details?.supplierRequired || false),
     });
 
@@ -365,6 +365,9 @@ const JobDetailsForm = () => {
                 toast.success(res.data.message, {
                   position: "top-left",
                 });
+                setTimeout(() => {
+                  navigate("/calendar");
+                }, 2000);
               } else {
                 toast.error(res.data.message, {
                   position: "top-left",
@@ -382,6 +385,9 @@ const JobDetailsForm = () => {
                 toast.success(res.data.message, {
                   position: "top-left",
                 });
+                setTimeout(() => {
+                  navigate("/calendar");
+                }, 2000);
               } else {
                 toast.error(res.data.message, {
                   position: "top-left",
@@ -453,6 +459,9 @@ const JobDetailsForm = () => {
                 toast.success(res.data.message, {
                   position: "top-left",
                 });
+                setTimeout(() => {
+                  navigate("/calendar");
+                }, 2000);
               } else {
                 toast.error(res.data.message, {
                   position: "top-left",

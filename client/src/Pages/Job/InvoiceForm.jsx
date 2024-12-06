@@ -382,7 +382,7 @@ const JobInvoiceForm = () => {
           <button className="bg-button-4 h-10 tracking-wider text-center rounded-[12px] text-white font-gotham-bold px-3
                         block rounded bg-black leading-normal shadow-md transition duration-150 ease-in-out w-full
                         hover:bg-slate-700 hover:shadow-md focus:bg-slate-800 focus:shadow-md focus:outline-none focus:ring-0 text-sm"
-            type="button" onClick={updateJob}>Update</button>
+            type="button" onClick={updateJob}>{job?.details?._id ? "Update" : "Submit"}</button>
         </div>
       </div>
 
