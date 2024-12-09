@@ -404,7 +404,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         summaryList: jobSummaryList
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
-      const subject = "Job Update - " + existJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
+      const subject = "Job Update - " + existJob?.jobName + " " + convertDateFormat(existJob?.createdAt);
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
