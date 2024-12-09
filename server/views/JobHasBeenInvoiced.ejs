@@ -237,18 +237,18 @@
 
         <div class="content-box">
             <div class="w-full my-5 d-flex">
-                <input type="text" class="title-input" value="<%=result.jobTitle %>" readonly />
+                <input type="text" class="title-input" value="<%= job.jobTitle %>" readonly />
             </div>
             <div style="display: flex;">
                 <div class="d-flex w-full" style="position: relative; margin-right: 10px;">
-                    <input type="text" readonly value="<%=result.startDate %>" class="date-input" />
+                    <input type="text" readonly value="<%= job.startDate %>" class="date-input" />
                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
                         <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
                             height="25" width="22" />
                     </svg>
                 </div>
                 <div class="d-flex w-full" style="position: relative; margin-left: 10px;">
-                    <input type="text" readonly value="<%=result.endDate %>" class="date-input" />
+                    <input type="text" readonly value="<%= job.endDate %>" class="date-input" />
                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
                         <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
                             height="25" width="22" />
@@ -258,7 +258,7 @@
             <div class="my-5 d-flex">
                 <div class="detail-box">
                     <div class="detail-text updated-text">
-                        <%= result.jobDesc %>
+                        <%= job.jobDesc %>
                     </div>
 
                     <div class="detail-note-text">

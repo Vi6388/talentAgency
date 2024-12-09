@@ -287,16 +287,6 @@
 </head>
 
 <body>
-    <script>
-        function convertDateFormat(date) {
-            if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
-                const day = new Date(date).getDate();
-                const month = new Date(date).getMonth() + 1;
-                const year = new Date(date).getFullYear();
-                return day + "/" + month + "/" + year;
-            }
-        }
-    </script>
     <div class="main">
         <div class="w-full text-center">
             <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
@@ -345,7 +335,8 @@
                             <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="contentDate" class="date-label">Content Due Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= summaryList[i]?.contentDueDate %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i]?.contentDueDate).getDate() + '/' + (new Date(summaryList[i]?.contentDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.contentDueDate).getFullYear() %>"
                                         class="date-input" name="contentDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -357,7 +348,8 @@
                             <div class="w-full" style="text-align: center;">
                                 <label for="liveDate" class="date-label">Live Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= summaryList[i]?.liveDate %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i]?.liveDate).getDate() + '/' + (new Date(summaryList[i]?.liveDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.liveDate).getFullYear() %>"
                                         class="date-input" name="liveDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -373,7 +365,8 @@
                                     <div class="w-full" style="padding-right: 10px; text-align: center;">
                                         <label for="eventDate" class="date-label">Event Date</label>
                                         <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                            <input type="text" readonly value="<%= summaryList[i]?.eventDate %>"
+                                            <input type="text" readonly 
+                                                value="<%= new Date(summaryList[i]?.eventDate).getDate() + '/' + (new Date(summaryList[i]?.eventDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.eventDate).getFullYear() %>"
                                                 class="date-input" name="eventDate" />
                                             <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                                 class="absolute calendar-icon">

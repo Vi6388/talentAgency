@@ -226,11 +226,16 @@ module.exports.AddJob = async (req, res, next) => {
       }));
     }
 
+    const emailData = {
+      job: newJob,
+      summaryList: jobSummaryList
+    };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
+    const subject = "New Job - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
     await sendEmail({
-      filename: 'NewJob.ejs',
-      data: jobSummaryList,
-      subject: "New Job",
+      filename: 'UpdateJob.ejs', // Ensure the correct file extension
+      data: emailData,
+      subject: subject,
       toEmail: toEmail,
     });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
@@ -239,6 +244,15 @@ module.exports.AddJob = async (req, res, next) => {
     next(error);
   }
 };
+
+const convertDateFormat = (date) => {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+      const day = new Date(date).getDate();
+      const month = new Date(date).getMonth() + 1;
+      const year = new Date(date).getFullYear();
+      return day + "/" + month + "/" + year;
+  }
+}
 
 module.exports.getJobById = async (req, res, next) => {
   try {
@@ -390,8 +404,7 @@ module.exports.UpdateJob = async (req, res, next) => {
         summaryList: jobSummaryList
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
-      const subject = "Job Update - " + existJob?.jobName + " " + new Date(existJob?.createdAt).toISOString();
-      console.log(emailData);
+      const subject = "Job Update - " + existJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
@@ -417,18 +430,15 @@ module.exports.updateJobStatus = async (req, res, next) => {
       await existJob.updateOne({ jobStatus: req.body.jobStatus });
       const toEmail = existJob?.talent?.email;
       const emailData = {
-        jobTitle: existJob?.jobName,
-        startDate: existJob?.startDate,
-        endDate: existJob?.endDate,
-        jobDesc: "Update Job Status"
-      }
+        job: existJob,
+      };
 
       switch (req.body.jobStatus) {
         case 5: // Approved
           await sendEmail({
             filename: 'ApprovedJob.ejs',
             data: emailData,
-            subject: "Approved",
+            subject: "Approved - " + existJob?.jobName + " " + convertDateFormat(newJob?.createdAt),
             toEmail: toEmail,
           });
           break;
