@@ -333,7 +333,8 @@
                             <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="conceptDate" class="date-label">Concept Due Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= convertDateFormat(summaryList[i]?.conceptDueDate) %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i]?.conceptDueDate).getDate() + '/' + (new Date(summaryList[i]?.conceptDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.conceptDueDate).getFullYear() %>"
                                         class="date-input" name="conceptDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
