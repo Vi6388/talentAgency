@@ -10,7 +10,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { store } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
-import { convertDueDate, dueDateFormat } from "../../utils/utils";
+import { dueDateFormat } from "../../utils/utils";
 
 const JobEventForm = () => {
   const { id } = useParams();
@@ -113,7 +113,7 @@ const JobEventForm = () => {
       let list = eventList;
       const data = {
         ...eventForm,
-        eventDate: convertDueDate(eventForm.eventDate),
+        eventDate: eventForm.eventDate,
         eventStartTime: eventForm.eventStartTime,
         eventEndTime: eventForm.eventEndTime,
         type: "event"

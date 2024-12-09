@@ -9,7 +9,7 @@ import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB
 import { JobApi } from "../../apis/job";
 import { toast, ToastContainer } from "react-toastify";
 import { store } from "../../redux/store";
-import { convertDueDate, dueDateFormat } from "../../utils/utils";
+import { dueDateFormat } from "../../utils/utils";
 
 const JobSocialForm = () => {
   const { id } = useParams();
@@ -81,9 +81,9 @@ const JobSocialForm = () => {
       let list = socialList;
       const data = {
         ...socialForm,
-        conceptDueDate: convertDueDate(socialForm.conceptDueDate),
-        contentDueDate: convertDueDate(socialForm.contentDueDate),
-        liveDate: convertDueDate(socialForm.liveDate),
+        conceptDueDate: socialForm.conceptDueDate,
+        contentDueDate: socialForm.contentDueDate,
+        liveDate: socialForm.liveDate,
         type: "social"
       }
       list.push(data);
