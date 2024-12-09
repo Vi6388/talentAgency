@@ -301,212 +301,180 @@
 
         <div class="content-box">
             <div class="w-full my-5 d-flex">
-                <input type="text" class="title-input mb-10" value="{JOB NAME}" readonly />
+                <input type="text" class="title-input mb-10" value="<%= job?.jobName %>" readonly />
             </div>
 
-            <div class="event-item">
-                <div class="w-full my-5 d-flex">
-                    <div class="title-input event-title">
-                        <span class="event-title-prefix">SOCIAL - </span>
-                        <span class="event-title-name">{DELIVERABLE NAME}</span>
-                    </div>
-                </div>
-
-                <div style="display: flex;">
-                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                        <label for="conceptDate" class="date-label">Concept Due Date</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="08/12/2024" class="date-input" name="conceptDate" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/calendar_month.svg" height="25" width="22" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                        <label for="contentDate" class="date-label">Content Due Date</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="09/12/2024" class="date-input" name="contentDate" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/calendar_month.svg" height="25" width="22" />
-                            </svg>
+            <% for(var i=0; i < summaryList.length; i++) { %>
+                <div class="event-item">
+                    <div class="w-full my-5 d-flex">
+                        <div class="title-input event-title">
+                            <span class="event-title-prefix">
+                                <%if (summaryList[i]?.type==="social" ) { %>SOCIAL - <% } %>
+                                        <%if (summaryList[i]?.type==="event" ) { %>EVENT - <% } %>
+                            </span>
+                            <span class="event-title-name">
+                                <%= summaryList[i]?.jobTitle %>
+                            </span>
                         </div>
                     </div>
 
-                    <div class="w-full" style="text-align: center;">
-                        <label for="liveDate" class="date-label">Live Date</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="09/12/2024" class="date-input" name="liveDate" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/calendar_month.svg" height="25" width="22" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="date-label">Brief - Client brief in job folder in link bein link below</div>
-
-                <div class="my-5 d-flex">
-                    <div class="detail-box">
-                        <div class="detail-text">
-                            <div>
-                                Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet liae num ipsam quas
-                                et
-                                aut
-                                post, non ped molupta tquaspe riaepudae corporehende vella sincitatius et officiti
-                                invello
-                                rempere providit eumquosanim simpore planiat ibuscius sitatio nsequos conectios eatur
-                                arcietur,
-                                cor aut
-                                eum derum fugit quae lam aliquam quia doluptatur, consequi conectatur aut re commod ma
-                                aut
-                                aut
-                                assit
-                                et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a quiat im volores maios
+                    <% if(summaryList[i]?.type==="social" ) { %>
+                        <div style="display: flex;">
+                            <div class="w-full" style="padding-right: 10px; text-align: center;">
+                                <label for="conceptDate" class="date-label">Concept Due Date</label>
+                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                    <input type="text" readonly value="<%= summaryList[i]?.conceptDueDate %>"
+                                        class="date-input" name="conceptDate" />
+                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                        class="absolute calendar-icon">
+                                        <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="w-full" style="padding-right: 10px; text-align: center;">
+                                <label for="contentDate" class="date-label">Content Due Date</label>
+                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                    <input type="text" readonly value="<%= summaryList[i]?.contentDueDate %>"
+                                        class="date-input" name="contentDate" />
+                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                        class="absolute calendar-icon">
+                                        <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
-                            <div>
-                                sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem earum et repro te ex
-                                exere
-                                nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta temquis et quos volorio
-                                maione
-                                reptate ssimaion et occulparchil mi, ut volla nos inumquo ditatiundis inistio consent
-                                liquamus
-                                nistrum
-                                quaspe volo to maximet ut aut anda quam ut esse mo conesenihil exceate rest asint,
-                                omnihicia
+                            <div class="w-full" style="text-align: center;">
+                                <label for="liveDate" class="date-label">Live Date</label>
+                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                    <input type="text" readonly value="<%= summaryList[i]?.liveDate %>"
+                                        class="date-input" name="liveDate" />
+                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                        class="absolute calendar-icon">
+                                        <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <% } %>
 
-                <div class="w-full add-calendar-box">
-                    <button class="add-calendar-button">
-                        <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
-                            <image href="./assets/add-calendar_month.svg" height="25" width="22" />
-                        </svg>
-                        Add to Calendar
-                    </button>
-                </div>
-            </div>
+                            <% if(summaryList[i]?.type==="event" ) { %>
+                                <div style="display: flex;">
+                                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                                        <label for="eventDate" class="date-label">Event Date</label>
+                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                            <input type="text" readonly value="<%= summaryList[i]?.eventDate %>"
+                                                class="date-input" name="eventDate" />
+                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                                class="absolute calendar-icon">
+                                                <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                                        <label for="eventStartTime" class="date-label">Event Start Time</label>
+                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                            <input type="text" readonly value="<%= summaryList[i]?.eventStartTime %>"
+                                                class="date-input" name="eventStartTime" />
+                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                                class="absolute calendar-icon">
+                                                <image href="./assets/schedule.svg" height="25" width="22" />
+                                            </svg>
+                                        </div>
+                                    </div>
 
-            <div class="event-item">
-                <div class="w-full my-5 d-flex">
-                    <div class="title-input event-title">
-                        <span class="event-title-prefix">EVENT - </span>
-                        <span class="event-title-name">{DELIVERABLE NAME}</span>
-                    </div>
-                </div>
+                                    <div class="w-full" style="text-align: center;">
+                                        <label for="eventEndTime" class="date-label">Event End Time</label>
+                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                            <input type="text" readonly value="<%= summaryList[i]?.eventEndTime %>"
+                                                class="date-input" name="eventEndTime" />
+                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                                class="absolute calendar-icon">
+                                                <image href="./assets/schedule.svg" height="25" width="22" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
 
-                <div style="display: flex;">
-                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                        <label for="eventDate" class="date-label">Event Date</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="08/12/2024" class="date-input" name="eventDate" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/calendar_month.svg" height="25" width="22" />
-                            </svg>
+                                    <div class="date-label">Brief - Client brief in job folder in link bein link below
+                                    </div>
+
+                                    <div class="my-5 d-flex">
+                                        <div class="detail-box">
+                                            <div class="detail-text">
+                                                <div>
+                                                    Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet
+                                                    liae num ipsam
+                                                    quas
+                                                    et
+                                                    aut
+                                                    post, non ped molupta tquaspe riaepudae corporehende vella
+                                                    sincitatius et officiti
+                                                    invello
+                                                    rempere providit eumquosanim simpore planiat ibuscius sitatio
+                                                    nsequos conectios
+                                                    eatur
+                                                    arcietur,
+                                                    cor aut
+                                                    eum derum fugit quae lam aliquam quia doluptatur, consequi
+                                                    conectatur aut re commod
+                                                    ma
+                                                    aut
+                                                    aut
+                                                    assit
+                                                    et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a
+                                                    quiat im volores
+                                                    maios
+                                                </div>
+
+                                                <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
+                                                <div>
+                                                    sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem
+                                                    earum et repro te
+                                                    ex
+                                                    exere
+                                                    nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta
+                                                    temquis et quos
+                                                    volorio
+                                                    maione
+                                                    reptate ssimaion et occulparchil mi, ut volla nos inumquo
+                                                    ditatiundis inistio
+                                                    consent
+                                                    liquamus
+                                                    nistrum
+                                                    quaspe volo to maximet ut aut anda quam ut esse mo conesenihil
+                                                    exceate rest asint,
+                                                    omnihicia
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full add-calendar-box">
+                                        <button class="add-calendar-button">
+                                            <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
+                                                style="margin-right: 10px;">
+                                                <image href="./assets/add-calendar_month.svg" height="25" width="22" />
+                                            </svg>
+                                            Add to Calendar
+                                        </button>
+                                    </div>
+                </div>
+                <% } %>
+
+                <div class="mt-20">
+                    <div class="tip-text bottom-tip">
+                        <div>If you have any questions please contact your manager</div>
+                        <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
+                            <%= job?.talent?.manager %>
                         </div>
+                        <div>on <%= job?.talent?.phoneNumber %> or <%= job?.talent?.email %></div>
                     </div>
-                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                        <label for="eventStartTime" class="date-label">Event Start Time</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="09/12/2024" class="date-input" name="eventStartTime" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/schedule.svg" height="25" width="22" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="w-full" style="text-align: center;">
-                        <label for="eventEndTime" class="date-label">Event End Time</label>
-                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                            <input type="text" readonly value="09/12/2024" class="date-input" name="eventEndTime" />
-                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                class="absolute calendar-icon">
-                                <image href="./assets/schedule.svg" height="25" width="22" />
-                            </svg>
-                        </div>
+                    <div class="w-full text-center">
+                        <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
+                            style="height: 25px;" />
                     </div>
                 </div>
-
-                <div class="date-label">Brief - Client brief in job folder in link bein link below</div>
-
-                <div class="my-5 d-flex">
-                    <div class="detail-box">
-                        <div class="detail-text">
-                            <div>
-                                Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet liae num ipsam quas
-                                et
-                                aut
-                                post, non ped molupta tquaspe riaepudae corporehende vella sincitatius et officiti
-                                invello
-                                rempere providit eumquosanim simpore planiat ibuscius sitatio nsequos conectios eatur
-                                arcietur,
-                                cor aut
-                                eum derum fugit quae lam aliquam quia doluptatur, consequi conectatur aut re commod ma
-                                aut
-                                aut
-                                assit
-                                et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a quiat im volores maios
-                            </div>
-
-                            <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
-                            <div>
-                                sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem earum et repro te ex
-                                exere
-                                nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta temquis et quos volorio
-                                maione
-                                reptate ssimaion et occulparchil mi, ut volla nos inumquo ditatiundis inistio consent
-                                liquamus
-                                nistrum
-                                quaspe volo to maximet ut aut anda quam ut esse mo conesenihil exceate rest asint,
-                                omnihicia
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full add-calendar-box">
-                    <button class="add-calendar-button">
-                        <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
-                            <image href="./assets/add-calendar_month.svg" height="25" width="22" />
-                        </svg>
-                        Add to Calendar
-                    </button>
-                </div>
-            </div>
-
-            <div class="d-flex justify-center items-center">
-                <span class="tip-text">
-                    A copy of the brief, contract and any supporting files are in the job folder in your share drive.
-                    <br />
-                    You can access the job folder in your share drive in the link below
-                </span>
-            </div>
-
-            <div class="w-full text-center job-folder-box">
-                <a class="job-folder-button" target="_blank"
-                    href="https://console.cloud.google.com/storage/browser/atarimaeagency;tab=objects?forceOnBucketsSortingFiltering=true&project=verdant-oven-438907-b1&prefix=&forceOnObjectsSortingFiltering=false">Job
-                    Folder</a>
-            </div>
-
-            <div class="mt-20">
-                <div class="tip-text bottom-tip">
-                    <div>If you have any questions please contact your manager</div>
-                    <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">{manager name}</div>
-                    <div>on {Mananger Phone} or {Manager Email}</div>
-                </div>
-                <div class="w-full text-center">
-                    <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
-                        style="height: 25px;" />
-                </div>
-            </div>
         </div>
     </div>
 </body>

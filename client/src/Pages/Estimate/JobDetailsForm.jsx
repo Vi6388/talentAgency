@@ -32,6 +32,7 @@ const EstimateJobDetailsForm = () => {
     jobName: "",
     talentName: "",
     talentEmail: "",
+    talentPhoneNumber: "",
     manager: "",
     startDate: "",
     endDate: "",
@@ -107,6 +108,7 @@ const EstimateJobDetailsForm = () => {
       jobName: data?.details?.jobName || (data?.details?.jobName || ""),
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
+      talentPhoneNumber: data?.details?.talent?.phoneNumber || (data?.details?.talentPhoneNumber || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
       startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : ""),
       endDate: id ? data?.details?.endDate : (data?.details?.endDate ? dueDateFormat(convertDueDate(data?.details?.endDate)) : ""),
@@ -141,11 +143,7 @@ const EstimateJobDetailsForm = () => {
       ...jobDetailsForm,
       talentName: item.firstname + " " + item.surname,
       talentEmail: item.email,
-      talent: {
-        ...jobDetailsForm?.talent,
-        talentName: item.firstname + " " + item.surname,
-        email: item.email,
-      }
+      talentPhoneNumber: item.phoneNumber,
     });
     setTalentSearchList(talentList);
     setShowTalentList(false);

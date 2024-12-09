@@ -135,6 +135,7 @@ const JobDetailsForm = () => {
       jobName: data?.details?.jobName || (data?.details?.jobName || ""),
       talentName: data?.details?.talent?.talentName || (data?.details?.talentName || ""),
       talentEmail: data?.details?.talent?.email || (data?.details?.talentEmail || ""),
+      talentPhoneNumber: data?.details?.talent?.phoneNumber || (data?.details?.talentPhoneNumber || ""),
       manager: data?.details?.talent?.manager || (data?.details?.manager || ""),
       labelColor: data?.details?.labelColor || (data?.details?.labelColor || ""),
       startDate: id ? data?.details?.startDate : (data?.details?.startDate ? dueDateFormat(convertDueDate(data?.details?.startDate)) : ""),
@@ -194,7 +195,8 @@ const JobDetailsForm = () => {
     const data = {
       ...jobDetailsForm,
       talentName: item.firstname + " " + item.surname,
-      talentEmail: item.email
+      talentEmail: item.email,
+      talentPhoneNumber: item.phoneNumber
     }
     setJobDetailsForm(data);
     setTalentSearchList(talentList);

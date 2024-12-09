@@ -3,10 +3,12 @@
 <head>
     <title>.atarimae // Workflow</title>
     <style type="text/css">
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+
         body {
             background-color: #b99e8b;
             margin: 0;
-            font-family: "Gotham-Book", Arial, Helvetica, sans-serif;
+            font-family: "Gotham-Book", arial, Helvetica, sans-serif;
         }
 
         .main {
@@ -27,7 +29,7 @@
             font-size: 40px;
             font-weight: 600;
             color: #5b493b;
-            font-family: "Gotham-Bold", Arial, Helvetica, sans-serif;
+            font-family: "Gotham-Bold", arial, Helvetica, sans-serif;
             text-transform: uppercase;
         }
 
@@ -64,6 +66,10 @@
             margin-bottom: 20px;
         }
 
+        .mb-10 {
+            margin-bottom: 40px;
+        }
+
         .date-box {
             display: flex;
             justify-content: space-between;
@@ -80,15 +86,15 @@
 
         .detail-text {
             color: #242c32;
-            font-family: "Gotham-Book", Arial, Helvetica, sans-serif;
-            font-size: 16px;
-            letter-spacing: 0.05em;
+            font-family: "Gotham-Book", arial, Helvetica, sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.8px;
             line-height: 1.25rem;
         }
 
         .detail-note-text {
             color: #d9d8d9;
-            font-family: "Gotham-Medium", Arial, Helvetica, sans-serif;
+            font-family: "Gotham-Medium", arial, Helvetica, sans-serif;
             font-size: 16px;
             letter-spacing: 0.05em;
             line-height: 1.25rem;
@@ -99,11 +105,16 @@
 
         .tip-text {
             color: #5b493b;
-            font-family: "Gotham-Bold", Arial, Helvetica, sans-serif;
-            font-size: 16px;
-            line-height: 2rem;
+            font-family: "Gotham-Bold", arial, Helvetica, sans-serif;
+            font-size: 1.25rem;
+            line-height: 1.25;
+            font-weight: 700;
             text-align: center;
             margin: 1.5rem auto;
+        }
+
+        .bottom-tip {
+            color: #242c32 !important;
         }
 
         .justify-center {
@@ -117,13 +128,28 @@
         .job-folder-button {
             background-color: #b99e8b;
             color: white;
-            font-size: 16px;
-            padding: 14px 45px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 12px 45px;
             border: none;
             border-radius: 16px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-decoration: none;
-            font-family: 'Gotham-Book', Arial, Helvetica, sans-serif;
+            font-family: 'Gotham-Book', arial, Helvetica, sans-serif;
+        }
+
+        .add-calendar-button {
+            color: white;
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 13px 45px;
+            border: none;
+            border-radius: 16px;
+            letter-spacing: 1px;
+            font-family: 'Gotham-Book', arial, Helvetica, sans-serif;
+            background-color: #242c32;
         }
 
         .updated-text {
@@ -145,13 +171,13 @@
         .form-item label {
             color: #5b493b;
             font-size: 16px;
-            font-family: "Gotham-Bold", Arial, Helvetica, sans-serif;
+            font-family: "Gotham-Bold", arial, Helvetica, sans-serif;
         }
 
         .form-item span {
             color: #000;
             font-size: 16px;
-            font-family: "Gotham-Book", serif;
+            font-family: "Gotham-Bold", arial, Helvetica, sans-serif;
         }
 
         .mt-20 {
@@ -175,6 +201,19 @@
             top: 11px;
         }
 
+        .add-calendar-icon {
+            left: 10px;
+            top: 11px;
+        }
+
+        .add-calendar-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+
         .text-center {
             text-align: center;
         }
@@ -185,7 +224,7 @@
             color: #242c32;
             height: 100%;
             border-style: none;
-            padding: 2rem 1.8rem 0.8rem 2rem;
+            padding: 2rem 1.8rem;
             background-color: white;
         }
 
@@ -197,12 +236,45 @@
             letter-spacing: 0.05em;
             font-size: 1.25rem;
             line-height: 1.25rem;
+            font-weight: 700;
             text-align: center;
             border-style: none;
             border: 1px solid #fff;
             padding: 0.5rem 0.75rem;
-            font-family: 'Gotham-Bold', Arial, Helvetica, sans-serif;
+            font-family: 'Gotham-Bold', arial, Helvetica, sans-serif;
             outline: none;
+        }
+
+        .event-title {
+            background: #9b8579;
+            display: flex;
+            justify-content: center;
+        }
+
+        .event-title-prefix,
+        .event-title-name {
+            height: 1.8rem;
+            letter-spacing: 0.05em;
+            font-size: 1.25rem;
+            line-height: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .event-title-prefix {
+            color: #232c31;
+        }
+
+        .event-title-name {
+            color: white;
+            margin-left: 8px;
+        }
+
+        .date-label {
+            color: #9b8579;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 20px;
         }
 
         .date-input {
@@ -211,13 +283,14 @@
             color: #242c32;
             height: 1.8rem;
             letter-spacing: 0.05em;
-            font-size: 0.875rem;
+            font-size: 1rem;
             line-height: 1.25rem;
+            font-weight: 600;
             text-align: center;
             border-style: none;
             border: 1px solid #fff;
             padding: 0.5rem 0.75rem;
-            font-family: 'Gotham-Bold', Arial, Helvetica, sans-serif;
+            font-family: 'Gotham-Bold', arial, Helvetica, sans-serif;
             outline: none;
         }
     </style>
@@ -232,39 +305,190 @@
 
         <div class="w-full text-center">
             <div class="main-title">
-                New Job
+                You have a new job
             </div>
         </div>
 
         <div class="content-box">
             <div class="w-full my-5 d-flex">
-                <input type="text" class="title-input" value="<%=result.jobTitle %>" readonly />
+                <input type="text" class="title-input mb-10" value="{JOB NAME}" readonly />
             </div>
-            <div style="display: flex;">
-                <div class="d-flex w-full" style="position: relative; margin-right: 10px;">
-                    <input type="text" readonly value="<%=result.startDate %>" class="date-input" />
-                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
-                        <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
-                            height="25" width="22" />
-                    </svg>
+
+            <div class="event-item">
+                <div class="w-full my-5 d-flex">
+                    <div class="title-input event-title">
+                        <span class="event-title-prefix">SOCIAL - </span>
+                        <span class="event-title-name">{DELIVERABLE NAME}</span>
+                    </div>
                 </div>
-                <div class="d-flex w-full" style="position: relative; margin-left: 10px;">
-                    <input type="text" readonly value="<%=result.endDate %>" class="date-input" />
-                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg" class="absolute calendar-icon">
-                        <image href="https://storage.googleapis.com/atarimaeagency/assets/calendar_month.svg"
-                            height="25" width="22" />
-                    </svg>
-                </div>
-            </div>
-            <div class="my-5 d-flex">
-                <div class="detail-box">
-                    <div class="detail-text updated-text">
-                        <%= result.jobDesc %>
+
+                <div style="display: flex;">
+                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                        <label for="conceptDate" class="date-label">Concept Due Date</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="08/12/2024" class="date-input" name="conceptDate" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/calendar_month.svg" height="25" width="22" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                        <label for="contentDate" class="date-label">Content Due Date</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="09/12/2024" class="date-input" name="contentDate" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/calendar_month.svg" height="25" width="22" />
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="detail-note-text">
-                        Full brief in the job folder..
+                    <div class="w-full" style="text-align: center;">
+                        <label for="liveDate" class="date-label">Live Date</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="09/12/2024" class="date-input" name="liveDate" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/calendar_month.svg" height="25" width="22" />
+                            </svg>
+                        </div>
                     </div>
+                </div>
+
+                <div class="date-label">Brief - Client brief in job folder in link bein link below</div>
+
+                <div class="my-5 d-flex">
+                    <div class="detail-box">
+                        <div class="detail-text">
+                            <div>
+                                Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet liae num ipsam quas
+                                et
+                                aut
+                                post, non ped molupta tquaspe riaepudae corporehende vella sincitatius et officiti
+                                invello
+                                rempere providit eumquosanim simpore planiat ibuscius sitatio nsequos conectios eatur
+                                arcietur,
+                                cor aut
+                                eum derum fugit quae lam aliquam quia doluptatur, consequi conectatur aut re commod ma
+                                aut
+                                aut
+                                assit
+                                et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a quiat im volores maios
+                            </div>
+
+                            <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
+                            <div>
+                                sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem earum et repro te ex
+                                exere
+                                nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta temquis et quos volorio
+                                maione
+                                reptate ssimaion et occulparchil mi, ut volla nos inumquo ditatiundis inistio consent
+                                liquamus
+                                nistrum
+                                quaspe volo to maximet ut aut anda quam ut esse mo conesenihil exceate rest asint,
+                                omnihicia
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full add-calendar-box">
+                    <button class="add-calendar-button">
+                        <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
+                            <image href="./assets/add-calendar_month.svg" height="25" width="22" />
+                        </svg>
+                        Add to Calendar
+                    </button>
+                </div>
+            </div>
+
+            <div class="event-item">
+                <div class="w-full my-5 d-flex">
+                    <div class="title-input event-title">
+                        <span class="event-title-prefix">EVENT - </span>
+                        <span class="event-title-name">{DELIVERABLE NAME}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex;">
+                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                        <label for="eventDate" class="date-label">Event Date</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="08/12/2024" class="date-input" name="eventDate" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/calendar_month.svg" height="25" width="22" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-full" style="padding-right: 10px; text-align: center;">
+                        <label for="eventStartTime" class="date-label">Event Start Time</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="09/12/2024" class="date-input" name="eventStartTime" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/schedule.svg" height="25" width="22" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="w-full" style="text-align: center;">
+                        <label for="eventEndTime" class="date-label">Event End Time</label>
+                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                            <input type="text" readonly value="09/12/2024" class="date-input" name="eventEndTime" />
+                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                class="absolute calendar-icon">
+                                <image href="./assets/schedule.svg" height="25" width="22" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="date-label">Brief - Client brief in job folder in link bein link below</div>
+
+                <div class="my-5 d-flex">
+                    <div class="detail-box">
+                        <div class="detail-text">
+                            <div>
+                                Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet liae num ipsam quas
+                                et
+                                aut
+                                post, non ped molupta tquaspe riaepudae corporehende vella sincitatius et officiti
+                                invello
+                                rempere providit eumquosanim simpore planiat ibuscius sitatio nsequos conectios eatur
+                                arcietur,
+                                cor aut
+                                eum derum fugit quae lam aliquam quia doluptatur, consequi conectatur aut re commod ma
+                                aut
+                                aut
+                                assit
+                                et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a quiat im volores maios
+                            </div>
+
+                            <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
+                            <div>
+                                sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem earum et repro te ex
+                                exere
+                                nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta temquis et quos volorio
+                                maione
+                                reptate ssimaion et occulparchil mi, ut volla nos inumquo ditatiundis inistio consent
+                                liquamus
+                                nistrum
+                                quaspe volo to maximet ut aut anda quam ut esse mo conesenihil exceate rest asint,
+                                omnihicia
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full add-calendar-box">
+                    <button class="add-calendar-button">
+                        <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
+                            <image href="./assets/add-calendar_month.svg" height="25" width="22" />
+                        </svg>
+                        Add to Calendar
+                    </button>
                 </div>
             </div>
 
@@ -280,6 +504,18 @@
                 <a class="job-folder-button" target="_blank"
                     href="https://console.cloud.google.com/storage/browser/atarimaeagency;tab=objects?forceOnBucketsSortingFiltering=true&project=verdant-oven-438907-b1&prefix=&forceOnObjectsSortingFiltering=false">Job
                     Folder</a>
+            </div>
+
+            <div class="mt-20">
+                <div class="tip-text bottom-tip">
+                    <div>If you have any questions please contact your manager</div>
+                    <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">{manager name}</div>
+                    <div>on {Mananger Phone} or {Manager Email}</div>
+                </div>
+                <div class="w-full text-center">
+                    <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
+                        style="height: 25px;" />
+                </div>
             </div>
         </div>
     </div>

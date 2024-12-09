@@ -205,9 +205,9 @@ const JobSocialForm = () => {
     if (item?.type === "social") {
       setSocialForm({
         ...item,
-        conceptDueDate: dueDateFormat(item.conceptDueDate) || "",
-        contentDueDate: dueDateFormat(item.contentDueDate) || "",
-        liveDate: dueDateFormat(item.liveDate) || "",
+        conceptDueDate: dueDateFormat(item.conceptDueDate),
+        contentDueDate: dueDateFormat(item.contentDueDate),
+        liveDate: dueDateFormat(item.liveDate),
       });
       const list = socialList?.filter((item, i) => i !== index);
       setSocialList(list);

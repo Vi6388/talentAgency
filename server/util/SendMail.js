@@ -15,7 +15,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         const inlinedHtml = juice(htmlWithStyles);
 
         // Render HTML string
-        const html = ejs.render(inlinedHtml, { result: data });
+        const html = ejs.render(inlinedHtml, { summaryList: data?.summaryList, job: data?.job });
 
         // Create a Nodemailer transporter
         const transporter = nodemailer.createTransport({

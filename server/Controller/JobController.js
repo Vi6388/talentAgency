@@ -174,6 +174,7 @@ module.exports.AddJob = async (req, res, next) => {
       talent: {
         talentName: detailData?.talentName || "",
         email: detailData?.talentEmail || "",
+        phoneNumber: detailData?.talentPhoneNumber || "",
         manager: detailData?.manager || "",
       },
       supplierRequired: detailData?.supplierRequired || false,
@@ -225,16 +226,10 @@ module.exports.AddJob = async (req, res, next) => {
       }));
     }
 
-    const emailData = {
-      jobTitle: newJob?.jobName,
-      startDate: newJob?.startDate,
-      endDate: newJob?.endDate,
-      jobDesc: "New Job"
-    };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
     await sendEmail({
       filename: 'NewJob.ejs',
-      data: emailData,
+      data: jobSummaryList,
       subject: "New Job",
       toEmail: toEmail,
     });
@@ -315,6 +310,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           talentName: detailData?.talentName || existJob?.talent?.talentName,
           email: detailData?.talentEmail || existJob?.talent?.email,
           manager: detailData?.manager || existJob?.talent?.manager,
+          phonenumber: detailData?.talentPhoneNumber || existJob?.talent?.phoneNumber,
         },
         supplierRequired: detailData?.supplierRequired || existJob?.supplierRequired || false,
         labelColor: detailData?.labelColor || existJob?.labelColor || "",
@@ -390,16 +386,15 @@ module.exports.UpdateJob = async (req, res, next) => {
       }
 
       const emailData = {
-        jobTitle: existJob?.jobName,
-        startDate: existJob?.startDate,
-        endDate: existJob?.endDate,
-        jobDesc: "Update Job"
+        job: existJob,
+        summaryList: jobSummaryList
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
+      const subject = "Job Update - " + existJob?.jobName + " " + new Date(existJob?.createdAt).toISOString();
       await sendEmail({
         filename: 'UpdateJob.ejs', // Ensure the correct file extension
         data: emailData,
-        subject: "Update To Brief",
+        subject: subject,
         toEmail: toEmail,
       });
 

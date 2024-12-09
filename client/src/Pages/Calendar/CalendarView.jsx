@@ -94,6 +94,10 @@ const CalendarView = () => {
     };
   }
 
+  const selectEvent = (event) => {
+    console.log(event);
+  }
+
   const selectedTalent = (item) => {
     setSelectedTalentUser(item);
     const eventByTalent = originalEventList?.filter(original => original?.talent?.email === item.email);
@@ -143,6 +147,7 @@ const CalendarView = () => {
             startAccessor="start"
             endAccessor="end"
             eventPropGetter={eventStyleGetter}
+            onSelectEvent={event => selectEvent(event)}
             style={{ height: 750 }}
           />
         </div>
