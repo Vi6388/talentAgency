@@ -10,10 +10,10 @@ const jobMediaSchema = new mongoose.Schema({
     type: String
   },
   startDate: {
-    type: Date,
+    type: String,
   },
   endDate: {
-    type: Date,
+    type: String,
   },
   type: {
     type: String, // podcast, radio, web series, tv

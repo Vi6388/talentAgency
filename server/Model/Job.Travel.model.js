@@ -10,14 +10,14 @@ const jobTravelSchema = new mongoose.Schema({
     type: String
   },
   departureDate: {
-    type: Date,
+    type: String,
   },
   departureTime: {
     type: String,
     default: "00:00",
   },
   arrivalDate: {
-    type: Date,
+    type: String,
   },
   arrivalTime: {
     type: String,

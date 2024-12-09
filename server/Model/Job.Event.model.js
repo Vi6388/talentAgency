@@ -11,7 +11,7 @@ const jobEventSchema = new mongoose.Schema({
     default: ""
   },
   eventDate: {
-    type: Date,
+    type: String,
   },
   eventStartTime: {
     type: String,
