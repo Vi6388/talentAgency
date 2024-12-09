@@ -323,7 +323,8 @@
                             <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="conceptDate" class="date-label">Concept Due Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= new Date(summaryList[i]?.conceptDueDate)?.toISOString() %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i].conceptDueDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) %>"
                                         class="date-input" name="conceptDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -334,7 +335,8 @@
                             <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="contentDate" class="date-label">Content Due Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= new Date(summaryList[i]?.contentDueDate)?.toISOString() %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i]?.contentDueDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) %>"
                                         class="date-input" name="contentDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -346,7 +348,8 @@
                             <div class="w-full" style="text-align: center;">
                                 <label for="liveDate" class="date-label">Live Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly value="<%= new Date(summaryList[i]?.liveDate)?.toISOString() %>"
+                                    <input type="text" readonly
+                                        value="<%= new Date(summaryList[i]?.liveDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) %>"
                                         class="date-input" name="liveDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -362,7 +365,8 @@
                                     <div class="w-full" style="padding-right: 10px; text-align: center;">
                                         <label for="eventDate" class="date-label">Event Date</label>
                                         <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                            <input type="text" readonly value="<%= new Date(summaryList[i]?.eventDate)?.toISOString() %>"
+                                            <input type="text" readonly
+                                                value="<%= new Date(summaryList[i]?.eventDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) %>"
                                                 class="date-input" name="eventDate" />
                                             <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                                 class="absolute calendar-icon">
@@ -435,7 +439,9 @@
                             <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
                                 <%= job?.talent?.manager %>
                             </div>
-                            <div>on <%= job?.talent?.phoneNumber %> <% if(job?.talent?.phoneNumber !== "") %> or <% } %> <%= job?.talent?.email %>
+                            <div>on <%= job?.talent?.phoneNumber %>
+                                    <% if(job?.talent?.phoneNumber !=="" ) %> or <% } %>
+                                            <%= job?.talent?.email %>
                             </div>
                         </div>
                         <div class="w-full text-center">
