@@ -150,6 +150,7 @@
             letter-spacing: 1px;
             font-family: 'Gotham-Book', arial, Helvetica, sans-serif;
             background-color: #242c32;
+            margin: auto;
         }
 
         .updated-text {
@@ -244,10 +245,9 @@
 
         .event-title-prefix,
         .event-title-name {
-            height: 1.8rem;
             letter-spacing: 0.05em;
             font-size: 1.25rem;
-            line-height: 1.25rem;
+            line-height: 1.8rem;
         }
 
         .event-title-prefix {
@@ -403,49 +403,16 @@
                                         <div class="detail-box">
                                             <div class="detail-text">
                                                 <div>
-                                                    Rest volo omnimusandae ea pediti tem quis arum audam venditi bustet
-                                                    liae num ipsam
-                                                    quas
-                                                    et
-                                                    aut
-                                                    post, non ped molupta tquaspe riaepudae corporehende vella
-                                                    sincitatius et officiti
-                                                    invello
-                                                    rempere providit eumquosanim simpore planiat ibuscius sitatio
-                                                    nsequos conectios
-                                                    eatur
-                                                    arcietur,
-                                                    cor aut
-                                                    eum derum fugit quae lam aliquam quia doluptatur, consequi
-                                                    conectatur aut re commod
-                                                    ma
-                                                    aut
-                                                    aut
-                                                    assit
-                                                    et quaeserum quae dion cusam, quae laut que nat laccatio. Pit a
-                                                    quiat im volores
-                                                    maios
+                                                    <%= summaryList[i]?.keyMessage %>
                                                 </div>
 
-                                                <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:</div>
-                                                <div>
-                                                    sed mi, tem hit, quis aliquae sa porestis nus remolor enisquae nem
-                                                    earum et repro te
-                                                    ex
-                                                    exere
-                                                    nis volorep errovidus aliquiam, ut magnihit et magnatia dolupta
-                                                    temquis et quos
-                                                    volorio
-                                                    maione
-                                                    reptate ssimaion et occulparchil mi, ut volla nos inumquo
-                                                    ditatiundis inistio
-                                                    consent
-                                                    liquamus
-                                                    nistrum
-                                                    quaspe volo to maximet ut aut anda quam ut esse mo conesenihil
-                                                    exceate rest asint,
-                                                    omnihicia
-                                                </div>
+                                                <% if(summaryList[i]?.deleverables !=="" ) { %>
+                                                    <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:
+                                                    </div>
+                                                    <div>
+                                                        <%= summaryList[i]?.deleverables %>
+                                                    </div>
+                                                    <% } %>
                                             </div>
                                         </div>
                                     </div>
@@ -462,19 +429,20 @@
                 </div>
                 <% } %>
 
-                <div class="mt-20">
-                    <div class="tip-text bottom-tip">
-                        <div>If you have any questions please contact your manager</div>
-                        <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
-                            <%= job?.talent?.manager %>
+                    <div class="mt-20">
+                        <div class="tip-text bottom-tip">
+                            <div>If you have any questions please contact your manager</div>
+                            <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
+                                <%= job?.talent?.manager %>
+                            </div>
+                            <div>on <%= job?.talent?.phoneNumber %> <% if(job?.talent?.phoneNumber !== "") %> or <% } %> <%= job?.talent?.email %>
+                            </div>
                         </div>
-                        <div>on <%= job?.talent?.phoneNumber %> or <%= job?.talent?.email %></div>
+                        <div class="w-full text-center">
+                            <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
+                                style="height: 25px;" />
+                        </div>
                     </div>
-                    <div class="w-full text-center">
-                        <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
-                            style="height: 25px;" />
-                    </div>
-                </div>
         </div>
     </div>
 </body>
