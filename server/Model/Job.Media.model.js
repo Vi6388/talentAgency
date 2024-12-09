@@ -22,7 +22,7 @@ const jobMediaSchema = new mongoose.Schema({
     type: String,
     default: "0"
   },
-  keyMessage: {
+  keyMessages: {
     type: String,
     default: ""
   },

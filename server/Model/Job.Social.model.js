@@ -18,7 +18,7 @@ const jobFinanceSchema = new mongoose.Schema({
   liveDate: {
     type: Date,
   },
-  keyMessage: {
+  keyMessages: {
     type: String,
     default: ""
   },

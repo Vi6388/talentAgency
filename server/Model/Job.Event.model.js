@@ -21,7 +21,7 @@ const jobEventSchema = new mongoose.Schema({
     type: String,
     default: "00:00"
   },
-  keyMessage: {
+  keyMessages: {
     type: String,
     default: ""
   },

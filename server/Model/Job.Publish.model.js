@@ -26,7 +26,7 @@ const jobPublishSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  keyMessage: {
+  keyMessages: {
     type: String,
     default: "",
   },
