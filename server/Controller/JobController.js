@@ -228,7 +228,8 @@ module.exports.AddJob = async (req, res, next) => {
 
     const emailData = {
       job: newJob,
-      summaryList: jobSummaryList
+      summaryList: jobSummaryList,
+      type: "job"
     };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
     const subject = "New Job - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
@@ -401,7 +402,8 @@ module.exports.UpdateJob = async (req, res, next) => {
 
       const emailData = {
         job: existJob,
-        summaryList: jobSummaryList
+        summaryList: jobSummaryList,
+        type: "job"
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
       const subject = "Job Update - " + existJob?.jobName + " " + convertDateFormat(existJob?.createdAt);
@@ -431,6 +433,7 @@ module.exports.updateJobStatus = async (req, res, next) => {
       const toEmail = existJob?.talent?.email;
       const emailData = {
         job: existJob,
+        type: "other"
       };
 
       switch (req.body.jobStatus) {

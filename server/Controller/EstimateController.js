@@ -113,7 +113,8 @@ module.exports.AddJobEstimate = async (req, res, next) => {
     const emailData = {
       job: newJob,
       invoiceList: jobInvoiceList,
-      summaryList: jobSummaryList
+      summaryList: jobSummaryList,
+      type: "estimate"
     };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
     const subject = "New Estimate - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
@@ -295,7 +296,8 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
       const emailData = {
         job: updateJob,
         invoiceList: jobInvoiceList,
-        summaryList: jobSummaryList
+        summaryList: jobSummaryList,
+        type: "estimate"
       };
       const toEmail = updateJob?.talent?.email || detailData?.talentEmail;
       const subject = "New Estimate - " + updateJob?.jobName + " " + convertDateFormat(updateJob?.createdAt);
@@ -352,7 +354,8 @@ module.exports.makeJobLive = async (req, res, next) => {
     const emailData = {
       job: job,
       invoiceList: invoice,
-      summaryList: list
+      summaryList: list,
+      type: "estimate"
     };
     const toEmail = job?.email;
     const subject = "New Job - " + job?.jobName + " " + convertDateFormat(job?.createdAt);

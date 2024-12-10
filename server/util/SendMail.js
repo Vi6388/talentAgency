@@ -17,7 +17,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         const summaryList = data?.summaryList;
         const icsFiles = [];
         
-        if (summaryList?.length > 0) {
+        if (summaryList?.length > 0 && data?.type === "job") {
             for (const item of summaryList) {
                 const icsFile = generateICSFile(item, data?.job?.jobName);
                 icsFiles.push({ type: item.type, fileUrl: icsFile });
