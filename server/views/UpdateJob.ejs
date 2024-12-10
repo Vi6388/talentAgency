@@ -203,9 +203,9 @@
         }
 
         .add-calendar-box {
-            margin-top: 30px;
-            margin-bottom: 60px;
+            margin: 30px auto 60px auto;
             text-align: center;
+            width: fit-content;
         }
 
         .text-center {
@@ -570,14 +570,15 @@
                         </div>
                     </div>
 
-                    <div class="w-full add-calendar-box">
-                        <button class="add-calendar-button" onclick="downloadICSFile(<%= summaryList[i] %>)">
+                    <div class="add-calendar-box">
+                        <a class="add-calendar-button" target="_blank"
+                            href="<%= '/download-ics/' + job?.jobName + '/' + summaryList[i]?.jobTitle %>">
                             <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
                                 style="margin-right: 10px;">
                                 <image href="./assets/add-calendar_month.svg" height="25" width="22" />
                             </svg>
                             Add to Calendar
-                        </button>
+                        </a>
                     </div>
                 </div>
             <% } %>
@@ -600,51 +601,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function downloadICSFile(event) {
-        let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
-
-        let start = ""; 
-        let end = "";
-        if(event?.type === "event") {
-            const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
-            start = eventDate + " " + event?.eventStartTime;
-            end = eventDate + " " + event?.eventEndTime;
-        }
-        if(event?.type === "social") {
-
-        }
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
-
-        icsContent += `BEGIN:VEVENT\n`;
-        icsContent += `SUMMARY:${event?.jobTitle}\n`;
-        icsContent += `DTSTART:${startDate}\n`;
-        icsContent += `DTEND:${endDate}\n`;
-        icsContent += `DESCRIPTION:${description}\n`;
-        icsContent += `LOCATION:Online\n`; // Customize location as needed
-        icsContent += `STATUS:CONFIRMED\n`;
-        icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
-        icsContent += `END:VEVENT\n`;
-
-        icsContent += "END:VCALENDAR";
-
-        // Create a Blob for the ICS content
-        const blob = new Blob([icsContent], { type: 'text/calendar' });
-        
-        // Create an anchor element to trigger the download
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${event?.jobTitle}.ics`; // Name of the downloaded file
-        
-        // Trigger the download by simulating a click event
-        link.click();
-        
-        // Clean up the URL object
-        URL.revokeObjectURL(url);
-        }
-      </script>
 </body>

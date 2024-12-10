@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
+const path = require('path');
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -50,6 +51,17 @@ app.use("/api/talent", talentRoute);
 app.use("/api/client", clientRoute);
 app.use("/api/estimate", estimateRoute);
 app.use("/api/job", jobRoute);
+
+app.get('/download-ics/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'generated-events', filename);
+
+  res.download(filePath, filename, (err) => {
+    if (err) {
+      res.status(404).send('File not found');
+    }
+  });
+});
 
 // Start the server
 app.listen(PORT, () => {
