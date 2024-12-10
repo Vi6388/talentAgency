@@ -248,10 +248,12 @@
             letter-spacing: 0.05em;
             font-size: 1.25rem;
             line-height: 1.8rem;
+            text-transform: uppercase;
         }
 
         .event-title-prefix {
             color: #232c31;
+
         }
 
         .event-title-name {
@@ -309,8 +311,7 @@
                     <div class="w-full my-5 d-flex">
                         <div class="title-input event-title">
                             <span class="event-title-prefix">
-                                <%if (summaryList[i]?.type==="social" ) { %>SOCIAL - <% } %>
-                                        <%if (summaryList[i]?.type==="event" ) { %>EVENT - <% } %>
+                                <%= summaryList[i]?.type %>
                             </span>
                             <span class="event-title-name">
                                 <%= summaryList[i]?.jobTitle %>
@@ -400,7 +401,7 @@
                     </div>
                     <% } %>
 
-                    <% if(summaryList[i]?.type === "media") { %>
+                    <% if(summaryList[i]?.type === "podcast" || summaryList[i]?.type === "radio" || summaryList[i]?.type === "webSeries" || summaryList[i]?.type === "tv" || summaryList[i]?.type === "Media") { %>
                     <div style="display: flex;">
                         <div class="w-full" style="padding-right: 10px; text-align: center;">
                             <label for="startDate" class="date-label">Start Date</label>
@@ -443,7 +444,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="w-full" style="text-align: center;">
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
                             <label for="secondDraftDate" class="date-label">2nd Draft Due Date</label>
                             <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
                                 <input type="text" readonly 
@@ -469,7 +470,7 @@
                         </div>
                     </div>
                     <div class="w-full my-5 d-flex">
-                        <input type="text" class="title-input mb-10" value="<%= summaryList[i]?.publisher %>" readonly />
+                        <input type="text" class="title-input" value="<%= summaryList[i]?.publisher %>" readonly />
                     </div>
                     <% } %>
 
@@ -487,11 +488,11 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="w-full" style="text-align: center;">
+                            <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="departureTime" class="date-label">Departure Time</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
                                     <input type="text" readonly 
-                                        value="<%= new Date(summaryList[i]?.departureTime).getDate() + '/' + (new Date(summaryList[i]?.departureTime).getMonth() + 1) + '/' + new Date(summaryList[i]?.departureTime).getFullYear() %>"
+                                        value="<%= summaryList[i]?.departureTime %>"
                                         class="date-input" name="departureTime" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -499,7 +500,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="w-full" style="text-align: center;">
+                            <div class="w-full" style="padding-right: 10px; text-align: center;">
                                 <label for="arrivalDate" class="date-label">Arrival Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
                                     <input type="text" readonly 
@@ -515,7 +516,7 @@
                                 <label for="arrivalTime" class="date-label">Arrival Time</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
                                     <input type="text" readonly 
-                                        value="<%= new Date(summaryList[i]?.arrivalTime).getDate() + '/' + (new Date(summaryList[i]?.arrivalTime).getMonth() + 1) + '/' + new Date(summaryList[i]?.arrivalTime).getFullYear() %>"
+                                        value="<%= summaryList[i]?.arrivalTime %>"
                                         class="date-input" name="arrivalTime" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
@@ -525,20 +526,20 @@
                             </div>
                         </div>
                         <div style="display: flex;" class="my-5">
-                            <div class="w-full" style="padding-right: 10px;">
+                            <div class="w-full" style="padding-right: 10px; display: flex;">
                                 <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.preferredCarrier %>" readonly />
                             </div>
-                            <div class="w-full">
+                            <div class="w-full" style="display: flex;">
                                 <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.frequentFlyerNumber %>" readonly />
                             </div>
                         </div>
                         <div style="display: flex;" class="my-5">
                             <div class="w-full" style="padding-right: 10px;">
-                                <span class="date-label">
+                                <div class="date-label" style="margin-top: 12px !important;">
                                     Is client paying for travel: <% if(summaryList[i]?.clientPaying) { %> Yes <% } else { %> No <% } %>
-                                </span>
+                                </div>
                             </div>
-                            <div class="w-full">
+                            <div class="w-full" style="display: flex;">
                                 <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.carHireRequired %>" readonly />
                             </div>
                         </div>
