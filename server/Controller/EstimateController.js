@@ -5,6 +5,7 @@ const JobFinance = require("../Model/Job.Finance.model");
 const JobPublishModel = require("../Model/Job.Publish.model");
 const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
+const { sendEmail } = require("../util/SendMail");
 
 module.exports.getJobEstimateList = async (req, res, next) => {
   try {
@@ -108,6 +109,20 @@ module.exports.AddJobEstimate = async (req, res, next) => {
         }
       })
     }
+
+    const emailData = {
+      job: newJob,
+      invoiceList: jobInvoiceList,
+      summaryList: jobSummaryList
+    };
+    const toEmail = newJob?.talent?.email || detailData?.talentEmail;
+    const subject = "New Estimate - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
+    await sendEmail({
+      filename: 'NewEstimate.ejs', // Ensure the correct file extension
+      data: emailData,
+      subject: subject,
+      toEmail: toEmail,
+    });
     return res.json({ status: 200, message: "Job added successfully", success: true, data: newJob });
   } catch (error) {
     console.error(error);
@@ -286,6 +301,44 @@ module.exports.makeJobLive = async (req, res, next) => {
       },
       { new: true }
     );
+
+    const invoice = await JobFinance.find({ jobId: req.params.id });
+    const social = await JobSocialModel.find({ jobId: req.params.id });
+    const event = await JobEventModel.find({ jobId: req.params.id });
+    const publishing = await JobPublishModel.find({ jobId: req.params.id });
+    const travel = await JobTravelModel.find({ jobId: req.params.id });
+    const media = await JobMediaModel.find({ jobId: req.params.id });
+
+    let list = [];
+    social.forEach((item) => {
+      list.push({ ...item?._doc, type: "social" });
+    });
+    event.forEach((item) => {
+      list.push({ ...item?._doc, type: "event" });
+    });
+    publishing.forEach((item) => {
+      list.push({ ...item?._doc, type: "publishing" });
+    });
+    travel.forEach((item) => {
+      list.push({ ...item?._doc, type: "travel" });
+    });
+    media.forEach((item) => {
+      list.push(item);
+    });
+
+    const emailData = {
+      job: job,
+      invoiceList: invoice,
+      summaryList: list
+    };
+    const toEmail = job?.talent?.email;
+    const subject = "New Job - " + job?.jobName + " " + convertDateFormat(job?.createdAt);
+    await sendEmail({
+      filename: 'NewJob.ejs', // Ensure the correct file extension
+      data: emailData,
+      subject: subject,
+      toEmail: toEmail,
+    });
 
     if (job) {
       return res.json({ status: 200, success: true, data: job, message: "Job updated successfully." });

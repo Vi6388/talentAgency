@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -7,14 +7,22 @@ import { JobApi } from "../../apis/job";
 import { combineDateAndTime } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
+import { useNavigate } from "react-router-dom";
 
-const localizer = momentLocalizer(moment)
+const localizer = momentLocalizer(moment);
+const messages = {
+  previous: "<",
+  next: ">",
+};
 
 const CalendarView = () => {
+  const [view, setView] = useState("month");
   const [originalEventList, setOriginalEventList] = useState([]);
   const [eventList, setEventList] = useState([]);
   const [talentList, setTalentList] = useState([]);
   const [selectedTaletUser, setSelectedTalentUser] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const navigate = useNavigate();
 
   useEffect(() => {
     getTalentList();
@@ -63,14 +71,45 @@ const CalendarView = () => {
         if (item?.events?.length > 0) {
           const talent = talentList.filter(talent => talent?.email === item.talent?.email)[0];
           item?.events?.forEach((event) => {
+            let start = "";
+            let end = "";
+
+            if (event?.type === "social") {
+              start = combineDateAndTime(new Date(event?.contentDueDate), "09:00");
+              end = combineDateAndTime(new Date(event?.contentDueDate), "17:00");
+            }
+
+            if (event?.type === "event") {
+              start = combineDateAndTime(new Date(event?.eventDate), event?.eventStartTime);
+              end = combineDateAndTime(new Date(event?.eventDate), event?.eventEndTime);
+            }
+
+            if (['podcast', 'tv', 'radio', 'webSeries', 'Media'].includes(event?.type)) {
+              start = new Date(event.startDate);
+              end = new Date(event.endDate);
+            }
+
+            if (event?.type === "publishing") {
+              start = combineDateAndTime(new Date(event?.finalDate), "09:00");
+              end = combineDateAndTime(new Date(event?.finalDate), "17:00");
+            }
+
+            if (event.type === "travel") {
+              start = combineDateAndTime(new Date(event?.departureDate), event?.departureTime);
+              end = combineDateAndTime(new Date(event?.arrivalDate), event?.arrivalTime);
+            }
+
             const data = {
-              title: talent?.firstname + " " + talent?.surname + " - " + event.jobTitle,
-              start: event?.eventDate ? combineDateAndTime(new Date(event?.eventDate), event?.eventStartTime) : new Date(event?.liveDate),
-              end: event?.eventDate ? combineDateAndTime(new Date(event?.eventDate), event?.eventEndTime) : new Date(event?.liveDate),
+              job: event.job,
+              event: event,
+              title: event.jobTitle,
+              start: start,
+              end: end,
+              eventType: event?.type,
               hexColor: talent?.highlightColor || "#ddd",
             };
             list.push(data);
-          })
+          });
         }
       });
     }
@@ -95,8 +134,12 @@ const CalendarView = () => {
   }
 
   const selectEvent = (event) => {
-    console.log(event);
-  }
+    const selectDate = event.start;
+    if (view !== "day") {
+      setSelectedDate(selectDate);
+      setView("day");
+    }
+  };
 
   const selectedTalent = (item) => {
     setSelectedTalentUser(item);
@@ -110,6 +153,33 @@ const CalendarView = () => {
     setEventList(formattedList);
     setSelectedTalentUser(null);
   }
+
+  const goToJob = (event) => {
+    const redirectURL = `../job/edit/${event?.event?.jobId}/${event?.eventType}`;
+    navigate(redirectURL);
+  }
+
+  const onDrillDown = () => {
+    setView("day");
+  }
+
+  const handleNavigate = (newDate) => {
+    setSelectedDate(newDate);
+  };
+
+  const CustomEventComponent = (event) => {
+    return (
+      <div>
+        {view === "day" ?
+          <>
+            <div className="text-white">Title: {event?.event?.job?.jobName}</div>
+            <div className="text-white">Client: {event?.event?.job?.contactDetails?.firstname} {event?.event?.job?.contactDetails?.surname}</div>
+          </> : <></>}
+        <div className="text-white">{view === "day" ? "Deliverables: " : ""}{event?.event?.title}</div>
+      </div>
+    );
+  };
+
 
   return (
     <div>
@@ -142,13 +212,24 @@ const CalendarView = () => {
         </div>
         <div className="md:col-span-7 col-span-1 px-4 mt-8 md:mt-2">
           <Calendar
+            selectable={true}
             localizer={localizer}
             events={eventList}
             startAccessor="start"
             endAccessor="end"
+            date={selectedDate}
+            onNavigate={handleNavigate}
             eventPropGetter={eventStyleGetter}
-            onSelectEvent={event => selectEvent(event)}
+            onSelectEvent={selectEvent}
+            onDoubleClickEvent={(event) => goToJob(event)}
+            onDrillDown={onDrillDown}
+            view={view}
+            onView={setView}
             style={{ height: 750 }}
+            messages={messages}
+            components={{
+              event: CustomEventComponent,
+            }}
           />
         </div>
       </div>

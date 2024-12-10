@@ -162,7 +162,6 @@ const JobTravelForm = () => {
     })
   }
 
-
   const cancelJobTravel = (index) => {
     const travel = travelList[index];
     let list = [];
@@ -192,6 +191,9 @@ const JobTravelForm = () => {
           toast.success(res.data.message, {
             position: "top-left",
           });
+          setTimeout(() => {
+            navigate("/calendar");
+          }, 2000);
         } else {
           toast.error(res.data.message, {
             position: "top-left",
@@ -209,6 +211,9 @@ const JobTravelForm = () => {
           toast.success(res.data.message, {
             position: "top-left",
           });
+          setTimeout(() => {
+            navigate("/calendar");
+          }, 2000);
         } else {
           toast.error(res.data.message, {
             position: "top-left",

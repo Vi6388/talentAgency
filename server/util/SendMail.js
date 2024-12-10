@@ -25,7 +25,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         }
 
         // Render HTML string
-        const html = ejs.render(inlinedHtml, { summaryList: summaryList, job: data?.job, icsFiles: icsFiles });
+        const html = ejs.render(inlinedHtml, { summaryList: summaryList, job: data?.job, invoiceList: data?.invoiceList, icsFiles: icsFiles });
 
         // Create a Nodemailer transporter
         const transporter = nodemailer.createTransport({

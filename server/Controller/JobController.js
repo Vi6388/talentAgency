@@ -557,12 +557,22 @@ module.exports.getCalendarList = async (req, res) => {
       let eventList = [];
 
       const jobEventList = await JobEventModel.find({ jobId: job._id });
-      jobEventList.forEach((item) => eventList.push(item));
+      jobEventList.forEach((item) => eventList.push({ ...item?._doc, type: "event", job: job }));
 
       const jobSocialList = await JobSocialModel.find({ jobId: job._id });
-      jobSocialList.forEach((item) => eventList.push(item));
+      jobSocialList.forEach((item) => eventList.push({ ...item?._doc, type: "social", job: job }));
+
+      const jobMediaList = await JobMediaModel.find({ jobId: job._id });
+      jobMediaList.forEach((item) => eventList.push({ ...item?._doc, job: job }));
+
+      const jobPublishList = await JobPublishModel.find({ jobId: job._id });
+      jobPublishList.forEach((item) => eventList.push({ ...item?._doc, type: "publishing", job: job }));
+
+      const jobTravelList = await JobTravelModel.find({ jobId: job._id });
+      jobTravelList.forEach((item) => eventList.push({ ...item?._doc, type: "travel", job: job }))
 
       const data = {
+        job: job,
         talent: job.talent,
         eventList: eventList
       };
