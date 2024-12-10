@@ -27,7 +27,7 @@ const jobTravelSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  requentFlyerNumber: {
+  frequentFlyerNumber: {
     type: String,
     default: "",
   },

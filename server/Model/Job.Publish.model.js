@@ -9,13 +9,13 @@ const jobPublishSchema = new mongoose.Schema({
   jobTitle: {
     type: String
   },
-  firstDraftDueDate: {
+  firstDraftDate: {
     type: String,
   },
-  secondDraftDueDate: {
+  secondDraftDate: {
     type: String,
   },
-  finalDueDate: {
+  finalDate: {
     type: String,
   },
   publisher: {

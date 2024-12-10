@@ -16,7 +16,7 @@ const jobMediaSchema = new mongoose.Schema({
     type: String,
   },
   type: {
-    type: String, // podcast, radio, web series, tv
+    type: String, // podcast, radio, web series, tv, Media
   },
   numberOfEpisodes: {
     type: String,
