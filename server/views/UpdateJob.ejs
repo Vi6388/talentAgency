@@ -297,7 +297,7 @@
 
         <div class="w-full text-center">
             <div class="main-title">
-                You have a new job
+                There's benn an update
             </div>
         </div>
 
@@ -311,7 +311,7 @@
                     <div class="w-full my-5 d-flex">
                         <div class="title-input event-title">
                             <span class="event-title-prefix">
-                                <%= summaryList[i]?.type %>
+                                <%= summaryList[i]?.type %> -
                             </span>
                             <span class="event-title-name">
                                 <%= summaryList[i]?.jobTitle %>
@@ -536,7 +536,7 @@
                         <div style="display: flex;" class="my-5">
                             <div class="w-full" style="padding-right: 10px;">
                                 <div class="date-label" style="margin-top: 12px !important;">
-                                    Is client paying for travel: <% if(summaryList[i]?.clientPaying) { %> Yes <% } else { %> No <% } %>
+                                    Is client paying for travel: <span style="color: #242c32;"><% if(summaryList[i]?.clientPaying) { %> Yes <% } else { %> No <% } %></span>
                                 </div>
                             </div>
                             <div class="w-full" style="display: flex;">
@@ -571,7 +571,7 @@
                     </div>
 
                     <div class="w-full add-calendar-box">
-                        <button class="add-calendar-button">
+                        <button class="add-calendar-button" onclick="downloadICSFile(<%= summaryList[i] %>)">
                             <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
                                 style="margin-right: 10px;">
                                 <image href="./assets/add-calendar_month.svg" height="25" width="22" />
@@ -580,75 +580,71 @@
                         </button>
                     </div>
                 </div>
-                <% } %>
+            <% } %>
 
-                    <div class="mt-20">
-                        <div class="tip-text bottom-tip">
-                            <div>If you have any questions please contact your manager</div>
-                            <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
-                                <%= job?.talent?.manager %>
-                            </div>
-                            <div>on <%= job?.talent?.phoneNumber %>
-                                    <% if(job?.talent?.phoneNumber !=="" ) { %> or <% } %>
-                                            <%= job?.talent?.email %>
-                            </div>
-                        </div>
-                        <div class="w-full text-center">
-                            <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
-                                style="height: 25px;" />
-                        </div>
+            <div class="mt-20">
+                <div class="tip-text bottom-tip">
+                    <div>If you have any questions please contact your manager</div>
+                    <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
+                        <%= job?.talent?.manager %>
                     </div>
+                    <div>on <%= job?.talent?.phoneNumber %>
+                            <% if(job?.talent?.phoneNumber !=="" ) { %> or <% } %>
+                                    <%= job?.talent?.email %>
+                    </div>
+                </div>
+                <div class="w-full text-center">
+                    <img src="https://storage.googleapis.com/atarimaeagency/assets/workflowLogo.png" alt="logo"
+                        style="height: 25px;" />
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const generateICSFile = (events) => {
-          let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
-    
-          events.forEach((event) => {    
-            // Format the date to iCalendar format (yyyyMMddTHHmmssZ)
-            let start = ""; 
-            let end = "";
-            if(event?.type === "event") {
-                const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
-                start = eventDate + " " + event?.eventStartTime;
-                end = eventDate + " " + event?.eventEndTime;
-            }
-            if(event?.type === "social") {
+        function downloadICSFile(event) {
+        let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
 
-            }
-            const startDate = new Date(start);
-            const endDate = new Date(end);
-            const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
-    
-            icsContent += `BEGIN:VEVENT\n`;
-            icsContent += `SUMMARY:${event?.jobTitle}\n`;
-            icsContent += `DTSTART:${startDate}\n`;
-            icsContent += `DTEND:${endDate}\n`;
-            icsContent += `DESCRIPTION:${description}\n`;
-            icsContent += `LOCATION:Online\n`; // Customize location as needed
-            icsContent += `STATUS:CONFIRMED\n`;
-            icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
-            icsContent += `END:VEVENT\n`;
-          });
-    
-          icsContent += "END:VCALENDAR";
-    
-          const blob = new Blob([icsContent], { type: 'text/calendar' });
-          const url = URL.createObjectURL(blob);
-          return url;
-        };
-    
-        document.querySelectorAll('.add-calendar-button').forEach(button => {
-          button.addEventListener('click', function() {
-            const event = JSON.parse(this.getAttribute('data-event'));
-    
-            const icsFileUrl = generateICSFile([event]);
-            const link = document.createElement('a');
-            link.href = icsFileUrl;
-            link.download = `${event.title}.ics`;
-            link.click();
-          });
-        });
+        let start = ""; 
+        let end = "";
+        if(event?.type === "event") {
+            const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
+            start = eventDate + " " + event?.eventStartTime;
+            end = eventDate + " " + event?.eventEndTime;
+        }
+        if(event?.type === "social") {
+
+        }
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
+
+        icsContent += `BEGIN:VEVENT\n`;
+        icsContent += `SUMMARY:${event?.jobTitle}\n`;
+        icsContent += `DTSTART:${startDate}\n`;
+        icsContent += `DTEND:${endDate}\n`;
+        icsContent += `DESCRIPTION:${description}\n`;
+        icsContent += `LOCATION:Online\n`; // Customize location as needed
+        icsContent += `STATUS:CONFIRMED\n`;
+        icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
+        icsContent += `END:VEVENT\n`;
+
+        icsContent += "END:VCALENDAR";
+
+        // Create a Blob for the ICS content
+        const blob = new Blob([icsContent], { type: 'text/calendar' });
+        
+        // Create an anchor element to trigger the download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${event?.jobTitle}.ics`; // Name of the downloaded file
+        
+        // Trigger the download by simulating a click event
+        link.click();
+        
+        // Clean up the URL object
+        URL.revokeObjectURL(url);
+        }
       </script>
 </body>
