@@ -129,6 +129,15 @@ module.exports.AddJobEstimate = async (req, res, next) => {
   }
 };
 
+const convertDateFormat = (date) => {
+  if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+      const day = new Date(date).getDate();
+      const month = new Date(date).getMonth() + 1;
+      const year = new Date(date).getFullYear();
+      return day + "/" + month + "/" + year;
+  }
+}
+
 module.exports.getJobEstimateById = async (req, res, next) => {
   try {
     if (!req.params.id) {
