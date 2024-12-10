@@ -319,117 +319,265 @@
                     </div>
 
                     <% if(summaryList[i]?.type==="social" ) { %>
+                    <div style="display: flex;">
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="conceptDate" class="date-label">Concept Due Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly
+                                    value="<%= new Date(summaryList[i]?.conceptDueDate).getDate() + '/' + (new Date(summaryList[i]?.conceptDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.conceptDueDate).getFullYear() %>"
+                                    class="date-input" name="conceptDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="contentDate" class="date-label">Content Due Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly
+                                    value="<%= new Date(summaryList[i]?.contentDueDate).getDate() + '/' + (new Date(summaryList[i]?.contentDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.contentDueDate).getFullYear() %>"
+                                    class="date-input" name="contentDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="w-full" style="text-align: center;">
+                            <label for="liveDate" class="date-label">Live Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly
+                                    value="<%= new Date(summaryList[i]?.liveDate).getDate() + '/' + (new Date(summaryList[i]?.liveDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.liveDate).getFullYear() %>"
+                                    class="date-input" name="liveDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(summaryList[i]?.type==="event" ) { %>
+                    <div style="display: flex;">
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="eventDate" class="date-label">Event Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.eventDate).getDate() + '/' + (new Date(summaryList[i]?.eventDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.eventDate).getFullYear() %>"
+                                    class="date-input" name="eventDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="eventStartTime" class="date-label">Event Start Time</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly value="<%= summaryList[i]?.eventStartTime %>"
+                                    class="date-input" name="eventStartTime" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/schedule.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="w-full" style="text-align: center;">
+                            <label for="eventEndTime" class="date-label">Event End Time</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly value="<%= summaryList[i]?.eventEndTime %>"
+                                    class="date-input" name="eventEndTime" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/schedule.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(summaryList[i]?.type === "media") { %>
+                    <div style="display: flex;">
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="startDate" class="date-label">Start Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.startDate).getDate() + '/' + (new Date(summaryList[i]?.startDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.startDate).getFullYear() %>"
+                                    class="date-input" name="startDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full" style="text-align: center;">
+                            <label for="endDate" class="date-label">End Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.endDate).getDate() + '/' + (new Date(summaryList[i]?.endDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.endDate).getFullYear() %>"
+                                    class="date-input" name="endDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(summaryList[i]?.type === "publishing") { %>
+                    <div style="display: flex;">
+                        <div class="w-full" style="padding-right: 10px; text-align: center;">
+                            <label for="firstDraftDate" class="date-label">1st Draft Due Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.firstDraftDate).getDate() + '/' + (new Date(summaryList[i]?.firstDraftDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.firstDraftDate).getFullYear() %>"
+                                    class="date-input" name="firstDraftDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full" style="text-align: center;">
+                            <label for="secondDraftDate" class="date-label">2nd Draft Due Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.secondDraftDate).getDate() + '/' + (new Date(summaryList[i]?.secondDraftDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.secondDraftDate).getFullYear() %>"
+                                    class="date-input" name="secondDraftDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-full" style="text-align: center;">
+                            <label for="finalDate" class="date-label">Final Due Date</label>
+                            <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                <input type="text" readonly 
+                                    value="<%= new Date(summaryList[i]?.finalDate).getDate() + '/' + (new Date(summaryList[i]?.finalDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.finalDate).getFullYear() %>"
+                                    class="date-input" name="finalDate" />
+                                <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                    class="absolute calendar-icon">
+                                    <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full my-5 d-flex">
+                        <input type="text" class="title-input mb-10" value="<%= summaryList[i]?.publisher %>" readonly />
+                    </div>
+                    <% } %>
+
+                    <% if(summaryList[i]?.type === "travel") { %>
                         <div style="display: flex;">
                             <div class="w-full" style="padding-right: 10px; text-align: center;">
-                                <label for="conceptDate" class="date-label">Concept Due Date</label>
+                                <label for="departureDate" class="date-label">Departure Date</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly
-                                        value="<%= new Date(summaryList[i]?.conceptDueDate).getDate() + '/' + (new Date(summaryList[i]?.conceptDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.conceptDueDate).getFullYear() %>"
-                                        class="date-input" name="conceptDate" />
+                                    <input type="text" readonly 
+                                        value="<%= new Date(summaryList[i]?.departureDate).getDate() + '/' + (new Date(summaryList[i]?.departureDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.departureDate).getFullYear() %>"
+                                        class="date-input" name="departureDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
                                         <image href="./assets/calendar_month.svg" height="25" width="22" />
                                     </svg>
                                 </div>
                             </div>
-                            <div class="w-full" style="padding-right: 10px; text-align: center;">
-                                <label for="contentDate" class="date-label">Content Due Date</label>
-                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly
-                                        value="<%= new Date(summaryList[i]?.contentDueDate).getDate() + '/' + (new Date(summaryList[i]?.contentDueDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.contentDueDate).getFullYear() %>"
-                                        class="date-input" name="contentDate" />
-                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                        class="absolute calendar-icon">
-                                        <image href="./assets/calendar_month.svg" height="25" width="22" />
-                                    </svg>
-                                </div>
-                            </div>
-
                             <div class="w-full" style="text-align: center;">
-                                <label for="liveDate" class="date-label">Live Date</label>
+                                <label for="departureTime" class="date-label">Departure Time</label>
                                 <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                    <input type="text" readonly
-                                        value="<%= new Date(summaryList[i]?.liveDate).getDate() + '/' + (new Date(summaryList[i]?.liveDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.liveDate).getFullYear() %>"
-                                        class="date-input" name="liveDate" />
+                                    <input type="text" readonly 
+                                        value="<%= new Date(summaryList[i]?.departureTime).getDate() + '/' + (new Date(summaryList[i]?.departureTime).getMonth() + 1) + '/' + new Date(summaryList[i]?.departureTime).getFullYear() %>"
+                                        class="date-input" name="departureTime" />
+                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                        class="absolute calendar-icon">
+                                        <image href="./assets/schedule.svg" height="25" width="22" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="w-full" style="text-align: center;">
+                                <label for="arrivalDate" class="date-label">Arrival Date</label>
+                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                    <input type="text" readonly 
+                                        value="<%= new Date(summaryList[i]?.arrivalDate).getDate() + '/' + (new Date(summaryList[i]?.arrivalDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.arrivalDate).getFullYear() %>"
+                                        class="date-input" name="arrivalDate" />
                                     <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
                                         class="absolute calendar-icon">
                                         <image href="./assets/calendar_month.svg" height="25" width="22" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="w-full" style="text-align: center;">
+                                <label for="arrivalTime" class="date-label">Arrival Time</label>
+                                <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
+                                    <input type="text" readonly 
+                                        value="<%= new Date(summaryList[i]?.arrivalTime).getDate() + '/' + (new Date(summaryList[i]?.arrivalTime).getMonth() + 1) + '/' + new Date(summaryList[i]?.arrivalTime).getFullYear() %>"
+                                        class="date-input" name="arrivalTime" />
+                                    <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
+                                        class="absolute calendar-icon">
+                                        <image href="./assets/schedule.svg" height="25" width="22" />
                                     </svg>
                                 </div>
                             </div>
                         </div>
-                        <% } %>
+                        <div style="display: flex;" class="my-5">
+                            <div class="w-full" style="padding-right: 10px;">
+                                <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.preferredCarrier %>" readonly />
+                            </div>
+                            <div class="w-full">
+                                <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.frequentFlyerNumber %>" readonly />
+                            </div>
+                        </div>
+                        <div style="display: flex;" class="my-5">
+                            <div class="w-full" style="padding-right: 10px;">
+                                <span class="date-label">
+                                    Is client paying for travel: <% if(summaryList[i]?.clientPaying) { %> Yes <% } else { %> No <% } %>
+                                </span>
+                            </div>
+                            <div class="w-full">
+                                <input type="text" class="title-input" style="text-align: center;" value="<%= summaryList[i]?.carHireRequired %>" readonly />
+                            </div>
+                        </div>
+                    <% } %>
 
-                            <% if(summaryList[i]?.type==="event" ) { %>
-                                <div style="display: flex;">
-                                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                                        <label for="eventDate" class="date-label">Event Date</label>
-                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                            <input type="text" readonly 
-                                                value="<%= new Date(summaryList[i]?.eventDate).getDate() + '/' + (new Date(summaryList[i]?.eventDate).getMonth() + 1) + '/' + new Date(summaryList[i]?.eventDate).getFullYear() %>"
-                                                class="date-input" name="eventDate" />
-                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                                class="absolute calendar-icon">
-                                                <image href="./assets/calendar_month.svg" height="25" width="22" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="w-full" style="padding-right: 10px; text-align: center;">
-                                        <label for="eventStartTime" class="date-label">Event Start Time</label>
-                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                            <input type="text" readonly value="<%= summaryList[i]?.eventStartTime %>"
-                                                class="date-input" name="eventStartTime" />
-                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                                class="absolute calendar-icon">
-                                                <image href="./assets/schedule.svg" height="25" width="22" />
-                                            </svg>
-                                        </div>
+                    <div class="date-label">Brief - Client brief in job folder in link bein link below
+                    </div>
+
+                    <div class="my-5 d-flex">
+                        <div class="detail-box">
+                            <% if(summaryList[i]?.type === "travel") { %>
+                                <div class="detail-text"><%= summaryList[i]?.travelDetails %></div>
+                            <% } else { %>
+                                <div class="detail-text">
+                                    <div>
+                                        <%= summaryList[i]?.keyMessages %>
                                     </div>
 
-                                    <div class="w-full" style="text-align: center;">
-                                        <label for="eventEndTime" class="date-label">Event End Time</label>
-                                        <div class="d-flex w-full" style="position: relative; margin-top: 12px;">
-                                            <input type="text" readonly value="<%= summaryList[i]?.eventEndTime %>"
-                                                class="date-input" name="eventEndTime" />
-                                            <svg width="22" height="25" xmlns="http://www.w3.org/2000/svg"
-                                                class="absolute calendar-icon">
-                                                <image href="./assets/schedule.svg" height="25" width="22" />
-                                            </svg>
+                                    <% if(summaryList[i]?.deleverables !=="" ) { %>
+                                        <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:
                                         </div>
-                                    </div>
+                                        <div>
+                                            <%= summaryList[i]?.deleverables %>
+                                        </div>
+                                    <% } %>
                                 </div>
-                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
 
-                                    <div class="date-label">Brief - Client brief in job folder in link bein link below
-                                    </div>
-
-                                    <div class="my-5 d-flex">
-                                        <div class="detail-box">
-                                            <div class="detail-text">
-                                                <div>
-                                                    <%= summaryList[i]?.keyMessages %>
-                                                </div>
-
-                                                <% if(summaryList[i]?.deleverables !=="" ) { %>
-                                                    <div style="font-weight: 700; padding-top: 20px;">DELIVERABLES:
-                                                    </div>
-                                                    <div>
-                                                        <%= summaryList[i]?.deleverables %>
-                                                    </div>
-                                                    <% } %>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="w-full add-calendar-box">
-                                        <button class="add-calendar-button">
-                                            <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
-                                                style="margin-right: 10px;">
-                                                <image href="./assets/add-calendar_month.svg" height="25" width="22" />
-                                            </svg>
-                                            Add to Calendar
-                                        </button>
-                                    </div>
+                    <div class="w-full add-calendar-box">
+                        <button class="add-calendar-button">
+                            <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
+                                style="margin-right: 10px;">
+                                <image href="./assets/add-calendar_month.svg" height="25" width="22" />
+                            </svg>
+                            Add to Calendar
+                        </button>
+                    </div>
                 </div>
                 <% } %>
 
@@ -451,4 +599,55 @@
                     </div>
         </div>
     </div>
+
+    <script>
+        const generateICSFile = (events) => {
+          let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
+    
+          events.forEach((event) => {    
+            // Format the date to iCalendar format (yyyyMMddTHHmmssZ)
+            let start = ""; 
+            let end = "";
+            if(event?.type === "event") {
+                const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
+                start = eventDate + " " + event?.eventStartTime;
+                end = eventDate + " " + event?.eventEndTime;
+            }
+            if(event?.type === "social") {
+
+            }
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
+    
+            icsContent += `BEGIN:VEVENT\n`;
+            icsContent += `SUMMARY:${event?.jobTitle}\n`;
+            icsContent += `DTSTART:${startDate}\n`;
+            icsContent += `DTEND:${endDate}\n`;
+            icsContent += `DESCRIPTION:${description}\n`;
+            icsContent += `LOCATION:Online\n`; // Customize location as needed
+            icsContent += `STATUS:CONFIRMED\n`;
+            icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
+            icsContent += `END:VEVENT\n`;
+          });
+    
+          icsContent += "END:VCALENDAR";
+    
+          const blob = new Blob([icsContent], { type: 'text/calendar' });
+          const url = URL.createObjectURL(blob);
+          return url;
+        };
+    
+        document.querySelectorAll('.add-calendar-button').forEach(button => {
+          button.addEventListener('click', function() {
+            const event = JSON.parse(this.getAttribute('data-event'));
+    
+            const icsFileUrl = generateICSFile([event]);
+            const link = document.createElement('a');
+            link.href = icsFileUrl;
+            link.download = `${event.title}.ics`;
+            link.click();
+          });
+        });
+      </script>
 </body>
