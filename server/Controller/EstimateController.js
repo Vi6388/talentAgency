@@ -331,7 +331,7 @@ module.exports.makeJobLive = async (req, res, next) => {
       invoiceList: invoice,
       summaryList: list
     };
-    const toEmail = job?.talent?.email;
+    const toEmail = job?.email;
     const subject = "New Job - " + job?.jobName + " " + convertDateFormat(job?.createdAt);
     await sendEmail({
       filename: 'NewJob.ejs', // Ensure the correct file extension
