@@ -291,6 +291,20 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
       }
 
       const updateJob = await JobModel.findById(req.params.id);
+
+      const emailData = {
+        job: updateJob,
+        invoiceList: jobInvoiceList,
+        summaryList: jobSummaryList
+      };
+      const toEmail = updateJob?.talent?.email || detailData?.talentEmail;
+      const subject = "New Estimate - " + updateJob?.jobName + " " + convertDateFormat(updateJob?.createdAt);
+      await sendEmail({
+        filename: 'NewEstimate.ejs', // Ensure the correct file extension
+        data: emailData,
+        subject: subject,
+        toEmail: toEmail,
+      });
       return res.json({ status: 200, success: true, data: updateJob, message: "Job updated successfully." });
     } else {
       return res.json({ status: 201, success: true, message: "Job Estimate doesn't exist." });
