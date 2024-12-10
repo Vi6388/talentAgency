@@ -73,14 +73,14 @@ const generateICSFile = (event, jobName) => {
       end = eventDate + " " + event?.eventEndTime;
     }
   
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+    const startDate = start;
+    const endDate = end;
     const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
   
     icsContent += `BEGIN:VEVENT\n`;
     icsContent += `SUMMARY:${event?.jobTitle}\n`;
-    icsContent += `DTSTART:${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}\n`;
-    icsContent += `DTEND:${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}\n`;
+    icsContent += `DTSTART:${startDate}\n`;
+    icsContent += `DTEND:${endDate}\n`;
     icsContent += `DESCRIPTION:${description}\n`;
     icsContent += `LOCATION:Online\n`; // Customize location as needed
     icsContent += `STATUS:CONFIRMED\n`;
