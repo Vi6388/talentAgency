@@ -382,34 +382,35 @@ module.exports.UpdateJob = async (req, res, next) => {
           delete summary._id;
           switch (summary.type) {
             case 'social':
-              const socialList = await JobSocialModel.create({ ...summary, jobId: existJob?._id });
-              socialList?.forEach(social => updatedSummaryList.push(social));
-              return socialList;
+              return await JobSocialModel.create({ ...summary, jobId: existJob?._id });
             case 'event':
-              const eventList = await JobEventModel.create({ ...summary, jobId: existJob?._id });
-              eventList?.forEach(event => updatedSummaryList.push(event));
-              return eventList;
+              return await JobEventModel.create({ ...summary, jobId: existJob?._id });
             case 'publishing':
-              const publishList = await JobPublishModel.create({ ...summary, jobId: existJob?._id });
-              publishList?.forEach(publish => updatedSummaryList.push(publish));
-              return publishList;
+              return await JobPublishModel.create({ ...summary, jobId: existJob?._id });
             case 'travel':
-              const travelList = await JobTravelModel.create({ ...summary, jobId: existJob?._id, clientPaying: summary?.clientPaying || null });
-              travelList?.forEach(travel => updatedSummaryList.push(travel));
-              return travelList;
+              return await JobTravelModel.create({ ...summary, jobId: existJob?._id, clientPaying: summary?.clientPaying || null });
             case 'podcast':
             case 'radio':
             case 'webSeries':
             case 'tv':
             case 'Media':
-              const mediaList = await JobMediaModel.create({ ...summary, jobId: existJob?._id });
-              mediaList?.forEach(media => updatedSummaryList.push(media));
-              return mediaList;
+              return await JobMediaModel.create({ ...summary, jobId: existJob?._id });
             default:
               return null;
           }
         }));
       }
+
+      const socialList = await JobSocialModel.find({ jobId: existJob?._id });
+      socialList?.forEach(item => updatedSummaryList.push(item));
+      const eventList = await JobEventModel.find({ jobId: existJob?._id });
+      eventList?.forEach(item => updatedSummaryList.push(item));
+      const publishList = await JobPublishModel.find({ jobId: existJob?._id });
+      publishList?.forEach(item => updatedSummaryList.push(item));
+      const mediaList = await JobMediaModel.find({ jobId: existJob?._id });
+      mediaList?.forEach(item => updatedSummaryList.push(item));
+      const travelList = await JobTravelModel.find({ jobId: existJob?._id });
+      travelList?.forEach(item => updatedSummaryList.push(item));
 
       console.log(updatedSummaryList);
 
