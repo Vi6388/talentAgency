@@ -105,8 +105,7 @@ const generateICSFile = (event) => {
             fs.mkdirSync(folderPath, { recursive: true });
         }
 
-        const fileName = `${event?._id}.ics`;
-        console.log(event);
+        const fileName = `${event?.type}-${event?._id}.ics`;
         const filePath = path.join(folderPath, fileName);
         fs.writeFileSync(filePath, icsContent);
 

@@ -227,16 +227,16 @@ module.exports.AddJob = async (req, res, next) => {
     }
 
     const updatedSummaryList = [];
-    const socialList = await JobSocialModel.find({ jobId: existJob?._id });
-    socialList?.forEach(item => updatedSummaryList.push(item));
-    const eventList = await JobEventModel.find({ jobId: existJob?._id });
-    eventList?.forEach(item => updatedSummaryList.push(item));
-    const publishList = await JobPublishModel.find({ jobId: existJob?._id });
-    publishList?.forEach(item => updatedSummaryList.push(item));
-    const mediaList = await JobMediaModel.find({ jobId: existJob?._id });
-    mediaList?.forEach(item => updatedSummaryList.push(item));
-    const travelList = await JobTravelModel.find({ jobId: existJob?._id });
-    travelList?.forEach(item => updatedSummaryList.push(item));
+    const socialList = await JobSocialModel.find({ jobId: newJob?._id });
+    socialList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "social" }));
+    const eventList = await JobEventModel.find({ jobId: newJob?._id });
+    eventList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "event" }));
+    const publishList = await JobPublishModel.find({ jobId: newJob?._id });
+    publishList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "publishing" }));
+    const mediaList = await JobMediaModel.find({ jobId: newJob?._id });
+    mediaList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "media" }));
+    const travelList = await JobTravelModel.find({ jobId: newJob?._id });
+    travelList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "travel" }));
 
     const emailData = {
       job: newJob,
@@ -413,15 +413,15 @@ module.exports.UpdateJob = async (req, res, next) => {
       }
       const updatedSummaryList = [];
       const socialList = await JobSocialModel.find({ jobId: existJob?._id });
-      socialList?.forEach(item => updatedSummaryList.push(item));
+      socialList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "social" }));
       const eventList = await JobEventModel.find({ jobId: existJob?._id });
-      eventList?.forEach(item => updatedSummaryList.push(item));
+      eventList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "event" }));
       const publishList = await JobPublishModel.find({ jobId: existJob?._id });
-      publishList?.forEach(item => updatedSummaryList.push(item));
+      publishList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "publishing" }));
       const mediaList = await JobMediaModel.find({ jobId: existJob?._id });
-      mediaList?.forEach(item => updatedSummaryList.push(item));
+      mediaList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "media" }));
       const travelList = await JobTravelModel.find({ jobId: existJob?._id });
-      travelList?.forEach(item => updatedSummaryList.push(item));
+      travelList?.forEach(item => updatedSummaryList.push({ ...item?._doc, type: "travel" }));
 
       const emailData = {
         job: existJob,

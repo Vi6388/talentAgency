@@ -151,6 +151,7 @@
             font-family: 'Gotham-Book', arial, Helvetica, sans-serif;
             background-color: #242c32;
             margin: auto;
+            text-decoration: none;
         }
 
         .updated-text {
@@ -572,7 +573,7 @@
 
                     <div class="add-calendar-box">
                         <a class="add-calendar-button" target="_blank"
-                            href="<%= '/download-ics/' + job?.jobName + '/' + summaryList[i]?.jobTitle %>">
+                            href="<%= '82.112.255.74:4000/download-ics/' + summaryList[i]?.type + '-' + summaryList[i]?._id + '.ics' %>">
                             <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg"
                                 style="margin-right: 10px;">
                                 <image href="./assets/add-calendar_month.svg" height="25" width="22" />
