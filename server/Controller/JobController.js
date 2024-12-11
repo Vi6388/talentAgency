@@ -376,33 +376,46 @@ module.exports.UpdateJob = async (req, res, next) => {
       await Promise.all(deletePromises);
 
       const jobSummaryList = req.body.jobSummaryList;
+      const updatedSummaryList = [];
       if (jobSummaryList?.length > 0) {
         await Promise.all(jobSummaryList.map(async (summary) => {
           delete summary._id;
           switch (summary.type) {
             case 'social':
-              return await JobSocialModel.create({ ...summary, jobId: existJob?._id });
+              const socialList = await JobSocialModel.create({ ...summary, jobId: existJob?._id });
+              socialList?.forEach(social => updatedSummaryList.push(social));
+              return socialList;
             case 'event':
-              return await JobEventModel.create({ ...summary, jobId: existJob?._id });
+              const eventList = await JobEventModel.create({ ...summary, jobId: existJob?._id });
+              eventList?.forEach(event => updatedSummaryList.push(event));
+              return eventList;
             case 'publishing':
-              return await JobPublishModel.create({ ...summary, jobId: existJob?._id });
+              const publishList = await JobPublishModel.create({ ...summary, jobId: existJob?._id });
+              publishList?.forEach(publish => updatedSummaryList.push(publish));
+              return publishList;
             case 'travel':
-              return await JobTravelModel.create({ ...summary, jobId: existJob?._id, clientPaying: summary?.clientPaying || null });
+              const travelList = await JobTravelModel.create({ ...summary, jobId: existJob?._id, clientPaying: summary?.clientPaying || null });
+              travelList?.forEach(travel => updatedSummaryList.push(travel));
+              return travelList;
             case 'podcast':
             case 'radio':
             case 'webSeries':
             case 'tv':
             case 'Media':
-              return await JobMediaModel.create({ ...summary, jobId: existJob?._id });
+              const mediaList = await JobMediaModel.create({ ...summary, jobId: existJob?._id });
+              mediaList?.forEach(media => updatedSummaryList.push(media));
+              return mediaList;
             default:
               return null;
           }
         }));
       }
 
+      console.log(updatedSummaryList);
+
       const emailData = {
         job: existJob,
-        summaryList: jobSummaryList,
+        summaryList: updatedSummaryList,
         type: "job"
       };
       const toEmail = existJob?.talent?.email || detailData?.talentEmail;
