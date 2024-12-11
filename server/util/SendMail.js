@@ -76,6 +76,23 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
     }
 }
 
+const convertDateFormat = (date) => {
+    if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+        const day = new Date(date).getDate();
+        const month = new Date(date).getMonth() + 1;
+        const year = new Date(date).getFullYear();
+        return year + "-" + month + "-" + day;
+    }
+}
+
+const combineDateAndTime = (date, time) => {
+    if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
+        const [hours, minutes] = time.split(':').map(Number); // Split and convert to numbers
+        const newDate = new Date(date); // Create a new Date object based on the original date
+        newDate.setUTCHours(hours, minutes, 0, 0); // Set the hours and minutes (UTC)
+        return newDate;
+    }
+};
 
 const generateICSFile = (event) => {
     try {
@@ -84,9 +101,29 @@ const generateICSFile = (event) => {
         let start = "";
         let end = "";
         if (event?.type === "event") {
-            const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
-            start = eventDate + " " + event?.eventStartTime;
-            end = eventDate + " " + event?.eventEndTime;
+            const eventDate = convertDateFormat(new Date(event?.eventDate));
+            start = new Date(eventDate + " " + event?.eventStartTime);
+            end = new Date(eventDate + " " + event?.eventEndTime);
+        }
+
+        if (event?.type === "social") {
+            start = combineDateAndTime(new Date(event?.contentDueDate), "09:00");
+            end = combineDateAndTime(new Date(event?.contentDueDate), "17:00");
+        }
+
+        if (['podcast', 'tv', 'radio', 'webSeries', 'Media'].includes(event?.type)) {
+            start = new Date(event.startDate);
+            end = new Date(event.endDate);
+        }
+
+        if (event?.type === "publishing") {
+            start = combineDateAndTime(new Date(event?.finalDate), "09:00");
+            end = combineDateAndTime(new Date(event?.finalDate), "17:00");
+        }
+
+        if (event.type === "travel") {
+            start = combineDateAndTime(new Date(event?.departureDate), event?.departureTime);
+            end = combineDateAndTime(new Date(event?.arrivalDate), event?.arrivalTime);
         }
 
         const startDate = start;
