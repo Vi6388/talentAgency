@@ -116,7 +116,7 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       summaryList: jobSummaryList,
       type: "estimate"
     };
-    const toEmail = newJob?.email;
+    const toEmail = newJob?.contactDetails?.email;
     const subject = "New Estimate - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
     await sendEmail({
       filename: 'NewEstimate.ejs', // Ensure the correct file extension
@@ -299,7 +299,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         summaryList: jobSummaryList,
         type: "estimate"
       };
-      const toEmail = existJob?.email;
+      const toEmail = existJob?.contactDetails?.email;
       console.log("----------", toEmail);
       const subject = "New Estimate - " + existJob?.jobName + " " + convertDateFormat(new Date());
       await sendEmail({
