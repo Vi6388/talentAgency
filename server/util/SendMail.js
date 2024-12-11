@@ -24,7 +24,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
                 icsFiles.push(icsFile);
                 updatedSummaryList.push({
                     ...item,
-                    fileUrl: icsFile
+                    fileUrl: "82.112.255.74:4000/download-ics/" + item?.type + "-" + item?._id + ".ics"
                 })
             }
             summaryList = updatedSummaryList;
