@@ -19,7 +19,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 
         if (summaryList?.length > 0 && data?.type === "job") {
             for (const item of summaryList) {
-                const icsFile = generateICSFile(item, data?.job?.jobName);
+                const icsFile = generateICSFile(item);
                 icsFiles.push({ type: item.type, fileUrl: icsFile });
             }
         }
@@ -70,7 +70,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
     }
 }
 
-const generateICSFile = (event, jobName) => {
+const generateICSFile = (event) => {
     try {
         let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
 
@@ -104,7 +104,7 @@ const generateICSFile = (event, jobName) => {
             fs.mkdirSync(folderPath, { recursive: true });
         }
 
-        const fileName = `${event?.jobTitle}.ics`;
+        const fileName = `${event?._id}.ics`;
         const filePath = path.join(folderPath, fileName);
         fs.writeFileSync(filePath, icsContent);
 
