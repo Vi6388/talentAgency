@@ -55,7 +55,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 
         if (icsFiles.length > 0) {
             emailOptions.attachments = icsFiles.map(filePath => ({
-                filename: path.basename(filePath),
+                filename: path.basename(filePath?.fileUrl),
                 path: filePath,
                 contentType: 'text/calendar',
             }));
@@ -105,6 +105,7 @@ const generateICSFile = (event) => {
         }
 
         const fileName = `${event?._id}.ics`;
+        console.log(event);
         const filePath = path.join(folderPath, fileName);
         fs.writeFileSync(filePath, icsContent);
 
