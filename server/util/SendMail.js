@@ -24,8 +24,16 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
             }
         }
 
+        const totalEsitmate = 0;
+
         // Render HTML string
-        const html = ejs.render(inlinedHtml, { summaryList: summaryList, job: data?.job, invoiceList: data?.invoiceList, icsFiles: icsFiles });
+        const html = ejs.render(inlinedHtml, { 
+            summaryList: summaryList, 
+            job: data?.job, 
+            invoiceList: data?.invoiceList, 
+            totalEsitmate: totalEsitmate, 
+            icsFiles: icsFiles 
+        });
 
         // Create a Nodemailer transporter
         const transporter = nodemailer.createTransport({

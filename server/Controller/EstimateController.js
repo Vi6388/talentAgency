@@ -116,7 +116,7 @@ module.exports.AddJobEstimate = async (req, res, next) => {
       summaryList: jobSummaryList,
       type: "estimate"
     };
-    const toEmail = newJob?.talent?.email || detailData?.talentEmail;
+    const toEmail = newJob?.email;
     const subject = "New Estimate - " + newJob?.jobName + " " + convertDateFormat(newJob?.createdAt);
     await sendEmail({
       filename: 'NewEstimate.ejs', // Ensure the correct file extension
@@ -299,7 +299,7 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         summaryList: jobSummaryList,
         type: "estimate"
       };
-      const toEmail = updateJob?.talent?.email || detailData?.talentEmail;
+      const toEmail = updateJob?.email;
       const subject = "New Estimate - " + updateJob?.jobName + " " + convertDateFormat(updateJob?.createdAt);
       await sendEmail({
         filename: 'NewEstimate.ejs', // Ensure the correct file extension
@@ -357,7 +357,7 @@ module.exports.makeJobLive = async (req, res, next) => {
       summaryList: list,
       type: "estimate"
     };
-    const toEmail = job?.email;
+    const toEmail = job?.talent?.email;
     const subject = "New Job - " + job?.jobName + " " + convertDateFormat(job?.createdAt);
     await sendEmail({
       filename: 'NewJob.ejs', // Ensure the correct file extension

@@ -285,6 +285,12 @@
             font-family: 'Gotham-Bold', arial, Helvetica, sans-serif;
             outline: none;
         }
+
+        .gst-checkbox {
+            width: 25px;
+            height: 25px;
+            margin: 8px 10px;
+        }
     </style>
 </head>
 
@@ -307,7 +313,7 @@
             </div>
 
             <% for(var i=0; i < summaryList.length; i++) { %>
-                <div class="event-item">
+                <div class="event-item" style="margin-top: 60px;">
                     <div class="w-full my-5 d-flex">
                         <div class="title-input event-title">
                             <span class="event-title-prefix">
@@ -545,9 +551,6 @@
                         </div>
                     <% } %>
 
-                    <div class="date-label">Brief - Client brief in job folder in link bein link below
-                    </div>
-
                     <div class="my-5 d-flex">
                         <div class="detail-box">
                             <% if(summaryList[i]?.type === "travel") { %>
@@ -568,6 +571,114 @@
                                 </div>
                             <% } %>
                         </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <% for(var i=0; i < invoiceList.length; i++) { %>
+                <div class="invoice-item">
+                    <div class="w-full my-5 d-flex">
+                        <div class="title-input event-title">
+                            <span class="event-title-name">
+                                <%= invoiceList[i]?.poNumber %>
+                            </span>
+                        </div>
+                    </div>
+    
+                    <div class="w-full">
+                        <div class="w-full d-flex my-5">
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Fee: $</div>
+                                <div style="width: 70%; display: inline-flex;">
+                                    <input type="text" readonly value="<%= invoiceList[i]?.fees %>" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Asf: </div>
+                                <div style="width: 70%; display: inline-flex;">
+                                    <input type="text" readonly value="<%= invoiceList[i]?.asf %>%" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Gst 10%: </div>
+                                <div style="width: 70%; display: inline-flex; justify-content: flex-end;">
+                                    <div class="d-flex">
+                                        <label for="yes" class="date-label" style="margin-top: 12px;">Yes</label>
+                                        <input type="checkbox" class="gst-checkbox" checked="<%= invoiceList[i].gst %>" />
+                                    </div>
+                                    <div class="d-flex">
+                                        <label for="yes" class="date-label" style="margin-top: 12px;">No</label>
+                                        <input type="checkbox" class="gst-checkbox" checked="<%= !invoiceList[i].gst %>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Usage: </div>
+                                <div style="width: 70%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= invoiceList[i]?.usage %>" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Payment Terms: </div>
+                                <div style="width: 70%; display: inline-flex;">
+                                    <input type="text" readonly value="<%= invoiceList[i]?.paymentTerms %> DAYS" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                            <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;"></div>
+                                <div style="width: 70%; display: inline-flex;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;">Expenses: </div>
+                                <div style="width: 86%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= invoiceList[i]?.expenses %>" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;"></div>
+                                <div style="width: 86%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= invoiceList[i]?.expensesDesc %>" class="date-input" 
+                                        style="text-align: left; height: 5rem;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;">Miscellaneous: </div>
+                                <div style="width: 86%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= invoiceList[i]?.miscellaneous %>" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full d-flex my-5">
+                            <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;"></div>
+                                <div style="width: 86%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= invoiceList[i]?.miscellaneousDesc %>" class="date-input" 
+                                        style="text-align: left; height: 5rem;" />
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="w-full d-flex" style="margin-top: 60px;">
+                            <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
+                                <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;">Total: </div>
+                                <div style="width: 86%; display: inline-flex;">
+                                    <input type="text" readonly value="$<%= totalEsitmate %>" class="date-input" style="text-align: right;" />
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="date-label">Estimates are valid for 30 days</div>
                     </div>
                 </div>
             <% } %>
