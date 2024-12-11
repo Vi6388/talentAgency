@@ -25,7 +25,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         }
 
         const totalEsitmate = 0;
-        console.log(data?.invoiceList[i].gst);
+        console.log(data?.invoiceList[0].gst);
 
         // Render HTML string
         const html = ejs.render(inlinedHtml, { 
