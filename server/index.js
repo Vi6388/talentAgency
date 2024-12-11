@@ -54,7 +54,7 @@ app.use("/api/job", jobRoute);
 
 app.get('/download-ics/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname, 'generated-events', filename);
+  const filePath = path.join(__dirname, './public/generated-events', filename);
 
   res.download(filePath, filename, (err) => {
     if (err) {
