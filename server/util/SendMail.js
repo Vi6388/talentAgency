@@ -16,7 +16,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 
         const summaryList = data?.summaryList;
         const icsFiles = [];
-        
+
         if (summaryList?.length > 0 && data?.type === "job") {
             for (const item of summaryList) {
                 const icsFile = generateICSFile(item, data?.job?.jobName);
@@ -27,12 +27,12 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         const totalEsitmate = 0;
 
         // Render HTML string
-        const html = ejs.render(inlinedHtml, { 
-            summaryList: summaryList, 
-            job: data?.job, 
-            invoiceList: data?.invoiceList, 
-            totalEsitmate: totalEsitmate, 
-            icsFiles: icsFiles 
+        const html = ejs.render(inlinedHtml, {
+            summaryList: summaryList,
+            job: data?.job,
+            invoiceList: data?.invoiceList,
+            totalEsitmate: totalEsitmate,
+            icsFiles: icsFiles
         });
 
         // Create a Nodemailer transporter
@@ -71,42 +71,47 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 }
 
 const generateICSFile = (event, jobName) => {
-    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
-  
-    let start = ""; 
-    let end = "";
-    if (event?.type === "event") {
-      const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
-      start = eventDate + " " + event?.eventStartTime;
-      end = eventDate + " " + event?.eventEndTime;
+    try {
+        let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
+
+        let start = "";
+        let end = "";
+        if (event?.type === "event") {
+            const eventDate = new Date(event?.eventDate).toISOString().replace(/[-:]/g, '').split('.')[0];
+            start = eventDate + " " + event?.eventStartTime;
+            end = eventDate + " " + event?.eventEndTime;
+        }
+
+        const startDate = start;
+        const endDate = end;
+        const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
+
+        icsContent += `BEGIN:VEVENT\n`;
+        icsContent += `SUMMARY:${event?.jobTitle}\n`;
+        icsContent += `DTSTART:${startDate}\n`;
+        icsContent += `DTEND:${endDate}\n`;
+        icsContent += `DESCRIPTION:${description}\n`;
+        icsContent += `LOCATION:Online\n`; // Customize location as needed
+        icsContent += `STATUS:CONFIRMED\n`;
+        icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
+        icsContent += `END:VEVENT\n`;
+
+        icsContent += "END:VCALENDAR";
+
+        const folderPath = path.join(__dirname, '../public/generated-events', jobName);
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath, { recursive: true });
+        }
+
+        const fileName = `${event?.jobTitle}.ics`;
+        const filePath = path.join(folderPath, fileName);
+        fs.writeFileSync(filePath, icsContent);
+
+        return filePath;
+    } catch (error) {
+        console.error('Error creating folder or file:', error);
+        return;
     }
-  
-    const startDate = start;
-    const endDate = end;
-    const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
-  
-    icsContent += `BEGIN:VEVENT\n`;
-    icsContent += `SUMMARY:${event?.jobTitle}\n`;
-    icsContent += `DTSTART:${startDate}\n`;
-    icsContent += `DTEND:${endDate}\n`;
-    icsContent += `DESCRIPTION:${description}\n`;
-    icsContent += `LOCATION:Online\n`; // Customize location as needed
-    icsContent += `STATUS:CONFIRMED\n`;
-    icsContent += `BEGIN:VALARM\nTRIGGER:-PT15M\nDESCRIPTION:Reminder for ${event?.jobTitle}\nACTION:DISPLAY\nEND:VALARM\n`;
-    icsContent += `END:VEVENT\n`;
-  
-    icsContent += "END:VCALENDAR";
-  
-    const folderPath = path.join(__dirname, '../public/generated-events', jobName);
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath, { recursive: true });
-    }
- 
-    const fileName = `${event?.jobTitle}.ics`;
-    const filePath = path.join(folderPath, fileName);
-    fs.writeFileSync(filePath, icsContent);
-   
-    return filePath;
 }
 
 module.exports = { sendEmail }; // Export the function
