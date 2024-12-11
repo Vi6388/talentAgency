@@ -18,11 +18,18 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         const icsFiles = [];
 
         if (summaryList?.length > 0 && data?.type === "job") {
+            const updatedSummaryList = [];
             for (const item of summaryList) {
                 const icsFile = generateICSFile(item);
                 icsFiles.push(icsFile);
+                updatedSummaryList.push({
+                    ...item,
+                    fileUrl: icsFile
+                })
             }
+            summaryList = updatedSummaryList;
         }
+        console.log(summaryList);
 
         const totalEsitmate = 0;
 
