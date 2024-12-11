@@ -294,13 +294,14 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
       const updateJob = await JobModel.findById(req.params.id);
 
       const emailData = {
-        job: updateJob,
+        job: existJob,
         invoiceList: jobInvoiceList,
         summaryList: jobSummaryList,
         type: "estimate"
       };
-      const toEmail = updateJob?.email;
-      const subject = "New Estimate - " + updateJob?.jobName + " " + convertDateFormat(updateJob?.createdAt);
+      const toEmail = existJob?.email;
+      console.log("----------", toEmail);
+      const subject = "New Estimate - " + existJob?.jobName + " " + convertDateFormat(new Date());
       await sendEmail({
         filename: 'NewEstimate.ejs', // Ensure the correct file extension
         data: emailData,
