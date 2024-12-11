@@ -603,14 +603,14 @@
                         <div class="w-full d-flex my-5">
                             <div style="padding-right: 10px; text-align: center; display: inline-flex; width: 50%;">
                                 <div for="fees" class="date-label" style="display: inline-block; width: 29%; text-align: left; margin-top: 12px;">Gst 10%: </div>
-                                <div style="width: 70%; display: inline-flex; justify-content: flex-end;">
-                                    <div class="d-flex">
+                                <div style="width: 70%; display: inline; text-align: right;">
+                                    <div style="display: inline-flex;">
                                         <label for="yes" class="date-label" style="margin-top: 12px;">Yes</label>
-                                        <input type="checkbox" class="gst-checkbox" checked="<%= invoiceList[i].gst %>" />
+                                        <input type="checkbox" class="gst-checkbox" <%= invoiceList[i].gst ? "checked" : "" %> />
                                     </div>
-                                    <div class="d-flex">
+                                    <div style="display: inline-flex;">
                                         <label for="yes" class="date-label" style="margin-top: 12px;">No</label>
-                                        <input type="checkbox" class="gst-checkbox" checked="<%= !invoiceList[i].gst %>" />
+                                        <input type="checkbox" class="gst-checkbox" <%= invoiceList[i].gst ? "" : "checked" %> />
                                     </div>
                                 </div>
                             </div>
@@ -646,7 +646,7 @@
                             <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
                                 <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;"></div>
                                 <div style="width: 86%; display: inline-flex;">
-                                    <input type="text" readonly value="$<%= invoiceList[i]?.expensesDesc %>" class="date-input" 
+                                    <input type="text" readonly value="<%= invoiceList[i]?.expensesDesc %>" class="date-input" 
                                         style="text-align: left; height: 5rem;" />
                                 </div>
                             </div>
@@ -663,7 +663,7 @@
                             <div class="w-full d-flex" style="padding-right: 10px; text-align: center;">
                                 <div for="fees" class="date-label" style="display: inline-block; width: 14.5%; text-align: left; margin-top: 12px;"></div>
                                 <div style="width: 86%; display: inline-flex;">
-                                    <input type="text" readonly value="$<%= invoiceList[i]?.miscellaneousDesc %>" class="date-input" 
+                                    <input type="text" readonly value="<%= invoiceList[i]?.miscellaneousDesc %>" class="date-input" 
                                         style="text-align: left; height: 5rem;" />
                                 </div>
                             </div>
