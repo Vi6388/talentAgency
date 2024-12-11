@@ -24,12 +24,11 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
                 icsFiles.push(icsFile);
                 updatedSummaryList.push({
                     ...item,
-                    fileUrl: "82.112.255.74:4000/download-ics/" + item?.type + "-" + item?._id + ".ics"
+                    fileUrl: icsFile
                 })
             }
             summaryList = updatedSummaryList;
         }
-        console.log(summaryList);
 
         const totalEsitmate = 0;
 
@@ -112,11 +111,14 @@ const generateICSFile = (event) => {
             fs.mkdirSync(folderPath, { recursive: true });
         }
 
-        const fileName = `${event?.type}-${event?._id}.ics`;
+        const fileName = `${event?._id}.ics`;
         const filePath = path.join(folderPath, fileName);
         fs.writeFileSync(filePath, icsContent);
 
-        return filePath;
+        // Construct the public URL for the ICS file
+        const publicUrl = `http://82.112.255.74:4000/download-ics/${fileName}`;
+
+        return publicUrl;
     } catch (error) {
         console.error('Error creating folder or file:', error);
         return;
