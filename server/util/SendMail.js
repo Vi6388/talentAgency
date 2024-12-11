@@ -98,7 +98,9 @@ const generateICSFile = (event, jobName) => {
 
         icsContent += "END:VCALENDAR";
 
-        const folderPath = path.join(__dirname, '../public/generated-events', jobName);
+        const sanitizedJobName = jobName.replace(/[/\\?%*:|"<>]/g, '_');
+        const folderPath = path.join(__dirname, '../public/generated-events', sanitizedJobName);
+
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
         }
