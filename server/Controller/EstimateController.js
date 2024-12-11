@@ -300,7 +300,6 @@ module.exports.UpdateJobEstimate = async (req, res, next) => {
         type: "estimate"
       };
       const toEmail = existJob?.contactDetails?.email;
-      console.log("----------", toEmail);
       const subject = "New Estimate - " + existJob?.jobName + " " + convertDateFormat(new Date());
       await sendEmail({
         filename: 'NewEstimate.ejs', // Ensure the correct file extension
