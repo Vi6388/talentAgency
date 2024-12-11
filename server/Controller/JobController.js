@@ -226,9 +226,21 @@ module.exports.AddJob = async (req, res, next) => {
       }));
     }
 
+    const updatedSummaryList = [];
+    const socialList = await JobSocialModel.find({ jobId: existJob?._id });
+    socialList?.forEach(item => updatedSummaryList.push(item));
+    const eventList = await JobEventModel.find({ jobId: existJob?._id });
+    eventList?.forEach(item => updatedSummaryList.push(item));
+    const publishList = await JobPublishModel.find({ jobId: existJob?._id });
+    publishList?.forEach(item => updatedSummaryList.push(item));
+    const mediaList = await JobMediaModel.find({ jobId: existJob?._id });
+    mediaList?.forEach(item => updatedSummaryList.push(item));
+    const travelList = await JobTravelModel.find({ jobId: existJob?._id });
+    travelList?.forEach(item => updatedSummaryList.push(item));
+
     const emailData = {
       job: newJob,
-      summaryList: jobSummaryList,
+      summaryList: updatedSummaryList,
       type: "job"
     };
     const toEmail = newJob?.talent?.email || detailData?.talentEmail;
@@ -248,10 +260,10 @@ module.exports.AddJob = async (req, res, next) => {
 
 const convertDateFormat = (date) => {
   if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
-      const day = new Date(date).getDate();
-      const month = new Date(date).getMonth() + 1;
-      const year = new Date(date).getFullYear();
-      return day + "/" + month + "/" + year;
+    const day = new Date(date).getDate();
+    const month = new Date(date).getMonth() + 1;
+    const year = new Date(date).getFullYear();
+    return day + "/" + month + "/" + year;
   }
 }
 
@@ -376,7 +388,6 @@ module.exports.UpdateJob = async (req, res, next) => {
       await Promise.all(deletePromises);
 
       const jobSummaryList = req.body.jobSummaryList;
-      const updatedSummaryList = [];
       if (jobSummaryList?.length > 0) {
         await Promise.all(jobSummaryList.map(async (summary) => {
           delete summary._id;
@@ -400,7 +411,7 @@ module.exports.UpdateJob = async (req, res, next) => {
           }
         }));
       }
-
+      const updatedSummaryList = [];
       const socialList = await JobSocialModel.find({ jobId: existJob?._id });
       socialList?.forEach(item => updatedSummaryList.push(item));
       const eventList = await JobEventModel.find({ jobId: existJob?._id });
@@ -411,8 +422,6 @@ module.exports.UpdateJob = async (req, res, next) => {
       mediaList?.forEach(item => updatedSummaryList.push(item));
       const travelList = await JobTravelModel.find({ jobId: existJob?._id });
       travelList?.forEach(item => updatedSummaryList.push(item));
-
-      console.log(updatedSummaryList);
 
       const emailData = {
         job: existJob,

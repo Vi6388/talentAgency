@@ -20,7 +20,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         if (summaryList?.length > 0 && data?.type === "job") {
             for (const item of summaryList) {
                 const icsFile = generateICSFile(item);
-                icsFiles.push({ type: item.type, fileUrl: icsFile });
+                icsFiles.push(icsFile);
             }
         }
 
@@ -55,7 +55,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
 
         if (icsFiles.length > 0) {
             emailOptions.attachments = icsFiles.map(filePath => ({
-                filename: path.basename(filePath?.fileUrl),
+                filename: path.basename(filePath),
                 path: filePath,
                 contentType: 'text/calendar',
             }));
@@ -69,6 +69,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         console.error('Error sending email:', error);
     }
 }
+
 
 const generateICSFile = (event) => {
     try {
