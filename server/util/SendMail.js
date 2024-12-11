@@ -14,7 +14,7 @@ const sendEmail = async ({ filename, data, subject, toEmail }) => {
         const htmlWithStyles = templateString;
         const inlinedHtml = juice(htmlWithStyles);
 
-        const summaryList = data?.summaryList;
+        let summaryList = data?.summaryList;
         const icsFiles = [];
 
         if (summaryList?.length > 0 && data?.type === "job") {
