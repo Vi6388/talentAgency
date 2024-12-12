@@ -108,6 +108,7 @@ const generateICSFile = (event) => {
             start = convertDateFormat(new Date(event.startDate)) + "T090000";
             end = convertDateFormat(new Date(event.endDate)) + "T170000";
         }
+        console.log(event?.type + "-------", start, end);
 
         if (event?.type === "publishing") {
             start = convertDateFormat(new Date(event?.finalDate)) + "T090000";
@@ -123,7 +124,7 @@ const generateICSFile = (event) => {
 
         const startDate = start;
         const endDate = end;
-        const description = event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
+        const description = event?.type === "travel" ? event?.travelDetails : event?.keyMessages + "\n" + "DELIVERABLES: " + "\n" + event?.deleverables;
 
         icsContent += `BEGIN:VEVENT\n`;
         icsContent += `SUMMARY:${event?.jobTitle}\n`;
