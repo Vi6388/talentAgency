@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCircle from "../../svg/add_circle.svg";
 import CancelIcon from "../../svg/cancel.svg";
-import { convertDueDate, dueDateFormat, numberFormat } from "../../utils/utils";
+import { dueDateFormat, numberFormat } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING, CLEAN_JOB, SAVE_JOB, SAVE_JOB_DETAILS_FORM, SAVE_JOB_INVOICE_LIST } from "../../redux/actionTypes";
 import { useSelector } from "react-redux";
@@ -74,27 +74,25 @@ const JobInvoiceForm = () => {
   }
 
   const addInvoice = () => {
-    if (invoiceForm?.poNumber !== "" || invoiceForm?.poNumber.trim() !== "") {
-      let list = invoiceList || [];
-      list.push(invoiceForm);
-      setInvoiceList(list);
-      setInvoiceForm({
-        poNumber: "",
-        fee: "",
-        gst: null,
-        usage: "",
-        asf: "",
-        royalities: "",
-        commission: "",
-        paymentTerms: "",
-        expenses: "",
-        expensesDesc: "",
-        miscellaneous: "",
-        miscellaneousDesc: "",
-        createdAt: new Date().toLocaleDateString("en-US"),
-        dueDate: new Date().toLocaleDateString("en-US")
-      });
-    }
+    let list = invoiceList || [];
+    list.push(invoiceForm);
+    setInvoiceList(list);
+    setInvoiceForm({
+      poNumber: "",
+      fee: "",
+      gst: null,
+      usage: "",
+      asf: "",
+      royalities: "",
+      commission: "",
+      paymentTerms: "",
+      expenses: "",
+      expensesDesc: "",
+      miscellaneous: "",
+      miscellaneousDesc: "",
+      createdAt: new Date().toLocaleDateString("en-US"),
+      dueDate: new Date().toLocaleDateString("en-US")
+    });
   }
 
   const cancelInvoice = (index) => {

@@ -75,27 +75,25 @@ const EstimateInvoiceForm = () => {
   }
 
   const addInvoice = () => {
-    if (invoiceForm?.poNumber !== "" || invoiceForm?.poNumber.trim() !== "") {
-      let list = invoiceList || [];
-      list.push(invoiceForm);
-      setInvoiceList(list);
-      setInvoiceForm({
-        poNumber: "",
-        fee: "",
-        gst: null,
-        usage: "",
-        asf: "",
-        royalities: "",
-        commission: "",
-        paymentTerms: "",
-        expenses: "",
-        expensesDesc: "",
-        miscellaneous: "",
-        miscellaneousDesc: "",
-        createdAt: new Date().toLocaleDateString("en-US"),
-        dueDate: new Date().toLocaleDateString("en-US")
-      });
-    }
+    let list = invoiceList || [];
+    list.push(invoiceForm);
+    setInvoiceList(list);
+    setInvoiceForm({
+      poNumber: "",
+      fee: "",
+      gst: null,
+      usage: "",
+      asf: "",
+      royalities: "",
+      commission: "",
+      paymentTerms: "",
+      expenses: "",
+      expensesDesc: "",
+      miscellaneous: "",
+      miscellaneousDesc: "",
+      createdAt: new Date().toLocaleDateString("en-US"),
+      dueDate: new Date().toLocaleDateString("en-US")
+    });
   }
 
   const cancelInvoice = (index) => {
