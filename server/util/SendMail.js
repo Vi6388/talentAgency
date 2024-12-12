@@ -104,11 +104,10 @@ const generateICSFile = (event) => {
             end = convertDateFormat(new Date(event?.contentDueDate)) + "T170000";
         }
 
-        if (['podcast', 'tv', 'radio', 'webSeries', 'Media'].includes(event?.type)) {
+        if (['podcast', 'tv', 'radio', 'webSeries', 'media'].includes(event?.type)) {
             start = convertDateFormat(new Date(event.startDate)) + "T090000";
             end = convertDateFormat(new Date(event.endDate)) + "T170000";
         }
-        console.log(event?.type + "-------", start, end);
 
         if (event?.type === "publishing") {
             start = convertDateFormat(new Date(event?.finalDate)) + "T090000";
