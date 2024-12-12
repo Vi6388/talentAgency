@@ -85,15 +85,6 @@ const convertDateFormat = (date) => {
     }
 }
 
-const combineDateAndTime = (date, time) => {
-    if (date !== "Invalid Date" && new Date(date) !== "Invalid Date" && date !== "" && date !== undefined) {
-        const [hours, minutes] = time.split(':').map(Number); // Split and convert to numbers
-        const newDate = new Date(date); // Create a new Date object based on the original date
-        newDate.setUTCHours(hours, minutes, 0, 0); // Set the hours and minutes (UTC)
-        return newDate;
-    }
-};
-
 const generateICSFile = (event) => {
     try {
         let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
@@ -102,28 +93,32 @@ const generateICSFile = (event) => {
         let end = "";
         if (event?.type === "event") {
             const eventDate = convertDateFormat(new Date(event?.eventDate));
-            start = new Date(eventDate + " " + event?.eventStartTime);
-            end = new Date(eventDate + " " + event?.eventEndTime);
+            const startTime = event?.eventStartTime.split(":");
+            start = eventDate + "T" + startTime[0] + startTime[1] + "00";
+            const endTime = event?.eventEndTime.split(":");
+            end = eventDate + "T" + endTime[0] + endTime[1] + "00";
         }
 
         if (event?.type === "social") {
-            start = combineDateAndTime(new Date(event?.contentDueDate), "09:00");
-            end = combineDateAndTime(new Date(event?.contentDueDate), "17:00");
+            start = convertDateFormat(new Date(event?.contentDueDate)) + "T090000";
+            end = convertDateFormat(new Date(event?.contentDueDate)) + "T170000";
         }
 
         if (['podcast', 'tv', 'radio', 'webSeries', 'Media'].includes(event?.type)) {
-            start = new Date(event.startDate);
-            end = new Date(event.endDate);
+            start = convertDateFormat(new Date(event.startDate)) + "T090000";
+            end = convertDateFormat(new Date(event.endDate)) + "T170000";
         }
 
         if (event?.type === "publishing") {
-            start = combineDateAndTime(new Date(event?.finalDate), "09:00");
-            end = combineDateAndTime(new Date(event?.finalDate), "17:00");
+            start = convertDateFormat(new Date(event?.finalDate)) + "T090000";
+            end = convertDateFormat(new Date(event?.finalDate)) + "T170000";
         }
 
         if (event.type === "travel") {
-            start = combineDateAndTime(new Date(event?.departureDate), event?.departureTime);
-            end = combineDateAndTime(new Date(event?.arrivalDate), event?.arrivalTime);
+            const startTime = event?.departureTime.split(":");
+            start = convertDateFormat(new Date(event?.departureDate)) + "T" + startTime[0] + startTime[1] + "00";
+            const endTime = event?.arrivalTime.split(":");
+            end = convertDateFormat(new Date(event?.arrivalDate)) + "T" + endTime[0] + endTime[1] + "00";
         }
 
         const startDate = start;
