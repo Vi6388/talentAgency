@@ -1,38 +1,12 @@
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema({
-  avatar: {
-    type: String
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: true
   },
-  firstname: {
-    type: String
-  },
-  surname: {
-    type: String
-  },
-  email: {
-    type: String,
-    unique: true,
-  },
-  contact: {
-    type: String,
-  },
-  phoneNumber: {
-    type: String
-  },
-  address: {
-    type: String
-  },
-  suburb: {
-    type: String
-  },
-  state: {
-    type: String
-  },
-  postcode: {
-    type: String
-  },
-  type: {
+  notes: {
     type: String
   },
   createdAt: {

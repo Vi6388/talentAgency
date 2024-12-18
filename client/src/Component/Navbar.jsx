@@ -14,14 +14,18 @@ import CalendarIcon from "../svg/header/calendar.svg";
 import CalendarIconActive from "../svg/header/calendar_active.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from "../svg/cancel.svg";
+import { useAuth } from "../hooks/useAuth";
+import { store } from "../redux/store";
+import { CHANGE_IS_LOADING } from "../redux/actionTypes";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loggedUser, setLoggedUser] = useState({});
+  const { logout } = useAuth();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("atarimaeLoggedUser"));
     if (user?._id) {
       setLoggedUser(user);
     } else {
@@ -34,6 +38,13 @@ const Navbar = () => {
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
+
+  const loggedUserOut = () => {
+    logout();
+    setTimeout(() => {
+      navigate("/login");
+    }, 1000)
+  }
 
   return (
     <>
@@ -84,7 +95,8 @@ const Navbar = () => {
               <li>
                 <button className="bg-white w-[88px] h-10 tracking-wider text-center rounded-[12px] text-input font-gotham-bold 
                       block rounded bg-white leading-normal shadow-md transition duration-150 ease-in-out 
-                      hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm">
+                      hover:bg-neutral-200 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 text-sm"
+                      onClick={loggedUserOut}>
                   <img className="relative z-30 inline object-cover w-7 h-7 rounded-full mr-1"
                     src={loggedUser?.avatar ? loggedUser?.avatar :
                       "https://static.vecteezy.com/system/resources/previews/022/123/337/non_2x/user-icon-profile-icon-account-icon-login-sign-line-vector.jpg"}
@@ -106,14 +118,14 @@ const Navbar = () => {
               </li>
               <li className="navbar-list-margin">
                 <Link to={"/client/list"} onClick={handleToggle} className="toolTip jobArchive-toolTip">
-                  <div className="toolTipText">Job Archive</div>
-                  <img src={location.pathname !== "/client/list" ? ListAlt : ListAltActive} alt="Client List" className="w-8 h-8" />
+                  <div className="toolTipText">Contacts</div>
+                  <img src={location.pathname.includes("/client") ? ListAltActive : ListAlt} alt="Client List" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">
                 <Link to={"/estimate/kanban"} onClick={handleToggle} className="toolTip estimates-toolTip">
                   <div className="toolTipText">Estimates</div>
-                  <img src={location.pathname !== "/estimate/kanban" ? RequestQuote : RequestQuoteActive} alt="Estimate Kanban" className="w-8 h-8" />
+                  <img src={location.pathname.includes("/estimate") ? RequestQuoteActive : RequestQuote} alt="Estimate Kanban" className="w-8 h-8" />
                 </Link>
               </li>
               <li className="navbar-list-margin">

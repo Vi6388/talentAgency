@@ -14,6 +14,7 @@ const talentRoute = require("./Routes/TalentRoute");
 const clientRoute = require("./Routes/ClientRoute");
 const estimateRoute = require("./Routes/EstimateRoute");
 const jobRoute = require("./Routes/JobRoute");
+const contactRoute = require("./Routes/ContactRoute");
 
 const app = express();
 const { MONGO_URL, PORT } = process.env;
@@ -51,6 +52,7 @@ app.use("/api/talent", talentRoute);
 app.use("/api/client", clientRoute);
 app.use("/api/estimate", estimateRoute);
 app.use("/api/job", jobRoute);
+app.use("/api/contact", contactRoute);
 
 app.get('/download-ics/:filename', (req, res) => {
   const filename = req.params.filename;

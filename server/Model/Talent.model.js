@@ -44,6 +44,9 @@ const talentSchema = new mongoose.Schema({
   highlightColor: {
     type: String
   },
+  notes: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: new Date(),

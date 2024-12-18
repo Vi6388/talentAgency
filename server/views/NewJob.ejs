@@ -588,11 +588,11 @@
                 <div class="tip-text bottom-tip">
                     <div>If you have any questions please contact your manager</div>
                     <div style="font-size: 2.5rem !important; margin-top: 12px; margin-bottom: 8px;">
-                        <%= job?.talent?.manager %>
+                        <%= job?.contactDetails?.firstname %> <%= job?.contactDetails?.surname %>
                     </div>
-                    <div>on <%= job?.talent?.phoneNumber %>
-                            <% if(job?.talent?.phoneNumber !=="" ) { %> or <% } %>
-                                    <%= job?.talent?.email %>
+                    <div>on <%= job?.contactDetails?.phoneNumber %>
+                            <% if(job?.contactDetails?.phoneNumber !=="" ) { %> or <% } %>
+                                    <%= job?.contactDetails?.email %>
                     </div>
                 </div>
                 <div class="w-full text-center">

@@ -7,7 +7,6 @@ const JobSocialModel = require("../Model/Job.Social.model");
 const JobTravelModel = require("../Model/Job.Travel.model");
 const { sendEmail } = require("../util/SendMail");
 const dotenv = require("dotenv");
-const google = require('googleapis');
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
 
@@ -16,9 +15,6 @@ dotenv.config();
 const bucketName = "atarimaeagency";
 const storage = new Storage({ keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 const path = require('path');
-const credentials = require(path.join(__dirname, "../public/verdant-oven-438907-b1-8b6556dc16f3.json"));
-
-// const credentials = require("./public/verdant-oven-438907-b1-8b6556dc16f3.json");
 
 const bucket = storage.bucket("atarimaeagency");
 

@@ -3,7 +3,7 @@ import { useLocalStorage } from "./useLocalStorage";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useLocalStorage("user", null);
+  const [user, setUser] = useLocalStorage("atarimaeLoggedUser", null);
 
   const login = async (tokens) => {
     setUser(tokens);

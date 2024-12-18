@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { ClientApi } from "../../apis/ClientApi";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
+import { companyTypeList } from "../../utils/utils";
 
 const thData = [
-  'client',
-  'contact',
-  'phone',
-  'state',
-  'type',
+  'Company',
+  'Primary Contact',
+  'Primary Email',
+  'Phone',
+  'Type',
   ''
 ];
 
@@ -53,13 +54,16 @@ const ClientList = () => {
           </thead>
           <tbody>
             {clientList?.map((item, index) => {
+              console.log(companyTypeList?.filter(item => item.id === item?.companyId?.companyType), item?.companyId?.companyType);
               return (
                 <tr className="border-table border-b last:border-b-0" key={index}>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.firstname + " " + item.surname}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.contact}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.phoneNumber}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular uppercase">{item.state}</span></td>
-                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.type}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item.companyId?.companyName}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item?.primaryContact?.firstname} {item?.primaryContact?.surname}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">{item?.primaryContact?.email}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular uppercase">{item?.companyId?.phoneNumber}</span></td>
+                  <td className="p-2"><span className="text-input text-sm font-gotham-regular">
+                    {companyTypeList?.filter(item => item.id === item?.companyId?.companyType)}
+                  </span></td>
                   <td className="p-2 w-[100px] md:w-[160px]">
                     <Link to={`/client/edit/${item._id}`}>
                       <button className="bg-button-6 h-12 md:h-9 text-center rounded-[12px] text-white font-gotham-bold tracking-wider w-[100px] md:w-[160px]

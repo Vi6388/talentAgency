@@ -11,11 +11,14 @@ const UserForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [loggedUser, setLoggedUser] = useState(null);
+
   const [userForm, setUserForm] = useState({
     firstname: "",
     surname: "",
     email: "",
     phoneNumber: "",
+    type: "user",
     username: "",
     password: "",
     avatar: ""
@@ -28,6 +31,15 @@ const UserForm = () => {
   });
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("atarimaeLoggedUser"));
+    if (user?._id) {
+      setLoggedUser(user);
+    } else {
+      navigate("/login");
+    }
+  }, []);
+
+  useEffect(() => {
     if (id !== undefined) {
       store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
       UserApi.getUserById(id).then((res) => {
@@ -38,6 +50,7 @@ const UserForm = () => {
             surname: user.surname || "",
             email: user.email || "",
             phoneNumber: user.phoneNumber || "",
+            type: user.type || "user",
             username: user.username || "",
             password: ""
           });
@@ -73,56 +86,50 @@ const UserForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const requiredFields = ['firstname', 'surname', 'email', 'username', 'password'];
-    const valid = isFormValid(userForm, requiredFields);
-    if (!userForm.avatar && !fileInfo.imageSrc) {
-      handleError("Please upload avatar.");
-    }
-    if (valid && (userForm.avatar || fileInfo.imageSrc)) {
-      const formData = new FormData();
-      formData.append('avatar', userForm.avatar);
-      formData.append('firstname', userForm.firstname);
-      formData.append('surname', userForm.surname);
-      formData.append('email', userForm.email);
-      formData.append('phoneNumber', userForm.phoneNumber);
-      formData.append('username', userForm.username);
-      formData.append('password', userForm.password);
+    const formData = new FormData();
+    formData.append('avatar', userForm.avatar);
+    formData.append('firstname', userForm.firstname);
+    formData.append('surname', userForm.surname);
+    formData.append('email', userForm.email);
+    formData.append('phoneNumber', userForm.phoneNumber);
+    formData.append('username', userForm.username);
+    formData.append('password', userForm.password);
+    formData.append('type', userForm.type);
 
-      if (id === undefined) {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        UserApi.add(formData).then((res) => {
-          try {
-            if (res.data.status === 200) {
-              handleSuccess(res.data.message);
-              setTimeout(() => {
-                navigate("/settings");
-              }, 2000);
-            } else {
-              handleError(res.data.message);
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          } catch (e) {
-            handleError(e);
+    if (id === undefined) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      UserApi.add(formData).then((res) => {
+        try {
+          if (res.data.status === 200) {
+            handleSuccess(res.data.message);
+            setTimeout(() => {
+              navigate("/settings");
+            }, 2000);
+          } else {
+            handleError(res.data.message);
           }
-        });
-      } else {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        UserApi.updateUserById(id, formData).then((res) => {
-          try {
-            if (res.data.status === 200) {
-              handleSuccess(res.data.message);
-              setTimeout(() => {
-                navigate("/settings");
-              }, 2000);
-            } else {
-              handleError(res.data.message);
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          } catch (e) {
-            handleError(e);
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        } catch (e) {
+          handleError(e);
+        }
+      });
+    } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      UserApi.updateUserById(id, formData).then((res) => {
+        try {
+          if (res.data.status === 200) {
+            handleSuccess(res.data.message);
+            setTimeout(() => {
+              navigate("/settings");
+            }, 2000);
+          } else {
+            handleError(res.data.message);
           }
-        })
-      }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        } catch (e) {
+          handleError(e);
+        }
+      })
     }
   }
 
@@ -191,6 +198,22 @@ const UserForm = () => {
               </div>
             </div>
           </div>
+
+          {loggedUser?.type === "admin" &&
+            <div className="mt-5">
+              <div className="text-base text-title-2 font-gotham-bold py-3">User Type</div>
+              <div className="w-full">
+                <select className="bg-white w-full px-2 h-10 text-center rounded-[12px] text-input tracking-wider border-none
+                            block rounded-[16px] bg-white leading-normal shadow-md transition duration-150 ease-in-out flex justify-center items-center
+                            hover:shadow-lg focus:shadow-lg focus:ring-1 text-sm" value={userForm?.type} onChange={(e) => handleChange(e)} name="type">
+                  <option value="admin">Admin</option>
+                  <option value="superuser">Super User</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+            </div>
+          }
+
           <div className="mt-5">
             <div className="text-base text-title-2 font-gotham-bold py-3">Login Information</div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">

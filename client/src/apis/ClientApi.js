@@ -6,9 +6,11 @@ const add = (data) => axios.post(`${SERVER_URL}/client/add`, data);
 
 const getClientList = () => axios.get(`${SERVER_URL}/client/list`);
 
+const getContactListByClientId = (clientId) => axios.get(`${SERVER_URL}}/client/getContactListByClientId/` + clientId);
+
 const deleteClientById = (id) => axios.delete(`${SERVER_URL}/client/delete/` + id);
 
-const updateClientById = (id, data) => axios.post(`${SERVER_URL}/client/update/`+ id, data);
+const updateClientById = (id, data) => axios.post(`${SERVER_URL}/client/update/` + id, data);
 
 const getClientById = (id) => axios.get(`${SERVER_URL}/client/` + id);
 
@@ -17,5 +19,6 @@ export const ClientApi = {
   getClientList,
   getClientById,
   deleteClientById,
-  updateClientById
+  updateClientById,
+  getContactListByClientId
 };

@@ -23,6 +23,23 @@ export const estimageStatusList = [
   { statusIndex: 4, name: "Successful Estimate" },
 ];
 
+export const companyTypeList = [
+  { id: '1', name: 'Advertising Agency' },
+  { id: '2', name: 'PR Agency' },
+  { id: '3', name: 'Brand' },
+  { id: '4', name: 'Speakers Bureau' },
+  { id: '5', name: 'Talent Agency' },
+  { id: '6', name: 'Publisher' },
+  { id: '7', name: 'Media Agency' },
+  { id: '8', name: 'Production Company' },
+  { id: '9', name: 'Television Station' },
+  { id: '10', name: 'Radio Station' },
+  { id: '11', name: 'Social Media Company' },
+  { id: '12', name: 'Event Company' },
+  { id: '13', name: 'Government Agency' },
+  { id: '14', name: 'Tourist Board' }
+];
+
 export const numberFormat = (numStr) => {
   let result = numStr;
   if (isNaN(parseFloat(result)) || parseFloat(result) === 0) {

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TalentApi } from "../../apis/TalentApi";
 import { toast, ToastContainer } from "react-toastify";
-import { isFormValid } from "../../utils/utils";
 import { store } from "../../redux/store";
 import { CHANGE_IS_LOADING } from "../../redux/actionTypes";
 
@@ -25,7 +24,8 @@ const TalentForm = () => {
     frequentFlyerNumber: "",
     abn: "",
     publiceLiabilityInsurance: "",
-    highlightColor: "#000000"
+    highlightColor: "",
+    notes: ""
   });
 
   const [fileInfo, setFileInfo] = useState({
@@ -54,7 +54,8 @@ const TalentForm = () => {
             frequentFlyerNumber: talent.frequentFlyerNumber || "",
             abn: talent.abn || "",
             publiceLiabilityInsurance: talent.publiceLiabilityInsurance || "",
-            highlightColor: talent.highlightColor || ""
+            highlightColor: talent.highlightColor || "",
+            notes: talent.notes || ""
           });
           if (talent.avatar !== "") {
             setFileInfo({
@@ -114,63 +115,57 @@ const TalentForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const requiredFields = ['firstname', 'surname', 'email'];
-    if (!talentForm.avatar && !fileInfo.imageSrc) {
-      handleError("Please upload avatar.");
-    }
-    const valid = isFormValid(talentForm, requiredFields);
-    if (valid && (talentForm.avatar || fileInfo.imageSrc)) {
-      const formData = new FormData();
-      formData.append('avatar', talentForm.avatar);
-      formData.append('firstname', talentForm.firstname);
-      formData.append('surname', talentForm.surname);
-      formData.append('email', talentForm.email);
-      formData.append('phoneNumber', talentForm.phoneNumber);
-      formData.append('address', talentForm.address);
-      formData.append('suburb', talentForm.suburb);
-      formData.append('state', talentForm.state);
-      formData.append('postcode', talentForm.postcode);
-      formData.append('preferredAirline', talentForm.preferredAirline);
-      formData.append('frequentFlyerNumber', talentForm.frequentFlyerNumber);
-      formData.append('abn', talentForm.abn);
-      formData.append('publiceLiabilityInsurance', talentForm.publiceLiabilityInsurance);
-      formData.append('highlightColor', talentForm.highlightColor);
+    const formData = new FormData();
+    formData.append('avatar', talentForm.avatar);
+    formData.append('firstname', talentForm.firstname);
+    formData.append('surname', talentForm.surname);
+    formData.append('email', talentForm.email);
+    formData.append('phoneNumber', talentForm.phoneNumber);
+    formData.append('address', talentForm.address);
+    formData.append('suburb', talentForm.suburb);
+    formData.append('state', talentForm.state);
+    formData.append('postcode', talentForm.postcode);
+    formData.append('preferredAirline', talentForm.preferredAirline);
+    formData.append('frequentFlyerNumber', talentForm.frequentFlyerNumber);
+    formData.append('abn', talentForm.abn);
+    formData.append('publiceLiabilityInsurance', talentForm.publiceLiabilityInsurance);
+    formData.append('highlightColor', talentForm.highlightColor);
+    formData.append('notes', talentForm.notes);
 
-      if (id !== undefined) {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        TalentApi.updateTalentById(id, formData).then((res) => {
-          try {
-            if (res.data.status === 200) {
-              handleSuccess(res.data.message);
-              setTimeout(() => {
-                navigate("/settings");
-              }, 2000);
-            } else {
-              handleError(res.data.message);
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          } catch (e) {
-            handleError(e);
+    if (id !== undefined) {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      TalentApi.updateTalentById(id, formData).then((res) => {
+        try {
+          if (res.data.status === 200) {
+            handleSuccess(res.data.message);
+            setTimeout(() => {
+              navigate("/settings");
+            }, 2000);
+          } else {
+            handleError(res.data.message);
           }
-        });
-      } else {
-        store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
-        TalentApi.add(formData).then((res) => {
-          try {
-            if (res.data.status === 200) {
-              handleSuccess(res.data.message);
-              setTimeout(() => {
-                navigate("/settings");
-              }, 2000);
-            } else {
-              handleError(res.data.message);
-            }
-            store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
-          } catch (e) {
-            handleError(e);
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        } catch (e) {
+          handleError(e);
+        }
+      });
+    } else {
+      store.dispatch({ type: CHANGE_IS_LOADING, payload: true });
+      TalentApi.add(formData).then((res) => {
+        try {
+          if (res.data.status === 200) {
+            handleSuccess(res.data.message);
+            setTimeout(() => {
+              navigate("/settings");
+            }, 2000);
+          } else {
+            handleError(res.data.message);
           }
-        });
-      }
+          store.dispatch({ type: CHANGE_IS_LOADING, payload: false });
+        } catch (e) {
+          handleError(e);
+        }
+      });
     }
   }
 
@@ -283,6 +278,14 @@ const TalentForm = () => {
                 type="text" value={talentForm.highlightColor} readOnly />
               <input type="color" id="color-picker" value={talentForm.highlightColor} className="absolute left-2 top-2 w-10 md:w-20"
                 onChange={(e) => handleChange(e)} name="highlightColor" />
+            </div>
+
+            <div className="w-full my-12">
+              <textarea className={`rounded-[16px] text-input shadow-md shadow-500 h-full w-full tracking-wider text-sm resize-none outline-none focus:border-[#d4d5d6]
+                       placeholder:text-center border-none`}
+                placeholder="Notes"
+                type="text" value={talentForm.notes} name="notes" rows={5}
+                onChange={(e) => handleChange(e)} />
             </div>
           </div>
         </div>

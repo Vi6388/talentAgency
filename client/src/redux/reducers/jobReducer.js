@@ -11,6 +11,7 @@ import {
   SAVE_JOB_ESTIMATE,
   CLEAN_JOB_ESTIMATE,
   CHANGE_IS_LOADING,
+  SAVE_CLIENT,
 } from "../actionTypes";
 
 const initialState = {
@@ -64,6 +65,28 @@ const initialState = {
     },
     invoiceList: [],
     jobSummaryList: [],
+  },
+
+  client: {
+    details: {
+      id: "",
+      notes: ""
+    },
+    company: {
+      companyName: "",
+      abn: "",
+      postalAddress: "",
+      postalSuburb: "",
+      postalState: "",
+      postalPostcode: "",
+      billingAddress: "",
+      billingSuburb: "",
+      billingState: "",
+      billingPostcode: "",
+      website: "",
+      phoneNumber: "",
+      companyType: "",
+    }
   }
 };
 
@@ -189,6 +212,12 @@ export const jobReducer = (state = initialState, action) => {
           jobSummaryList: [],
         }
       };
+
+    case SAVE_CLIENT:
+      return {
+        ...state,
+        client: action.payload
+      }
     default:
       return state;
   }

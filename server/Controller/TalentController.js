@@ -16,9 +16,23 @@ module.exports.AddTalent = async (req, res, next) => {
     if (existingTalent) {
       return res.json({ success: true, status: 201, message: "Talent already exists" });
     }
+    const data = req.body;
     const talent = TalentModel.create({
-      ...req.body,
-      avatar: url + '/uploads/talent/' + req.file.filename
+      avatar: url + '/uploads/talent/' + req.file.filename,
+      firstname: data.firstname || "",
+      surname: data.surname || "",
+      email: data.email || "",
+      phoneNumber: data.phoneNumber || "",
+      address: data.address || "",
+      suburb: data.suburb || "",
+      state: data.state || "",
+      postcode: data.postcode || "",
+      preferredAirline: data.preferredAirline || "",
+      frequentFlyerNumber: data.frequentFlyerNumber || "",
+      abn: data.abn || "",
+      publicLiabilityInsurance: data.publicLiabilityInsurance || "",
+      highlightColor: data.highlightColor || "",
+      notes: data.notes || "",
     });
     return res.json({ status: 200, message: "Talent added successfully", success: true, data: talent });
     next();
@@ -51,7 +65,23 @@ module.exports.UpdateTalent = async (req, res, next) => {
     if(req.body.avatar === 'undefined') {
       data.avatar = talent.avatar;
     }
-    await TalentModel.findById(req.params.id).updateMany(data);
+    await TalentModel.findById(req.params.id).updateMany({
+      avatar: data.avatar,
+      firstname: data.firstname || talent.firstname,
+      surname: data.surname || talent.surname,
+      email: data.email || talent.email,
+      phoneNumber: data.phoneNumber || talent.phoneNumber,
+      address: data.address || talent.address,
+      suburb: data.suburb || talent.suburb,
+      state: data.state || talent.state,
+      postcode: data.postcode || talent.postcode,
+      preferredAirline: data.preferredAirline || talent.preferredAirline,
+      frequentFlyerNumber: data.frequentFlyerNumber || talent.frequentFlyerNumber,
+      abn: data.abn || talent.abn,
+      publicLiabilityInsurance: data.publicLiabilityInsurance || talent.publicLiabilityInsurance,
+      highlightColor: data.highlightColor || talent.highlightColor,
+      notes: data.notes || talent.notes,
+    });
     res.json({ status: 200, success: true, talent: talent, message: "Talent updated successfully." });
   } catch (err) {
     next(err);

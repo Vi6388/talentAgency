@@ -17,8 +17,20 @@ module.exports.UserAdd = async (req, res, next) => {
     if (existingUser) {
       return res.json({ success: true, status: 201, message: "User already exists" });
     }
+    const data = req.body;
+    if (req.body.password !== "") {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+      data.password = hashedPassword;
+    }
     const user = UserModel.create({
-      ...req.body,
+      firstname: data.firstname || "",
+      surname: data.surname || "",
+      email: data.email || "",
+      phoneNumber: data.phoneNumber || "",
+      username: data.username || "",
+      password: data.password || "",
+      type: data.type || 'user',
       avatar: url + '/uploads/user/' + req.file.filename
     });
     return res.json({ status: 200, message: "User added successfully", success: true, data: user });
@@ -46,16 +58,28 @@ module.exports.UserUpdate = async (req, res, next) => {
     const user = await UserModel.findById(req.params.id);
     const url = req.protocol + '://' + req.get("host");
     var data = req.body;
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-    data.password = hashedPassword;
-    if(req.file !== undefined) {
+    if (req.body.password !== "") {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+      data.password = hashedPassword;
+    }
+    if (req.file !== undefined) {
       data.avatar = url + '/uploads/user/' + req.file.filename;
     }
-    if(req.body.avatar === 'undefined') {
+    if (req.body.avatar === 'undefined') {
       data.avatar = user.avatar;
     }
-    await UserModel.findById(req.params.id).updateMany(data);
+    console.log(data);
+    await UserModel.findById(req.params.id).updateMany({
+      firstname: data.firstname || user.firstname,
+      surname: data.surname || user.surname,
+      email: data.email || user.email,
+      phoneNumber: data.phoneNumber || user.phoneNumber,
+      username: data.username || user.username,
+      password: data.password || user.password,
+      type: data.type || user.type,
+      avatar: data.avatar
+    });
     res.json({ status: 200, success: true, user: user, message: "User updated successfully." });
   } catch (err) {
     next(err);
